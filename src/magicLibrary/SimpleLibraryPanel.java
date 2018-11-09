@@ -37,9 +37,20 @@ public class SimpleLibraryPanel extends LibraryPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         lstCards = new javax.swing.JList();
 
+        txtName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtNameActionPerformed(evt);
+            }
+        });
+
         btnAdvanced.setText("Advanced");
 
         btnSearch.setText("Search");
+        btnSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
 
         lstCards.setModel(new LibraryListModel());
         lstCards.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -83,15 +94,46 @@ public class SimpleLibraryPanel extends LibraryPanel {
         if(evt.getClickCount() == 1) {
             selected[1] = selected[0];
             selected[0] = lstCards.getSelectedIndices();
-            //do unselecting
+            if(selected[0].length == 1 && selected[1].length == 1 && selected[0][0] == selected[1][0]) {
+                lstCards.clearSelection();
+                selected[0] = new int[0];
+            }
         } else if(evt.getClickCount() == 2) {
             selected[0] = selected[1];
             lstCards.setSelectedIndices(selected[0]);
             int index = lstCards.locationToIndex(evt.getPoint());
-            CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index), false, 0);
+            if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index), false, 0)) {
+                fireLibraryChanged();
+            }
         }
     }//GEN-LAST:event_lstCardsMouseClicked
 
+    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+        String searchStr = txtName.getText().trim().toLowerCase();
+        if(searchStr.isEmpty()) {
+            Library.getInstance().clearSearch();
+        } else {
+            Library.getInstance().doSearch(searchStr);
+        }
+        fireLibraryChanged();
+    }//GEN-LAST:event_btnSearchActionPerformed
+
+    private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
+        btnSearchActionPerformed(null);
+    }//GEN-LAST:event_txtNameActionPerformed
+
+    
+    private String printArr(int[] arr) {
+        String rv = "[";
+        for(int i = 0; i < arr.length; i++) {
+            if(i > 0) {
+                rv += ",";
+            }
+            rv += arr[i];
+        }
+        rv += "]";
+        return rv;
+    }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdvanced;
@@ -103,7 +145,7 @@ public class SimpleLibraryPanel extends LibraryPanel {
 
     @Override
     public void fireLibraryChanged() {
-        //redo search
+        Library.getInstance().redoSesarch();
         ((LibraryListModel)lstCards.getModel()).fireLibraryChanged();
     }
 }

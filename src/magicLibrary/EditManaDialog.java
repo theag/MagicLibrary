@@ -8,7 +8,6 @@ package magicLibrary;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
-import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
@@ -19,7 +18,7 @@ import javax.swing.table.TableCellRenderer;
  */
 public class EditManaDialog extends javax.swing.JDialog {
     
-    private static final String CYCLE = "BUGRW";
+    private static final String CYCLE = "WUBRG";
     
     public static String[] showDialog(java.awt.Dialog parent, String[] manaCost) {
         EditManaDialog emd = new EditManaDialog(parent, manaCost);
@@ -56,7 +55,9 @@ public class EditManaDialog extends javax.swing.JDialog {
     private String[] getFinalCost() {
         int untyped = (int)spnUntyped.getValue();
         String[] rv;
-        if(untyped == 0) {
+        if(untyped == 0 && model.mana.size() == 0) {
+            rv = new String[]{"0"};
+        } else if(untyped == 0) {
             rv = new String[model.mana.size()];
             rv = model.mana.toArray(rv);
         } else {
@@ -180,13 +181,8 @@ public class EditManaDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_btnDeleteActionPerformed
 
     private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
-        int untyped = (int)spnUntyped.getValue();
-        if(untyped == 0 && model.mana.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Card must have a cost.", "Error", JOptionPane.ERROR_MESSAGE);
-        } else {
-            saved = true;
-            setVisible(false);
-        }
+        saved = true;
+        setVisible(false);
     }//GEN-LAST:event_btnSaveActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed

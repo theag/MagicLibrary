@@ -9,11 +9,13 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
@@ -74,6 +76,7 @@ public class CardDialog extends javax.swing.JDialog {
     private final MoneyPanel pnlPrice;
     private final JTextArea txtNotes;
     private final JButton btnSave;
+    private final JButton btnDelete;
     private final JButton btnClose;
     
     /**
@@ -223,6 +226,19 @@ public class CardDialog extends javax.swing.JDialog {
                 saveCard();
             }
         });
+        
+        if(card != null) {
+            btnDelete = new JButton("Delete");
+            btnDelete.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    deleteCard();
+                }
+            });
+        } else {
+            btnDelete = null;
+        }
+        
         btnClose = new JButton("Cancel");
         btnClose.addActionListener(new java.awt.event.ActionListener() {
             @Override
@@ -233,6 +249,9 @@ public class CardDialog extends javax.swing.JDialog {
         JPanel pnl = new JPanel();
         pnl.setBackground(Color.white);
         pnl.add(btnSave);
+        if(btnDelete != null) {
+            pnl.add(btnDelete);
+        }
         pnl.add(btnClose);
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -247,7 +266,7 @@ public class CardDialog extends javax.swing.JDialog {
         if(card != null) {
             if(deckMode) {
                 setTitle("Edit Deck Card");
-                //add deck amount
+                //todo: add deck amount
             } else {
                 setTitle("Edit Card");
             }
@@ -276,7 +295,7 @@ public class CardDialog extends javax.swing.JDialog {
             updated.setText("Last Updated: " +card.formatUpdate());
         } else {
             setTitle("New Card");
-            pnlMana = new ManaPanel();
+            pnlMana = new ManaPanel(new String[]{"0"});
         }
         c = new GridBagConstraints();
         c.gridx = 4;
@@ -340,7 +359,11 @@ public class CardDialog extends javax.swing.JDialog {
             errors.add("Type cannot be empty");
         }
         if(!errors.isEmpty()) {
-            //show error
+            String s = "Cannot save card because of the following errors:";
+            for(int i = 0; i < errors.size(); i++) {
+                s += "\n" +(i+1) +": " +errors.get(i);
+            }
+            JOptionPane.showMessageDialog(this, s, "Save", JOptionPane.ERROR_MESSAGE);
             return;
         }
         //Saving
@@ -386,6 +409,15 @@ public class CardDialog extends javax.swing.JDialog {
         setVisible(false);
     }
     
+    private void deleteCard() {
+        int result = JOptionPane.showConfirmDialog(this, "Are you sure that you wish to delete this card?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(result == JOptionPane.YES_OPTION) {
+            Library.getInstance().deleteCard(card);
+            saved = true;
+            setVisible(false);
+        }
+    }
+    
     private String[] split(String s) {
         if(s.isEmpty()) {
             return new String[0];
@@ -394,55 +426,6 @@ public class CardDialog extends javax.swing.JDialog {
         }
     }
     
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String args[]) {
-        /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
-        /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
-         * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
-         */
-        try {
-            for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(CardDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(CardDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(CardDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(CardDialog.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        }
-        //</editor-fold>
-
-        /* Create and display the dialog */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                try {
-                    Library.makeLibrary(new java.io.File(MainFrame.filename));
-                } catch (IOException ex) {
-                    System.out.println("Library creation failed");
-                    System.out.println(ex.getMessage());
-                    ex.printStackTrace(System.out);
-                }
-                CardDialog dialog = new CardDialog(new javax.swing.JFrame(), false, Library.getInstance().resultAt(1), false, 0);
-                dialog.addWindowListener(new java.awt.event.WindowAdapter() {
-                    @Override
-                    public void windowClosing(java.awt.event.WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     // End of variables declaration//GEN-END:variables
 }

@@ -42,17 +42,23 @@ public class Library implements Iterable<Card> {
     }
     
     private File file;
+
     private final ArrayList<Card> cards;
+    private String lastSearch;
     private int[] results;
+    
+    private final ArrayList<Deck> decks;
     
     private Library() {
         cards = new ArrayList<>();
+        decks = new ArrayList<>();
         file = null;
         results = null;
     }
     
     private Library(File file) throws IOException {
         cards = new ArrayList<>();
+        decks = new ArrayList<>();
         if(file.length() > Integer.MAX_VALUE) {
             throw new ArrayIndexOutOfBoundsException(file.getName() +".length() = " +file.length() +" > " +Integer.MAX_VALUE +" (maximum int)");
         }
@@ -61,8 +67,15 @@ public class Library implements Iterable<Card> {
         fin.read(bytes);
         fin.close();
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
-        while(buffer.hasRemaining()) {
+        int count = buffer.getInt();
+        while(count > 0) {
             cards.add(new Card(buffer));
+            count--;
+        }
+        count = buffer.getInt();
+        while(count > 0) {
+            decks.add(new Deck(buffer, cards));
+            count--;
         }
         this.file = file;
         results = null;
@@ -77,13 +90,21 @@ public class Library implements Iterable<Card> {
     }
     
     public void save(File file) throws IOException {
-        int size = 0;
+        int size = 8;
         for(Card c : cards) {
             size += c.saveSize();
         }
+        for(Deck d : decks) {
+            size += d.saveSize();
+        }
         ByteBuffer buffer = ByteBuffer.allocate(size);
+        buffer.putInt(cards.size());
         for(Card c : cards) {
             c.save(buffer);
+        }
+        buffer.putInt(decks.size());
+        for(Deck d : decks) {
+            d.save(buffer);
         }
         FileOutputStream fOut = new FileOutputStream(file);
         fOut.write(buffer.array());
@@ -116,6 +137,44 @@ public class Library implements Iterable<Card> {
         } else {
             return cards.get(results[index]);
         }
+    }
+
+    void deleteCard(Card card) {
+        cards.remove(card);
+        //todo: remove from decks
+    }
+
+    void clearSearch() {
+        results = null;
+        lastSearch = null;
+    }
+
+    void doSearch(String searchStr) {
+        int[] temp = new int[cards.size()];
+        int count = 0;
+        for(int i = 0; i < cards.size(); i++) {
+            if(cards.get(i).name.toLowerCase().contains(searchStr)) {
+                temp[count++] = i;
+            }
+        }
+        results = new int[count];
+        System.arraycopy(temp, 0, results, 0, count);
+        lastSearch = searchStr;
+    }
+    
+    void redoSesarch() {
+        if(lastSearch != null) {
+            doSearch(lastSearch);
+        }
+    }
+
+    int getCardIndex(Card card) {
+        return cards.indexOf(card);
+    }
+
+    void addDeck(String value) {
+        decks.add(new Deck(value, "default"));
+        Collections.sort(decks);
     }
     
     

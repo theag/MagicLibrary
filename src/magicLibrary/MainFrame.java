@@ -7,6 +7,7 @@ package magicLibrary;
 
 import java.io.File;
 import java.io.IOException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -56,6 +57,9 @@ public class MainFrame extends javax.swing.JFrame {
         mbMain = new javax.swing.JMenuBar();
         mCard = new javax.swing.JMenu();
         miNewCard = new javax.swing.JMenuItem();
+        mDeck = new javax.swing.JMenu();
+        miNewDeck = new javax.swing.JMenuItem();
+        miAddCardToDeck = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magic Library");
@@ -76,6 +80,27 @@ public class MainFrame extends javax.swing.JFrame {
         mCard.add(miNewCard);
 
         mbMain.add(mCard);
+
+        mDeck.setText("Deck");
+
+        miNewDeck.setText("New Deck");
+        miNewDeck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miNewDeckActionPerformed(evt);
+            }
+        });
+        mDeck.add(miNewDeck);
+
+        miAddCardToDeck.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, 0));
+        miAddCardToDeck.setText("Add Card to Deck");
+        miAddCardToDeck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miAddCardToDeckActionPerformed(evt);
+            }
+        });
+        mDeck.add(miAddCardToDeck);
+
+        mbMain.add(mDeck);
 
         setJMenuBar(mbMain);
 
@@ -111,6 +136,27 @@ public class MainFrame extends javax.swing.JFrame {
             pnlLib.fireLibraryChanged();
         }
     }//GEN-LAST:event_miNewCardActionPerformed
+
+    private void miNewDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewDeckActionPerformed
+        String value = "";
+        while(value.isEmpty()) {
+            value = (String)JOptionPane.showInputDialog(this, "What is the new deck's name?", "New Deck", JOptionPane.QUESTION_MESSAGE, null, null, "");
+            if(value == null) {
+                break;
+            }
+            value = value.trim();
+            if(value.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Name cannot be blank.", "New Deck", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        if(value != null) {
+            Library.getInstance().addDeck(value);
+        }
+    }//GEN-LAST:event_miNewDeckActionPerformed
+
+    private void miAddCardToDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddCardToDeckActionPerformed
+        //todo: 
+    }//GEN-LAST:event_miAddCardToDeckActionPerformed
 
     /**
      * @param args the command line arguments
@@ -150,8 +196,12 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu mCard;
+    private javax.swing.JMenu mDeck;
     private javax.swing.JMenuBar mbMain;
+    private javax.swing.JMenuItem miAddCardToDeck;
     private javax.swing.JMenuItem miNewCard;
+    private javax.swing.JMenuItem miNewDeck;
     private javax.swing.JTabbedPane tabMain;
     // End of variables declaration//GEN-END:variables
+
 }

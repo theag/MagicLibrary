@@ -50,7 +50,7 @@ public class MoneyPanel extends javax.swing.JPanel {
         String s = txtAmount.getText();
         int i = s.indexOf(".");
         if(i > 0 && s.length() - i > 2) {
-
+            s = s.substring(0, i+3);
         }
         return Float.parseFloat(s);
     }
