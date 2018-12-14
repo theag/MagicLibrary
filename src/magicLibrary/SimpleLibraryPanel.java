@@ -102,7 +102,7 @@ public class SimpleLibraryPanel extends LibraryPanel {
             selected[0] = selected[1];
             lstCards.setSelectedIndices(selected[0]);
             int index = lstCards.locationToIndex(evt.getPoint());
-            if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index), false, 0)) {
+            if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index))) {
                 fireLibraryChanged();
             }
         }

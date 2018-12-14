@@ -7,6 +7,7 @@ package magicLibrary;
 
 import java.nio.ByteBuffer;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Objects;
 
@@ -30,10 +31,12 @@ public class Card implements Comparable<Card> {
     public String loyalty;
     public String notes;
     public int count;
-    public float price;
     public long lastUpdated;
+    public ArrayList<String> decks;
 
-    public Card() {}
+    public Card() {
+        decks = new ArrayList<>();
+    }
 
     protected Card(ByteBuffer buffer) {
         name = "";
@@ -139,8 +142,19 @@ public class Card implements Comparable<Card> {
             }
         }
         count = buffer.getInt();
-        price = buffer.getFloat();
         lastUpdated = buffer.getLong();
+        decks = new ArrayList<>();
+        int count = buffer.getInt();
+        String s;
+        for(; count > 0; count--) {
+            s = "";
+            chr = buffer.getChar();
+            while(chr != Library.ETX) {
+                s += chr;
+                chr = buffer.getChar();
+            }
+            decks.add(s);
+        }
     }
     
     @Override
@@ -174,27 +188,8 @@ public class Card implements Comparable<Card> {
         } else if(loyalty != null) {
             rv += "\n[" +loyalty+"]";
         }
-        rv += "\nHave: " +count +"\nCosts: " +formatPrice(true) +"\nNotes: " +notes +"\nLast Updated: " +formatUpdate();
+        rv += "\nHave: " +count +"\nNotes: " +notes +"\nLast Updated: " +formatUpdate();
         return rv;
-    }
-
-    public String formatPrice(boolean dollarSign) {
-        String rv = ""+price;
-        int dot = rv.indexOf(".");
-        if(rv.length() - dot < 3) {
-            rv += "0";
-        } else if(rv.length() - dot > 3) {
-            rv = rv.substring(0, dot +3);
-        }
-        while(dot >= 4) {
-            rv = rv.substring(0, dot - 4) +"," +rv.substring(dot - 3);
-            dot -= 3;
-        }
-        if(dollarSign) {
-            return "$" + rv;
-        } else {
-            return rv;
-        }
     }
 
     public String formatUpdate() {
@@ -273,7 +268,10 @@ public class Card implements Comparable<Card> {
         } else {
             rv += 2*(notes.length() + 1);
         }
-        rv += 4 + 4 + 8;
+        rv += 4 + 8 + 4;
+        for(String s : decks) {
+            rv += 2*(s.length() + 1);
+        }
         return rv;
     }
 
@@ -359,8 +357,14 @@ public class Card implements Comparable<Card> {
             buffer.putChar(Library.ETX);
         }
         buffer.putInt(count);
-        buffer.putFloat(price);
         buffer.putLong(lastUpdated);
+        buffer.putInt(decks.size());
+        for(String s : decks) {
+            for(int i = 0; i < s.length(); i++) {
+                buffer.putChar(s.charAt(i));
+            }
+            buffer.putChar(Library.ETX);
+        }
     }
 
     public String getTypeString() {
@@ -396,6 +400,14 @@ public class Card implements Comparable<Card> {
                 rv += " ";
             }
             rv += subtype[i];
+        }
+        return rv;
+    }
+
+    String getDeckString() {
+        String rv = "";
+        for(String s : decks) {
+            rv += s +"\n";
         }
         return rv;
     }

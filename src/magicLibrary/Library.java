@@ -47,18 +47,14 @@ public class Library implements Iterable<Card> {
     private String lastSearch;
     private int[] results;
     
-    private final ArrayList<Deck> decks;
-    
     private Library() {
         cards = new ArrayList<>();
-        decks = new ArrayList<>();
         file = null;
         results = null;
     }
     
     private Library(File file) throws IOException {
         cards = new ArrayList<>();
-        decks = new ArrayList<>();
         if(file.length() > Integer.MAX_VALUE) {
             throw new ArrayIndexOutOfBoundsException(file.getName() +".length() = " +file.length() +" > " +Integer.MAX_VALUE +" (maximum int)");
         }
@@ -74,7 +70,6 @@ public class Library implements Iterable<Card> {
         }
         count = buffer.getInt();
         while(count > 0) {
-            decks.add(new Deck(buffer, cards));
             count--;
         }
         this.file = file;
@@ -94,17 +89,10 @@ public class Library implements Iterable<Card> {
         for(Card c : cards) {
             size += c.saveSize();
         }
-        for(Deck d : decks) {
-            size += d.saveSize();
-        }
         ByteBuffer buffer = ByteBuffer.allocate(size);
         buffer.putInt(cards.size());
         for(Card c : cards) {
             c.save(buffer);
-        }
-        buffer.putInt(decks.size());
-        for(Deck d : decks) {
-            d.save(buffer);
         }
         FileOutputStream fOut = new FileOutputStream(file);
         fOut.write(buffer.array());
@@ -171,12 +159,5 @@ public class Library implements Iterable<Card> {
     int getCardIndex(Card card) {
         return cards.indexOf(card);
     }
-
-    void addDeck(String value) {
-        decks.add(new Deck(value, "default"));
-        Collections.sort(decks);
-    }
-    
-    
-    
+   
 }

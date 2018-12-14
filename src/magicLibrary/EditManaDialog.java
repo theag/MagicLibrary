@@ -60,6 +60,14 @@ public class EditManaDialog extends javax.swing.JDialog {
         } else if(untyped == 0) {
             rv = new String[model.mana.size()];
             rv = model.mana.toArray(rv);
+        } else if(chkIsX.isSelected()) {
+            rv = new String[model.mana.size() + untyped];
+            for(int i = 0; i < untyped; i++) {
+                rv[i] = "X";
+            }
+            for(int i = 0; i < model.mana.size(); i++) {
+                rv[i+untyped] = model.mana.get(i);
+            }
         } else {
             rv = new String[model.mana.size() + 1];
             rv[0] = ""+untyped;
@@ -86,6 +94,7 @@ public class EditManaDialog extends javax.swing.JDialog {
         btnCancel = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblColoured = new javax.swing.JTable();
+        chkIsX = new javax.swing.JCheckBox();
 
         setTitle("Edit Mana");
 
@@ -127,6 +136,8 @@ public class EditManaDialog extends javax.swing.JDialog {
         });
         jScrollPane1.setViewportView(tblColoured);
 
+        chkIsX.setText("Is X");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -138,7 +149,10 @@ public class EditManaDialog extends javax.swing.JDialog {
                         .addComponent(btnSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancel))
-                    .addComponent(spnUntyped, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(spnUntyped, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(chkIsX))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 245, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -150,7 +164,9 @@ public class EditManaDialog extends javax.swing.JDialog {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(spnUntyped, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(spnUntyped, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(chkIsX))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -202,6 +218,7 @@ public class EditManaDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnDelete;
     private javax.swing.JButton btnSave;
+    private javax.swing.JCheckBox chkIsX;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSpinner spnUntyped;
     private javax.swing.JTable tblColoured;

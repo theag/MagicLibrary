@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JButton;
@@ -34,12 +33,10 @@ public class CardDialog extends javax.swing.JDialog {
      * @param parent
      * @param modal
      * @param card
-     * @param deckMode
-     * @param count
      * @return 
      */
-    public static boolean showEditDialog(java.awt.Frame parent, boolean modal, Card card, boolean deckMode, int count) {
-        CardDialog cd = new CardDialog(parent, modal, card, deckMode, count);
+    public static boolean showEditDialog(java.awt.Frame parent, boolean modal, Card card) {
+        CardDialog cd = new CardDialog(parent, modal, card);
         cd.setVisible(true);
         boolean rv = cd.saved;
         cd.dispose();
@@ -53,7 +50,7 @@ public class CardDialog extends javax.swing.JDialog {
      * @return 
      */
     public static Card showNewDialog(java.awt.Frame parent, boolean modal) {
-        CardDialog cd = new CardDialog(parent, modal, null, false, 0);
+        CardDialog cd = new CardDialog(parent, modal, null);
         cd.setVisible(true);
         Card rv = cd.card;
         cd.dispose();
@@ -73,7 +70,7 @@ public class CardDialog extends javax.swing.JDialog {
     private final JTextArea txtText;
     private final JTextField txtLPT;
     private final JSpinner spnCount;
-    private final MoneyPanel pnlPrice;
+    private final JTextArea txtDecks;
     private final JTextArea txtNotes;
     private final JButton btnSave;
     private final JButton btnDelete;
@@ -82,7 +79,7 @@ public class CardDialog extends javax.swing.JDialog {
     /**
      * Creates new form CardDialog
      */
-    private CardDialog(java.awt.Frame parent, boolean modal, Card card, boolean deckMode, int count) {
+    private CardDialog(java.awt.Frame parent, boolean modal, Card card) {
         super(parent, modal);
         initComponents();
         setLocationRelativeTo(parent);
@@ -175,16 +172,6 @@ public class CardDialog extends javax.swing.JDialog {
         c.anchor = GridBagConstraints.LINE_START;
         add(spnCount, c);
         
-        pnlPrice = new MoneyPanel();
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 5;
-        c.gridwidth = 5;
-        c.insets.left = 5;
-        c.insets.right = 5;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        add(pnlPrice, c);
-        
         JLabel updated = new JLabel("Last Updated: never");
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -194,10 +181,33 @@ public class CardDialog extends javax.swing.JDialog {
         c.anchor = GridBagConstraints.LINE_START;
         add(updated, c);
         
-        lbl = new JLabel("Notes");
+        lbl = new JLabel("Decks");
         c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 7;
+        c.gridwidth = 5;
+        c.insets.left = 5;
+        c.anchor = GridBagConstraints.LINE_START;
+        add(lbl, c);
+        
+        txtDecks = new JTextArea();
+        sp = new JScrollPane();
+        sp.setViewportView(txtDecks);
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 8;
+        c.gridwidth = 5;
+        c.weightx = 1;
+        c.weighty = 1;
+        c.insets.left = 5;
+        c.insets.right = 5;
+        c.fill = GridBagConstraints.BOTH;
+        add(sp, c);
+        
+        lbl = new JLabel("Notes");
+        c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 9;
         c.gridwidth = 5;
         c.insets.left = 5;
         c.anchor = GridBagConstraints.LINE_START;
@@ -210,7 +220,7 @@ public class CardDialog extends javax.swing.JDialog {
         sp.setViewportView(txtNotes);
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 8;
+        c.gridy = 10;
         c.gridwidth = 5;
         c.weightx = 1;
         c.weighty = 1;
@@ -255,7 +265,7 @@ public class CardDialog extends javax.swing.JDialog {
         pnl.add(btnClose);
         c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 9;
+        c.gridy = 11;
         c.gridwidth = 5;
         c.weightx = 1;
         c.insets.left = 5;
@@ -264,12 +274,7 @@ public class CardDialog extends javax.swing.JDialog {
         add(pnl, c);
 
         if(card != null) {
-            if(deckMode) {
-                setTitle("Edit Deck Card");
-                //todo: add deck amount
-            } else {
-                setTitle("Edit Card");
-            }
+            setTitle("Edit Card");
             txtName.setText(card.name);
             pnlMana = new ManaPanel(card.manaCost);
             if(card.supertype.length > 0) {
@@ -287,11 +292,11 @@ public class CardDialog extends javax.swing.JDialog {
             } else if(card.power != null) {
                 txtLPT.setText(card.power +"/" +card.toughness);
             }
+            txtDecks.setText(card.getDeckString());
             if(card.notes != null) {
                 txtNotes.setText(card.notes);
             }
             spnCount.setValue(card.count);
-            pnlPrice.setAmount(card.price);
             updated.setText("Last Updated: " +card.formatUpdate());
         } else {
             setTitle("New Card");
@@ -398,7 +403,13 @@ public class CardDialog extends javax.swing.JDialog {
             card.toughness = null;
         }
         card.count = (int)spnCount.getValue();
-        card.price = pnlPrice.getAmount();
+        String[] decks = txtDecks.getText().trim().split("\n");
+        card.decks.clear();
+        for(String d : decks) {
+            if(!d.isEmpty()) {
+                card.decks.add(d);
+            }
+        }
         if(!txtNotes.getText().trim().isEmpty()) {
             card.notes = txtNotes.getText().trim();
         } else {

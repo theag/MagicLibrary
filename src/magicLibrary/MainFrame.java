@@ -5,9 +5,12 @@
  */
 package magicLibrary;
 
+import java.awt.BorderLayout;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import javax.swing.JOptionPane;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -40,7 +43,8 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
         pnlLib = new SimpleLibraryPanel();
-        tabMain.add("Library", pnlLib);
+        pnlMain.setLayout(new BorderLayout());
+        pnlMain.add(pnlLib, BorderLayout.CENTER);
         setLocationRelativeTo(null);
     }
 
@@ -53,13 +57,11 @@ public class MainFrame extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        tabMain = new javax.swing.JTabbedPane();
+        pnlMain = new javax.swing.JPanel();
         mbMain = new javax.swing.JMenuBar();
         mCard = new javax.swing.JMenu();
         miNewCard = new javax.swing.JMenuItem();
-        mDeck = new javax.swing.JMenu();
-        miNewDeck = new javax.swing.JMenuItem();
-        miAddCardToDeck = new javax.swing.JMenuItem();
+        miJSONCard = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magic Library");
@@ -68,6 +70,17 @@ public class MainFrame extends javax.swing.JFrame {
                 formWindowClosing(evt);
             }
         });
+
+        javax.swing.GroupLayout pnlMainLayout = new javax.swing.GroupLayout(pnlMain);
+        pnlMain.setLayout(pnlMainLayout);
+        pnlMainLayout.setHorizontalGroup(
+            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 805, Short.MAX_VALUE)
+        );
+        pnlMainLayout.setVerticalGroup(
+            pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 605, Short.MAX_VALUE)
+        );
 
         mCard.setText("Card");
 
@@ -79,28 +92,15 @@ public class MainFrame extends javax.swing.JFrame {
         });
         mCard.add(miNewCard);
 
+        miJSONCard.setText("Add from JSON");
+        miJSONCard.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miJSONCardActionPerformed(evt);
+            }
+        });
+        mCard.add(miJSONCard);
+
         mbMain.add(mCard);
-
-        mDeck.setText("Deck");
-
-        miNewDeck.setText("New Deck");
-        miNewDeck.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miNewDeckActionPerformed(evt);
-            }
-        });
-        mDeck.add(miNewDeck);
-
-        miAddCardToDeck.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, 0));
-        miAddCardToDeck.setText("Add Card to Deck");
-        miAddCardToDeck.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miAddCardToDeckActionPerformed(evt);
-            }
-        });
-        mDeck.add(miAddCardToDeck);
-
-        mbMain.add(mDeck);
 
         setJMenuBar(mbMain);
 
@@ -108,20 +108,23 @@ public class MainFrame extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabMain, javax.swing.GroupLayout.DEFAULT_SIZE, 805, Short.MAX_VALUE)
+            .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(tabMain, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 605, Short.MAX_VALUE)
+            .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        File f = new File(filename);
         try {
-            Library.getInstance().save();
+            try {
+                Library.getInstance().save();
+            } catch (NullPointerException ex) {
+                Library.getInstance().save(new File(filename));
+            }
         } catch (IOException ex) {
             System.out.println("Library save failed");
             System.out.println(ex.getMessage());
@@ -137,26 +140,17 @@ public class MainFrame extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_miNewCardActionPerformed
 
-    private void miNewDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewDeckActionPerformed
-        String value = "";
-        while(value.isEmpty()) {
-            value = (String)JOptionPane.showInputDialog(this, "What is the new deck's name?", "New Deck", JOptionPane.QUESTION_MESSAGE, null, null, "");
-            if(value == null) {
-                break;
+    private void miJSONCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miJSONCardActionPerformed
+        try {
+            if(JSONCardDialog.showDialog(this)) {
+                pnlLib.fireLibraryChanged();
             }
-            value = value.trim();
-            if(value.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "Name cannot be blank.", "New Deck", JOptionPane.ERROR_MESSAGE);
-            }
+        } catch (FileNotFoundException ex) {
+            System.out.println("Couldn't find JSON file.");
+            System.out.println(ex.getMessage());
+            ex.printStackTrace(System.out);
         }
-        if(value != null) {
-            Library.getInstance().addDeck(value);
-        }
-    }//GEN-LAST:event_miNewDeckActionPerformed
-
-    private void miAddCardToDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miAddCardToDeckActionPerformed
-        //todo: 
-    }//GEN-LAST:event_miAddCardToDeckActionPerformed
+    }//GEN-LAST:event_miJSONCardActionPerformed
 
     /**
      * @param args the command line arguments
@@ -196,12 +190,10 @@ public class MainFrame extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenu mCard;
-    private javax.swing.JMenu mDeck;
     private javax.swing.JMenuBar mbMain;
-    private javax.swing.JMenuItem miAddCardToDeck;
+    private javax.swing.JMenuItem miJSONCard;
     private javax.swing.JMenuItem miNewCard;
-    private javax.swing.JMenuItem miNewDeck;
-    private javax.swing.JTabbedPane tabMain;
+    private javax.swing.JPanel pnlMain;
     // End of variables declaration//GEN-END:variables
 
 }

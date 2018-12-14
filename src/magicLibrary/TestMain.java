@@ -6,8 +6,13 @@
 package magicLibrary;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 /**
  *
@@ -20,23 +25,10 @@ public class TestMain {
      */
     public static void main(String[] args) throws IOException {
         //newLibrary();
-        String s = "a b";
-        String[] sa = s.split(" ");
-        for(String sb : sa) {
-            System.out.println(sb);
-        }
-        System.out.println("#");
-        s = "";
-        sa = s.split(" ");
-        for(String sb : sa) {
-            System.out.println(sb);
-        }
-        System.out.println("#");
-        s = "ab";
-        sa = s.split(" ");
-        for(String sb : sa) {
-            System.out.println(sb);
-        }
+        JSONObject obj = new JSONObject(new JSONTokener(new FileInputStream("AllCards.json")));
+        ArrayList<String> names = new ArrayList<>();
+        names.addAll(obj.keySet());
+        Collections.sort(names);
     }
     
     public static void newLibrary() throws IOException {
@@ -49,8 +41,8 @@ public class TestMain {
         c.manaCost = new String[]{"1"};
         c.text = "At the beginning of your upkeep, you may put a charge counter of Aether Vial.\ntap: You may put a creature card with converted mana cost equal to the number of charge counters on Aether Vial from your hand onto the battlefield.";
         c.fancyText = "At the beginning of your upkeep, you may put a charge counter of Aether Vial.\n{T}: You may put a creature card with converted mana cost equal to the number of charge counters on Aether Vial from your hand onto the battlefield.";
-        c.count = 0;
-        c.price = 50;
+        c.count = 1;
+        c.decks.add("Sygg");
         c.lastUpdated = Calendar.getInstance().getTimeInMillis();
         l.addCard(c);
         c = new Card();
@@ -65,7 +57,8 @@ public class TestMain {
         c.toughness = "1";
         c.notes = "Alt to Aether Vial";
         c.count = 2;
-        c.price = 1.5f;
+        c.decks.add("Sygg");
+        c.decks.add("Merfolk");
         c.lastUpdated = Calendar.getInstance().getTimeInMillis();
         l.addCard(c);
         c = new Card();
@@ -75,8 +68,8 @@ public class TestMain {
         c.subtype = new String[0];
         c.manaCost = new String[]{"GP"};
         c.text = "Target creature gets +2/+2 until end of turn.";
-        c.count = 0;
-        c.price = 2.03f;
+        c.count = 4;
+        c.decks.add("Infect");
         c.lastUpdated = Calendar.getInstance().getTimeInMillis();
         l.addCard(c);
         l.save(new File("library.txt"));
