@@ -44,6 +44,11 @@ public class SimpleLibraryPanel extends LibraryPanel {
         });
 
         btnAdvanced.setText("Advanced");
+        btnAdvanced.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAdvancedActionPerformed(evt);
+            }
+        });
 
         btnSearch.setText("Search");
         btnSearch.addActionListener(new java.awt.event.ActionListener() {
@@ -121,6 +126,10 @@ public class SimpleLibraryPanel extends LibraryPanel {
     private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
         btnSearchActionPerformed(null);
     }//GEN-LAST:event_txtNameActionPerformed
+
+    private void btnAdvancedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdvancedActionPerformed
+        this.fireChangePanel("Advanced");
+    }//GEN-LAST:event_btnAdvancedActionPerformed
 
     
     private String printArr(int[] arr) {

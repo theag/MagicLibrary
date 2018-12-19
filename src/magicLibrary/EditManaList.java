@@ -17,7 +17,7 @@ import magicLibrary.ManaCellRenderer.ChangeListener;
  */
 public class EditManaList extends JPanel {
     
-    private static final String CYCLE = "BUGRW";
+    private static final String CYCLE = "WUBG";
     
     private ArrayList<String> mana;
     private ManaCellRenderer mcr;

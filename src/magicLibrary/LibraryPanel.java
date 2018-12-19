@@ -13,4 +13,18 @@ public abstract class LibraryPanel extends javax.swing.JPanel {
     
     public abstract void fireLibraryChanged();
     
+    public void addChangePanelListener(ChangePanelListener listener) {
+        listenerList.add(ChangePanelListener.class, listener);
+    }
+    
+    public void fireChangePanel(String newPanelName) {
+        for(ChangePanelListener listener : listenerList.getListeners(ChangePanelListener.class)) {
+            listener.changePanel(newPanelName);
+        }
+    }
+    
+    public interface ChangePanelListener extends java.util.EventListener {
+        public void changePanel(String newPanelName);
+    }
+    
 }

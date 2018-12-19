@@ -9,14 +9,12 @@ import java.awt.BorderLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
  * @author nbp184
  */
-public class MainFrame extends javax.swing.JFrame {
+public class MainFrame extends javax.swing.JFrame implements LibraryPanel.ChangePanelListener {
 
     public static final String filename = "library.txt";
     private static MainFrame instance = null;
@@ -43,6 +41,7 @@ public class MainFrame extends javax.swing.JFrame {
             }
         }
         pnlLib = new SimpleLibraryPanel();
+        pnlLib.addChangePanelListener(this);
         pnlMain.setLayout(new BorderLayout());
         pnlMain.add(pnlLib, BorderLayout.CENTER);
         setLocationRelativeTo(null);
@@ -195,5 +194,19 @@ public class MainFrame extends javax.swing.JFrame {
     private javax.swing.JMenuItem miNewCard;
     private javax.swing.JPanel pnlMain;
     // End of variables declaration//GEN-END:variables
+
+    @Override
+    public void changePanel(String newPanelName) {
+        pnlMain.remove(pnlLib);
+        switch(newPanelName) {
+            case "Simple":
+                pnlLib = new SimpleLibraryPanel();
+                pnlLib.addChangePanelListener(this);
+                pnlMain.add(pnlLib, BorderLayout.CENTER);
+                break;
+            case "Advanced":
+                break;
+        }
+    }
 
 }

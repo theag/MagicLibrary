@@ -8,9 +8,12 @@ package magicLibrary;
 import java.awt.Color;
 import java.awt.Component;
 import java.util.ArrayList;
+import javax.swing.DefaultCellEditor;
+import javax.swing.JComboBox;
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableColumn;
 
 /**
  *
@@ -44,6 +47,12 @@ public class EditManaDialog extends javax.swing.JDialog {
         setLocationRelativeTo(parent);
         tblColoured.setDefaultRenderer(String.class, new ManaTableCellRenderer());
         tblColoured.setRowHeight(ManaPanel.DOT_SIZE + 1 + 4);
+        TableColumn col = tblColoured.getColumnModel().getColumn(1);
+        JComboBox cb = new JComboBox();
+        cb.addItem("Normal");
+        cb.addItem("Hybrid");
+        cb.addItem("Phyrexian");
+        col.setCellEditor(new DefaultCellEditor(cb));
         for(String m : manaCost) {
             if(!CYCLE.contains(""+m.charAt(0))) {
                 spnUntyped.setValue(Integer.parseInt(m));
@@ -58,21 +67,20 @@ public class EditManaDialog extends javax.swing.JDialog {
         if(untyped == 0 && model.mana.size() == 0) {
             rv = new String[]{"0"};
         } else if(untyped == 0) {
-            rv = new String[model.mana.size()];
-            rv = model.mana.toArray(rv);
+            rv = model.getArray();
         } else if(chkIsX.isSelected()) {
             rv = new String[model.mana.size() + untyped];
             for(int i = 0; i < untyped; i++) {
                 rv[i] = "X";
             }
             for(int i = 0; i < model.mana.size(); i++) {
-                rv[i+untyped] = model.mana.get(i);
+                rv[i+untyped] = model.mana.get(i).toString();
             }
         } else {
             rv = new String[model.mana.size() + 1];
             rv[0] = ""+untyped;
             for(int i = 0; i < model.mana.size(); i++) {
-                rv[i+1] = model.mana.get(i);
+                rv[i+1] = model.mana.get(i).toString();
             }
         }
         return rv;
@@ -185,7 +193,7 @@ public class EditManaDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        model.mana.add(CYCLE.substring(0, 1));
+        model.mana.add(new ManaDot(CYCLE.substring(0, 1)));
         model.fireTableRowsInserted(model.mana.size() - 1, model.mana.size() - 1);
     }//GEN-LAST:event_btnAddActionPerformed
 
@@ -208,7 +216,7 @@ public class EditManaDialog extends javax.swing.JDialog {
     private void tblColouredMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblColouredMouseClicked
         int row = tblColoured.rowAtPoint(evt.getPoint());
         int col = tblColoured.columnAtPoint(evt.getPoint());
-        if(col == 0) {
+        if(col == 0 || col == 2) {
             model.setValueAt(null, row, col);
         }
     }//GEN-LAST:event_tblColouredMouseClicked
@@ -224,15 +232,80 @@ public class EditManaDialog extends javax.swing.JDialog {
     private javax.swing.JTable tblColoured;
     // End of variables declaration//GEN-END:variables
 
+    private static class ManaDot {
+        private char main;
+        private boolean phyrexian;
+        private char second;
+        
+        public ManaDot(String mana) {
+            main = mana.charAt(0);
+            phyrexian = false;
+            second = Library.NULL;
+            if(mana.length() > 1) {
+                if(mana.charAt(1) == 'P') {
+                    phyrexian = true;
+                } else {
+                    second = mana.charAt(1);
+                }
+            }
+        }
+        
+        void cycleMain() {
+            int index = CYCLE.indexOf(main) + 1;
+            if(second == Library.NULL) {
+                index = index%CYCLE.length();
+                main = CYCLE.charAt(index);
+            } else {
+                index = (index+1)%(CYCLE.length() + 1);
+                if(index == 0) {
+                    main = '2';
+                } else {
+                    main = CYCLE.charAt(index - 1);
+                }
+            }
+        }
+        
+        void cycleSecond() {
+            int index = CYCLE.indexOf(second) + 1;
+            index = index%CYCLE.length();
+            second = CYCLE.charAt(index);
+        }
+        
+        void setHybrid() {
+            if(second == Library.NULL) {
+                second = CYCLE.charAt(0);
+            }
+        }
+        
+        void clearHybrid() {
+            second = Library.NULL;
+            if(main == '2') {
+                main = CYCLE.charAt(0);
+            }
+        }
+        
+        @Override
+        public String toString() {
+            String rv = ""+main;
+            if(phyrexian) {
+                rv += "P";
+            } else if(second != Library.NULL) {
+                rv += second;
+            }
+            return rv;
+        }
+        
+    }
+    
     private static class ManaTableModel extends AbstractTableModel {
 
-        private ArrayList<String> mana;
+        private ArrayList<ManaDot> mana;
         
         public ManaTableModel(String[] mana) {
             this.mana = new ArrayList<>();
             for(String m : mana) {
                 if(CYCLE.contains(""+m.charAt(0))) {
-                    this.mana.add(m);
+                    this.mana.add(new ManaDot(m));
                 }
             }
         }
@@ -248,7 +321,9 @@ public class EditManaDialog extends javax.swing.JDialog {
                 case 0:
                     return "Colour";
                 case 1:
-                    return "Phyrexian";
+                    return "Type";
+                case 2:
+                    return "Second Colour";
                 default:
                     return super.getColumnName(columnIndex);
             }
@@ -258,9 +333,8 @@ public class EditManaDialog extends javax.swing.JDialog {
         public Class<?> getColumnClass(int columnIndex) {
             switch(columnIndex) {
                 case 0:
+                case 2:
                     return String.class;
-                case 1:
-                    return Boolean.class;
                 default:
                     return super.getColumnClass(columnIndex);
             }
@@ -273,37 +347,72 @@ public class EditManaDialog extends javax.swing.JDialog {
 
         @Override
         public int getColumnCount() {
-            return 2;
+            return 3;
         }
 
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
-            String m = mana.get(rowIndex);
-            if(columnIndex == 1) {
-                return m.length() > 1 && m.charAt(1) == 'P';
-            } else {
-                return m.substring(columnIndex, columnIndex+1);
+            ManaDot m = mana.get(rowIndex);
+            switch(columnIndex) {
+                case 0:
+                    return ""+m.main;
+                case 1:
+                    if(m.phyrexian) {
+                        return "Phyrexian";
+                    } else if(m.second != Library.NULL) {
+                        return "Hybrid";
+                    } else {
+                        return "Normal";
+                    }
+                case 2:
+                    if(m.second == Library.NULL) {
+                        return " ";
+                    } else {
+                        return ""+m.second;
+                    }
+                default:
+                    return null;
             }
         }
         
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
-            String value = mana.get(rowIndex);
+            ManaDot m = mana.get(rowIndex);
             switch(columnIndex) {
                 case 0:
-                    int index = (CYCLE.indexOf(value.substring(0,1)) + 1)%CYCLE.length();
-                    value = CYCLE.substring(index, index+1) +value.substring(1);
+                    m.cycleMain();
                     break;
                 case 1:
-                    if(aValue == Boolean.TRUE) {
-                        value += "P";
-                    } else {
-                        value = value.substring(0, 1);
+                    switch(aValue.toString()) {
+                        case "Normal":
+                            m.phyrexian = false;
+                            m.clearHybrid();
+                            break;
+                        case "Phyrexian":
+                            m.phyrexian = true;
+                            m.clearHybrid();
+                            break;
+                        case "Hybrid":
+                            m.phyrexian = false;
+                            m.setHybrid();
+                            break;
+                    }
+                    break;
+                case 2:
+                    if(m.second != Library.NULL) {
+                        m.cycleSecond();
                     }
                     break;
             }
-            mana.set(rowIndex, value);
-            this.fireTableCellUpdated(rowIndex, columnIndex);
+            this.fireTableRowsUpdated(rowIndex, rowIndex);
+        }
+        
+        public String[] getArray() {
+            String[] rv = new String[mana.size()];
+            for(int i = 0; i < rv.length; i++) {
+                rv[i] = mana.get(i).toString();
+            }
+            return rv;
         }
         
     }
@@ -328,7 +437,7 @@ public class EditManaDialog extends javax.swing.JDialog {
             } else {
                 mp.setBackground(Color.white);
             }
-            mp.setManaCost(new String[]{((String)value).substring(0, 1)});
+            mp.setManaCost(new String[]{(String)value});
             return mp;
         }
     }

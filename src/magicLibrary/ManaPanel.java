@@ -124,15 +124,45 @@ public class ManaPanel extends javax.swing.JPanel {
                     untyped = true;
                     break;
             }
-            g.drawArc(x, 0, DOT_SIZE, DOT_SIZE, 0, 360);
-            g.fillArc(x, 0, DOT_SIZE, DOT_SIZE, 0, 360);
-            if(untyped) {
-                g.setColor(Color.black);
-                g.drawString(mana, x + (DOT_SIZE - fm.stringWidth(mana))/2 + 1, (DOT_SIZE + fm.getAscent())/2 - 1);
-            } else if(mana.length() > 1 && mana.charAt(1) == 'P') {
-                g.setColor(Color.black);
-                g.drawLine(x + DOT_SIZE/2 + 1, 1, x + DOT_SIZE/2 + 1, DOT_SIZE - 1);
-                g.drawArc(x + MyMath.round(DOT_SIZE/4.0) + 1, MyMath.round(DOT_SIZE/4.0) + 1, DOT_SIZE/2, DOT_SIZE/2, 0, 360);
+            if(mana.length() == 2 && mana.charAt(1) != 'P' && mana.charAt(1) >= 'B' && mana.charAt(1) <= 'W') {
+                //hybrid mana
+                g.drawArc(x, 0, DOT_SIZE, DOT_SIZE, 45, 180);
+                g.fillArc(x, 0, DOT_SIZE, DOT_SIZE, 45, 180);
+                if(untyped) {
+                    g.setColor(Color.black);
+                    g.drawString(mana.substring(0, 1), x + (DOT_SIZE/2 - fm.stringWidth(mana))/2 + 1, (DOT_SIZE/2 + fm.getAscent())/2 - 1);
+                }
+                //second half
+                switch(mana.charAt(1)) {
+                    case 'R':
+                        g.setColor(MANA_RED);
+                        break;
+                    case 'U':
+                        g.setColor(MANA_BLUE);
+                        break;
+                    case 'G':
+                        g.setColor(MANA_GREEN);
+                        break;
+                    case 'W':
+                        g.setColor(MANA_WHITE);
+                        break;
+                    case 'B':
+                        g.setColor(MANA_BLACK);
+                        break;
+                }
+                g.drawArc(x, 0, DOT_SIZE, DOT_SIZE, 225, 180);
+                g.fillArc(x, 0, DOT_SIZE, DOT_SIZE, 225, 180);
+            } else {
+                g.drawArc(x, 0, DOT_SIZE, DOT_SIZE, 0, 360);
+                g.fillArc(x, 0, DOT_SIZE, DOT_SIZE, 0, 360);
+                if(untyped) {
+                    g.setColor(Color.black);
+                    g.drawString(mana, x + (DOT_SIZE - fm.stringWidth(mana))/2 + 1, (DOT_SIZE + fm.getAscent())/2 - 1);
+                } else if(mana.length() > 1 && mana.charAt(1) == 'P') {
+                    g.setColor(Color.black);
+                    g.drawLine(x + DOT_SIZE/2 + 1, 1, x + DOT_SIZE/2 + 1, DOT_SIZE - 1);
+                    g.drawArc(x + MyMath.round(DOT_SIZE/4.0) + 1, MyMath.round(DOT_SIZE/4.0) + 1, DOT_SIZE/2, DOT_SIZE/2, 0, 360);
+                }
             }
             x += DOT_SIZE + 1 + DOT_MARGIN;
         }

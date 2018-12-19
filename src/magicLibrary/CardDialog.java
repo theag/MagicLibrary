@@ -110,12 +110,11 @@ public class CardDialog extends javax.swing.JDialog {
         add(txtSuperType, c);
 
         txtType = new JTextField();
-        txtType.setColumns(5);
-        txtType.setMinimumSize(txtType.getPreferredSize());
         c = new GridBagConstraints();
         c.gridx = 1;
         c.gridy = 1;
-        c.anchor = GridBagConstraints.LINE_START;
+        c.weightx = 1;
+        c.fill = GridBagConstraints.HORIZONTAL;
         add(txtType, c);
 
         JLabel lbl = new JLabel(" -- ");
@@ -126,11 +125,12 @@ public class CardDialog extends javax.swing.JDialog {
         add(lbl, c);
 
         txtSubType = new JTextField();
+        txtSubType.setColumns(10);
+        txtSubType.setMinimumSize(txtSubType.getPreferredSize());
         c = new GridBagConstraints();
         c.gridx = 3;
         c.gridy = 1;
-        c.weightx = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.LINE_START;
         add(txtSubType, c);
 
         txtText = new JTextArea();
