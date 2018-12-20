@@ -411,5 +411,42 @@ public class Card implements Comparable<Card> {
         }
         return rv;
     }
+
+    int getColours() {
+        int rv = 0;
+        for(String m : manaCost) {
+            if(m.contains("W")) {
+                rv = rv | 1;
+            }
+            if(m.contains("U")) {
+                rv = rv | 2;
+            }
+            if(m.contains("B")) {
+                rv = rv | 4;
+            }
+            if(m.contains("R")) {
+                rv = rv | 8;
+            }
+            if(m.contains("G")) {
+                rv = rv | 16;
+            }
+        }
+        return rv;
+    }
+
+    int getCMC() {
+        int rv = 0;
+        for(String s : manaCost) {
+            try {
+                int m = Integer.parseInt(s);
+                rv += m;
+            } catch(NumberFormatException ex) {
+                if(s.compareTo("X") != 0) {
+                    rv++;
+                }
+            }
+        }
+        return rv;
+    }
     
 }

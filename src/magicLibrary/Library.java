@@ -44,17 +44,21 @@ public class Library implements Iterable<Card> {
     private File file;
 
     private final ArrayList<Card> cards;
+    private final ArrayList<String> decks;
     private String lastSearch;
+    private AdvancedSearch lastSearch2;
     private int[] results;
     
     private Library() {
         cards = new ArrayList<>();
         file = null;
         results = null;
+        decks = new ArrayList<>();
     }
     
     private Library(File file) throws IOException {
         cards = new ArrayList<>();
+        decks = new ArrayList<>();
         if(file.length() > Integer.MAX_VALUE) {
             throw new ArrayIndexOutOfBoundsException(file.getName() +".length() = " +file.length() +" > " +Integer.MAX_VALUE +" (maximum int)");
         }
@@ -66,6 +70,7 @@ public class Library implements Iterable<Card> {
         int count = buffer.getInt();
         while(count > 0) {
             cards.add(new Card(buffer));
+            addDecks(cards.get(cards.size() - 1));
             count--;
         }
         count = buffer.getInt();
@@ -103,6 +108,7 @@ public class Library implements Iterable<Card> {
         if(!cards.contains(c)) {
             cards.add(c);
             Collections.sort(cards);
+            addDecks(c);
         }
     }
 
@@ -129,12 +135,12 @@ public class Library implements Iterable<Card> {
 
     void deleteCard(Card card) {
         cards.remove(card);
-        //todo: remove from decks
     }
 
     void clearSearch() {
         results = null;
         lastSearch = null;
+        lastSearch2 = null;
     }
 
     void doSearch(String searchStr) {
@@ -148,16 +154,71 @@ public class Library implements Iterable<Card> {
         results = new int[count];
         System.arraycopy(temp, 0, results, 0, count);
         lastSearch = searchStr;
+        lastSearch2 = null;
+    }
+    
+    void doSearch(AdvancedSearch search) {
+        int[] temp = new int[cards.size()];
+        int count = 0;
+        for(int i = 0; i < cards.size(); i++) {
+            if(search.matches(cards.get(i))) {
+                temp[count++] = i;
+            }
+        }
+        results = new int[count];
+        System.arraycopy(temp, 0, results, 0, count);
+        lastSearch = null;
+        lastSearch2 = search;
     }
     
     void redoSesarch() {
         if(lastSearch != null) {
             doSearch(lastSearch);
+        } else if(lastSearch2 != null) {
+            doSearch(lastSearch2);
         }
     }
 
     int getCardIndex(Card card) {
         return cards.indexOf(card);
     }
-   
+    
+    public void updateDecks() {
+        decks.clear();
+        for(Card c : cards) {
+            for(String d : c.decks) {
+                if(!decks.contains(d)) {
+                    decks.add(d);
+                }
+            }
+        }
+        Collections.sort(decks);
+    }
+
+    private void addDecks(Card c) {
+        for(String d : c.decks) {
+            if(!decks.contains(d)) {
+                decks.add(d);
+            }
+        }
+        Collections.sort(decks);
+    }
+
+    public String getDeckListString() {
+        String rv = "";
+        for(String d : decks) {
+            if(!rv.isEmpty()) {
+                rv += "\n";
+            }
+            rv += d;
+        }
+        return rv;
+    }
+
+    String[] getDeckVector() {
+        String[] rv = new String[decks.size()];
+        rv = decks.toArray(rv);
+        return rv;
+    }
+    
 }

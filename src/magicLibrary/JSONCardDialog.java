@@ -70,6 +70,10 @@ public class JSONCardDialog extends javax.swing.JDialog {
         lstCards = new javax.swing.JList();
         btnAdd = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
+        btnAddPlus = new javax.swing.JButton();
+        chkAddDecks = new javax.swing.JCheckBox();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtDecks = new javax.swing.JTextArea();
 
         setTitle("New Card from JSON");
 
@@ -96,6 +100,19 @@ public class JSONCardDialog extends javax.swing.JDialog {
             }
         });
 
+        btnAddPlus.setText("Add +");
+        btnAddPlus.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddPlusActionPerformed(evt);
+            }
+        });
+
+        chkAddDecks.setText("Add to Deck(s)");
+
+        txtDecks.setColumns(20);
+        txtDecks.setRows(3);
+        jScrollPane2.setViewportView(txtDecks);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -106,10 +123,15 @@ public class JSONCardDialog extends javax.swing.JDialog {
                     .addComponent(txtName)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 370, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
+                        .addComponent(chkAddDecks)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jScrollPane2))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(btnAdd)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnCancel)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addComponent(btnAddPlus)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnCancel)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -119,10 +141,17 @@ public class JSONCardDialog extends javax.swing.JDialog {
                 .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 188, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(btnAdd)
-                    .addComponent(btnCancel))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(chkAddDecks)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(btnAdd)
+                                .addComponent(btnAddPlus))
+                            .addComponent(btnCancel))))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -130,12 +159,58 @@ public class JSONCardDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
+        addSelected();
+        setVisible(false);
+    }//GEN-LAST:event_btnAddActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void txtNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyReleased
+        String str = txtName.getText().trim();
+        if(str.isEmpty()) {
+            model.clearSearch();
+        } else {
+            model.doSearch(str);
+        }
+    }//GEN-LAST:event_txtNameKeyReleased
+
+    private void btnAddPlusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPlusActionPerformed
+        addSelected();
+        txtName.setText("");
+        model.clearSearch();
+    }//GEN-LAST:event_btnAddPlusActionPerformed
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAdd;
+    private javax.swing.JButton btnAddPlus;
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JCheckBox chkAddDecks;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JList lstCards;
+    private javax.swing.JTextArea txtDecks;
+    private javax.swing.JTextField txtName;
+    // End of variables declaration//GEN-END:variables
+
+    private void addSelected() {
         java.util.List<String> cards = lstCards.getSelectedValuesList();
         if(cards.size() > 0) {
             Library l = Library.getInstance();
             Card c;
             JSONObject obj;
             JSONArray arr;
+            ArrayList<String> deckList = null;
+            if(chkAddDecks.isSelected()) {
+                deckList = new ArrayList<>();
+                String[] decks = txtDecks.getText().trim().split("\n");
+                for(String d : decks) {
+                    if(!d.isEmpty()) {
+                        deckList.add(d);
+                    }
+                }
+            }
             long now = Calendar.getInstance().getTimeInMillis();
             for(String name : cards) {
                 c = new Card();
@@ -191,33 +266,14 @@ public class JSONCardDialog extends javax.swing.JDialog {
                 if(obj.has("loyalty")) {
                     c.loyalty = obj.getString("loyalty");
                 }
+                if(deckList != null) {
+                    c.decks.addAll(deckList);
+                }
                 c.lastUpdated = now;
                 l.addCard(c);
             }
         }
         saved = true;
-        setVisible(false);
-    }//GEN-LAST:event_btnAddActionPerformed
+    }
 
-    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
-        saved = false;
-        setVisible(false);
-    }//GEN-LAST:event_btnCancelActionPerformed
-
-    private void txtNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyReleased
-        String str = txtName.getText().trim();
-        if(str.isEmpty()) {
-            model.clearSearch();
-        } else {
-            model.doSearch(str);
-        }
-    }//GEN-LAST:event_txtNameKeyReleased
-
-    // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnAdd;
-    private javax.swing.JButton btnCancel;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList lstCards;
-    private javax.swing.JTextField txtName;
-    // End of variables declaration//GEN-END:variables
 }

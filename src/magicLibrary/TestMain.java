@@ -6,13 +6,8 @@
 package magicLibrary;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 /**
  *
@@ -25,10 +20,11 @@ public class TestMain {
      */
     public static void main(String[] args) throws IOException {
         //newLibrary();
-        JSONObject obj = new JSONObject(new JSONTokener(new FileInputStream("AllCards.json")));
-        ArrayList<String> names = new ArrayList<>();
-        names.addAll(obj.keySet());
-        Collections.sort(names);
+        String cost = "2}{G}{G}{U}{U";
+        String[] split = cost.split("\\}\\{");
+        for(String s : split) {
+            System.out.println("#" +s +"#");
+        }
     }
     
     public static void newLibrary() throws IOException {

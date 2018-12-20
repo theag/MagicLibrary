@@ -5,7 +5,7 @@
  */
 package magicLibrary;
 
-import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -23,7 +23,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         return instance;
     }
     
-    private LibraryPanel pnlLib;
+    private int current;
     
     /**
      * Creates new form MainFrame
@@ -40,10 +40,15 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
                 ex.printStackTrace(System.out);
             }
         }
-        pnlLib = new SimpleLibraryPanel();
+        pnlMain.setLayout(new CardLayout());
+        LibraryPanel pnlLib = new SimpleLibraryPanel();
         pnlLib.addChangePanelListener(this);
-        pnlMain.setLayout(new BorderLayout());
-        pnlMain.add(pnlLib, BorderLayout.CENTER);
+        pnlMain.add(pnlLib, "Simple");
+        pnlLib = new AdvancedLibraryPanel();
+        pnlLib.addChangePanelListener(this);
+        pnlMain.add(pnlLib, "Advanced");
+        pnlMain.add(new DeckPanel(), "Deck");
+        current = 0;
         setLocationRelativeTo(null);
     }
 
@@ -61,6 +66,9 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         mCard = new javax.swing.JMenu();
         miNewCard = new javax.swing.JMenuItem();
         miJSONCard = new javax.swing.JMenuItem();
+        jMenu1 = new javax.swing.JMenu();
+        miUpdateDecks = new javax.swing.JMenuItem();
+        miDeckMode = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magic Library");
@@ -78,7 +86,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 605, Short.MAX_VALUE)
+            .addGap(0, 662, Short.MAX_VALUE)
         );
 
         mCard.setText("Card");
@@ -100,6 +108,26 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         mCard.add(miJSONCard);
 
         mbMain.add(mCard);
+
+        jMenu1.setText("Decks");
+
+        miUpdateDecks.setText("Update Decks");
+        miUpdateDecks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miUpdateDecksActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miUpdateDecks);
+
+        miDeckMode.setText("Deck Mode");
+        miDeckMode.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miDeckModeActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miDeckMode);
+
+        mbMain.add(jMenu1);
 
         setJMenuBar(mbMain);
 
@@ -135,14 +163,14 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         Card c = CardDialog.showNewDialog(this, true);
         if(c != null) {
             Library.getInstance().addCard(c);
-            pnlLib.fireLibraryChanged();
+            ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
         }
     }//GEN-LAST:event_miNewCardActionPerformed
 
     private void miJSONCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miJSONCardActionPerformed
         try {
             if(JSONCardDialog.showDialog(this)) {
-                pnlLib.fireLibraryChanged();
+                ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Couldn't find JSON file.");
@@ -150,6 +178,21 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             ex.printStackTrace(System.out);
         }
     }//GEN-LAST:event_miJSONCardActionPerformed
+
+    private void miUpdateDecksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUpdateDecksActionPerformed
+        Library.getInstance().updateDecks();
+    }//GEN-LAST:event_miUpdateDecksActionPerformed
+
+    private void miDeckModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckModeActionPerformed
+        CardLayout lo = (CardLayout)pnlMain.getLayout();
+        if(miDeckMode.isSelected()) {
+            lo.show(pnlMain, "Deck");
+        } else if(current == 0) {
+            lo.show(pnlMain, "Simple");
+        } else {
+            lo.show(pnlMain, "Advanced");
+        }
+    }//GEN-LAST:event_miDeckModeActionPerformed
 
     /**
      * @param args the command line arguments
@@ -188,25 +231,30 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu mCard;
     private javax.swing.JMenuBar mbMain;
+    private javax.swing.JCheckBoxMenuItem miDeckMode;
     private javax.swing.JMenuItem miJSONCard;
     private javax.swing.JMenuItem miNewCard;
+    private javax.swing.JMenuItem miUpdateDecks;
     private javax.swing.JPanel pnlMain;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void changePanel(String newPanelName) {
-        pnlMain.remove(pnlLib);
         switch(newPanelName) {
             case "Simple":
-                pnlLib = new SimpleLibraryPanel();
-                pnlLib.addChangePanelListener(this);
-                pnlMain.add(pnlLib, BorderLayout.CENTER);
+                current = 0;
+                Library.getInstance().clearSearch();
                 break;
             case "Advanced":
+                current = 1;
+                Library.getInstance().doSearch(""+Library.NULL);
                 break;
         }
+        CardLayout lo = (CardLayout)pnlMain.getLayout();
+        lo.show(pnlMain, newPanelName);
     }
 
 }

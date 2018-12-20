@@ -5,21 +5,11 @@
  */
 package magicLibrary;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import java.util.Calendar;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
 import javax.swing.SpinnerNumberModel;
 
 /**
@@ -37,6 +27,7 @@ public class CardDialog extends javax.swing.JDialog {
      */
     public static boolean showEditDialog(java.awt.Frame parent, boolean modal, Card card) {
         CardDialog cd = new CardDialog(parent, modal, card);
+        cd.pack();
         cd.setVisible(true);
         boolean rv = cd.saved;
         cd.dispose();
@@ -62,19 +53,7 @@ public class CardDialog extends javax.swing.JDialog {
     private Card card;
     private String[][] types;
     
-    private final JTextField txtName;
     private final ManaPanel pnlMana;
-    private final JTextField txtSuperType;
-    private final JTextField txtType;
-    private final JTextField txtSubType;
-    private final JTextArea txtText;
-    private final JTextField txtLPT;
-    private final JSpinner spnCount;
-    private final JTextArea txtDecks;
-    private final JTextArea txtNotes;
-    private final JButton btnSave;
-    private final JButton btnDelete;
-    private final JButton btnClose;
     
     /**
      * Creates new form CardDialog
@@ -86,193 +65,9 @@ public class CardDialog extends javax.swing.JDialog {
         this.card = card;
         saved = false;
         this.getContentPane().setBackground(Color.white);
-        setLayout(new GridBagLayout());
-        GridBagConstraints c;
-        txtName = new JTextField();
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.gridwidth = 4;
-        c.weightx = 1;
-        c.insets.top = 5;
-        c.insets.left = 5;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        add(txtName, c);
-
-        txtSuperType = new JTextField();
-        txtSuperType.setColumns(6);
-        txtSuperType.setMinimumSize(txtSuperType.getPreferredSize());
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 1;
-        c.insets.left = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(txtSuperType, c);
-
-        txtType = new JTextField();
-        c = new GridBagConstraints();
-        c.gridx = 1;
-        c.gridy = 1;
-        c.weightx = 1;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        add(txtType, c);
-
-        JLabel lbl = new JLabel(" -- ");
-        c = new GridBagConstraints();
-        c.gridx = 2;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(lbl, c);
-
-        txtSubType = new JTextField();
-        txtSubType.setColumns(10);
-        txtSubType.setMinimumSize(txtSubType.getPreferredSize());
-        c = new GridBagConstraints();
-        c.gridx = 3;
-        c.gridy = 1;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(txtSubType, c);
-
-        txtText = new JTextArea();
-        txtText.setRows(5);
-        txtText.setLineWrap(true);
-        txtText.setWrapStyleWord(true);
-        JScrollPane sp = new JScrollPane();
-        sp.setViewportView(txtText);
-        sp.setMinimumSize(new Dimension(0, sp.getPreferredSize().height));
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 2;
-        c.gridwidth = 5;
-        c.weightx = 1;
-        c.insets.left = 5;
-        c.insets.right = 5;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        add(sp, c);
-
-        txtLPT = new JTextField();
-        txtLPT.setColumns(3);
-        txtLPT.setMinimumSize(txtLPT.getPreferredSize());
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 3;
-        c.gridwidth = 5;
-        c.insets.right = 5;
-        c.anchor = GridBagConstraints.LINE_END;
-        add(txtLPT, c);
-        
-        spnCount = new JSpinner();
-        spnCount.setModel(new SpinnerNumberModel(0, 0, null, 1));
-        spnCount.setBackground(Color.white);
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 4;
-        c.gridwidth = 5;
-        c.insets.left = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(spnCount, c);
-        
-        JLabel updated = new JLabel("Last Updated: never");
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 6;
-        c.gridwidth = 5;
-        c.insets.left = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(updated, c);
-        
-        lbl = new JLabel("Decks");
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 7;
-        c.gridwidth = 5;
-        c.insets.left = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(lbl, c);
-        
-        txtDecks = new JTextArea();
-        sp = new JScrollPane();
-        sp.setViewportView(txtDecks);
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 8;
-        c.gridwidth = 5;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.insets.left = 5;
-        c.insets.right = 5;
-        c.fill = GridBagConstraints.BOTH;
-        add(sp, c);
-        
-        lbl = new JLabel("Notes");
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 9;
-        c.gridwidth = 5;
-        c.insets.left = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(lbl, c);
-        
-        txtNotes = new JTextArea();
-        txtNotes.setLineWrap(true);
-        txtNotes.setWrapStyleWord(true);
-        sp = new JScrollPane();
-        sp.setViewportView(txtNotes);
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 10;
-        c.gridwidth = 5;
-        c.weightx = 1;
-        c.weighty = 1;
-        c.insets.left = 5;
-        c.insets.right = 5;
-        c.fill = GridBagConstraints.BOTH;
-        add(sp, c);
-        
-        btnSave = new JButton("Save");
-        btnSave.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                saveCard();
-            }
-        });
-        
-        if(card != null) {
-            btnDelete = new JButton("Delete");
-            btnDelete.addActionListener(new java.awt.event.ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    deleteCard();
-                }
-            });
-        } else {
-            btnDelete = null;
+        if(card == null) {
+            btnDelete.setVisible(false);
         }
-        
-        btnClose = new JButton("Cancel");
-        btnClose.addActionListener(new java.awt.event.ActionListener() {
-            @Override
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                setVisible(false);
-            }
-        });
-        JPanel pnl = new JPanel();
-        pnl.setBackground(Color.white);
-        pnl.add(btnSave);
-        if(btnDelete != null) {
-            pnl.add(btnDelete);
-        }
-        pnl.add(btnClose);
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 11;
-        c.gridwidth = 5;
-        c.weightx = 1;
-        c.insets.left = 5;
-        c.insets.bottom = 5;
-        c.anchor = GridBagConstraints.LINE_START;
-        add(pnl, c);
-
         if(card != null) {
             setTitle("Edit Card");
             txtName.setText(card.name);
@@ -297,19 +92,13 @@ public class CardDialog extends javax.swing.JDialog {
                 txtNotes.setText(card.notes);
             }
             spnCount.setValue(card.count);
-            updated.setText("Last Updated: " +card.formatUpdate());
+            lblUpdated.setText("Last Updated: " +card.formatUpdate());
         } else {
             setTitle("New Card");
             pnlMana = new ManaPanel(new String[]{"0"});
         }
-        c = new GridBagConstraints();
-        c.gridx = 4;
-        c.gridy = 0;
-        c.insets.top = 5;
-        c.insets.left = 5;
-        c.insets.right = 5;
-        c.anchor = GridBagConstraints.LINE_END;
-        add(pnlMana, c);
+        pnlManaHolder.setLayout(new BorderLayout());
+        pnlManaHolder.add(pnlMana, BorderLayout.LINE_END);
         pnlMana.addMouseListener(new java.awt.event.MouseAdapter() {
             @Override
             public void mouseClicked(java.awt.event.MouseEvent evt) {
@@ -327,19 +116,184 @@ public class CardDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        txtName = new javax.swing.JTextField();
+        txtSuperType = new javax.swing.JTextField();
+        txtType = new javax.swing.JTextField();
+        jLabel1 = new javax.swing.JLabel();
+        txtSubType = new javax.swing.JTextField();
+        pnlManaHolder = new javax.swing.JPanel();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtText = new javax.swing.JTextArea();
+        txtLPT = new javax.swing.JTextField();
+        spnCount = new javax.swing.JSpinner();
+        lblUpdated = new javax.swing.JLabel();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtDecks = new javax.swing.JTextArea();
+        jLabel3 = new javax.swing.JLabel();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        txtNotes = new javax.swing.JTextArea();
+        btnSave = new javax.swing.JButton();
+        btnDelete = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
+
+        txtSuperType.setColumns(6);
+
+        jLabel1.setText("--");
+
+        txtSubType.setColumns(10);
+
+        pnlManaHolder.setBackground(new java.awt.Color(255, 255, 255));
+
+        javax.swing.GroupLayout pnlManaHolderLayout = new javax.swing.GroupLayout(pnlManaHolder);
+        pnlManaHolder.setLayout(pnlManaHolderLayout);
+        pnlManaHolderLayout.setHorizontalGroup(
+            pnlManaHolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+        pnlManaHolderLayout.setVerticalGroup(
+            pnlManaHolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
+        txtText.setColumns(20);
+        txtText.setLineWrap(true);
+        txtText.setRows(5);
+        txtText.setWrapStyleWord(true);
+        jScrollPane1.setViewportView(txtText);
+
+        txtLPT.setColumns(3);
+
+        spnCount.setModel(new SpinnerNumberModel(0, 0, null, 1));
+
+        lblUpdated.setText("Last Updated: never");
+
+        jLabel2.setText("Decks");
+
+        txtDecks.setColumns(20);
+        txtDecks.setRows(5);
+        jScrollPane2.setViewportView(txtDecks);
+
+        jLabel3.setText("Notes");
+
+        txtNotes.setColumns(20);
+        txtNotes.setRows(5);
+        jScrollPane3.setViewportView(txtNotes);
+
+        btnSave.setText("Save");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+
+        btnDelete.setText("Delete");
+        btnDelete.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteActionPerformed(evt);
+            }
+        });
+
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 417, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(txtName)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(txtSuperType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtType)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jLabel1)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(txtSubType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(pnlManaHolder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addGap(0, 0, Short.MAX_VALUE)
+                        .addComponent(txtLPT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUpdated)
+                            .addComponent(jLabel2)
+                            .addComponent(jLabel3))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnSave)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDelete)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
+                        .addComponent(btnCancel)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 518, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(txtName)
+                    .addComponent(pnlManaHolder, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtSuperType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel1)
+                    .addComponent(txtSubType, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtLPT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblUpdated)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSave)
+                    .addComponent(btnDelete)
+                    .addComponent(btnCancel))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        saveCard();
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnDeleteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteActionPerformed
+        deleteCard();
+    }//GEN-LAST:event_btnDeleteActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
 
     private void pnlManaMouseClicked(java.awt.event.MouseEvent evt) {
         if(evt.getClickCount() == 2) {
@@ -438,5 +392,25 @@ public class CardDialog extends javax.swing.JDialog {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnSave;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JLabel lblUpdated;
+    private javax.swing.JPanel pnlManaHolder;
+    private javax.swing.JSpinner spnCount;
+    private javax.swing.JTextArea txtDecks;
+    private javax.swing.JTextField txtLPT;
+    private javax.swing.JTextField txtName;
+    private javax.swing.JTextArea txtNotes;
+    private javax.swing.JTextField txtSubType;
+    private javax.swing.JTextField txtSuperType;
+    private javax.swing.JTextArea txtText;
+    private javax.swing.JTextField txtType;
     // End of variables declaration//GEN-END:variables
 }

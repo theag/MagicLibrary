@@ -24,7 +24,7 @@ public class ManaPanel extends javax.swing.JPanel {
     private static final Color MANA_WHITE = new Color(0xFFFFE1);
     private static final Color MANA_BLACK = new Color(0xC4B8B6);
     
-    public static final int DOT_SIZE = 25;
+    public static final int DOT_SIZE = 18;
     private static final int DOT_MARGIN = 1;
     private static final int LINE_WIDTH = 2;
     

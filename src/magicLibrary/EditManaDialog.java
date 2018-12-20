@@ -416,30 +416,5 @@ public class EditManaDialog extends javax.swing.JDialog {
         }
         
     }
-
-    private static class ManaTableCellRenderer implements TableCellRenderer {
-
-        private static final Color bg = new Color(57, 105, 138);
-        
-        private ManaPanel mp;
-        
-        public ManaTableCellRenderer() {
-            mp = new ManaPanel(0, 2);
-        }
-
-        @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-            if(mp.getBorderX() == 0) {
-                mp.setBorder((table.getColumnModel().getColumn(column).getWidth() - ManaPanel.DOT_SIZE - 1)/2, 2);
-            }
-            if(isSelected) {
-                mp.setBackground(bg);
-            } else {
-                mp.setBackground(Color.white);
-            }
-            mp.setManaCost(new String[]{(String)value});
-            return mp;
-        }
-    }
     
 }
