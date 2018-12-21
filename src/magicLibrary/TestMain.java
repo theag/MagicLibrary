@@ -20,11 +20,21 @@ public class TestMain {
      */
     public static void main(String[] args) throws IOException {
         //newLibrary();
-        String cost = "2}{G}{G}{U}{U";
-        String[] split = cost.split("\\}\\{");
-        for(String s : split) {
-            System.out.println("#" +s +"#");
+        testDialog();
+    }
+    
+    public static void testDialog() {
+        File f = new File(MainFrame.filename);
+        if(f.exists()) {
+            try {
+                Library.makeLibrary(f);
+            } catch (IOException ex) {
+                System.out.println("Library creation failed");
+                System.out.println(ex.getMessage());
+                ex.printStackTrace(System.out);
+            }
         }
+        CardDialog.showEditDialog(null, true, Library.getInstance().resultAt(0));
     }
     
     public static void newLibrary() throws IOException {

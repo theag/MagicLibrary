@@ -220,5 +220,15 @@ public class Library implements Iterable<Card> {
         rv = decks.toArray(rv);
         return rv;
     }
+
+    Card getCardByName(String string) {
+        //todo: update with better search
+        for(Card c : cards) {
+            if(c.name.compareToIgnoreCase(string) == 0) {
+                return c;
+            }
+        }
+        return null;
+    }
     
 }

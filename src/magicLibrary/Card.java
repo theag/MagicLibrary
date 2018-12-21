@@ -448,5 +448,17 @@ public class Card implements Comparable<Card> {
         }
         return rv;
     }
+
+    String getAllTypeString() {
+        String rv = getSuperTypeString();
+        if(!rv.isEmpty()) {
+            rv += " ";
+        }
+        rv += getTypeString();
+        if(subtype.length > 0) {
+            rv += " -- "+getSubTypeString();
+        }
+        return rv;
+    }
     
 }

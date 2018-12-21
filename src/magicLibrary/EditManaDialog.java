@@ -5,14 +5,10 @@
  */
 package magicLibrary;
 
-import java.awt.Color;
-import java.awt.Component;
 import java.util.ArrayList;
 import javax.swing.DefaultCellEditor;
 import javax.swing.JComboBox;
-import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
-import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableColumn;
 
 /**

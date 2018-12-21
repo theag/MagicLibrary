@@ -5,6 +5,7 @@
  */
 package magicLibrary;
 
+import java.awt.BorderLayout;
 import java.util.ArrayList;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.table.AbstractTableModel;
@@ -15,6 +16,8 @@ import javax.swing.table.AbstractTableModel;
  */
 public class DeckPanel extends javax.swing.JPanel {
 
+    private ManaCurvePanel pnlManaCurve;
+    
     /**
      * Creates new form DeckPanel
      */
@@ -23,9 +26,6 @@ public class DeckPanel extends javax.swing.JPanel {
         setModels(true);
         tblDeck.setRowHeight(ManaPanel.DOT_SIZE + 1 + 4);
         tblDeck.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
-        //todo: stretch some colums and shrink others, columns below to be shrunk
-        tblDeck.getColumnModel().getColumn(2).setWidth(50);
-        tblDeck.getColumnModel().getColumn(4).setWidth(50);
     }
 
     /**
@@ -40,7 +40,7 @@ public class DeckPanel extends javax.swing.JPanel {
         cbDecks = new javax.swing.JComboBox();
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDeck = new javax.swing.JTable();
-        jPanel1 = new javax.swing.JPanel();
+        pnlManaCurveHolder = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jScrollPane2 = new javax.swing.JScrollPane();
@@ -48,9 +48,16 @@ public class DeckPanel extends javax.swing.JPanel {
         jLabel3 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         tblSpreads = new javax.swing.JTable();
-        jLabel4 = new javax.swing.JLabel();
+        lblLand = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jList1 = new javax.swing.JList();
+        lstLand = new javax.swing.JList();
+        lblTotal = new javax.swing.JLabel();
+
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
 
         cbDecks.setModel(new DefaultComboBoxModel(Library.getInstance().getDeckVector()));
         cbDecks.addActionListener(new java.awt.event.ActionListener() {
@@ -70,16 +77,21 @@ public class DeckPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblDeck.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDeckMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tblDeck);
 
-        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
-        jPanel1.setLayout(jPanel1Layout);
-        jPanel1Layout.setHorizontalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        javax.swing.GroupLayout pnlManaCurveHolderLayout = new javax.swing.GroupLayout(pnlManaCurveHolder);
+        pnlManaCurveHolder.setLayout(pnlManaCurveHolderLayout);
+        pnlManaCurveHolderLayout.setHorizontalGroup(
+            pnlManaCurveHolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 225, Short.MAX_VALUE)
         );
-        jPanel1Layout.setVerticalGroup(
-            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+        pnlManaCurveHolderLayout.setVerticalGroup(
+            pnlManaCurveHolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGap(0, 123, Short.MAX_VALUE)
         );
 
@@ -115,14 +127,23 @@ public class DeckPanel extends javax.swing.JPanel {
         ));
         jScrollPane3.setViewportView(tblSpreads);
 
-        jLabel4.setText("Land");
+        lblLand.setText("Land");
 
-        jList1.setModel(new javax.swing.AbstractListModel() {
+        lstLand.setModel(new javax.swing.AbstractListModel() {
             String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
             public int getSize() { return strings.length; }
             public Object getElementAt(int i) { return strings[i]; }
         });
-        jScrollPane4.setViewportView(jList1);
+        lstLand.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        lstLand.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                lstLandMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(lstLand);
+
+        lblTotal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        lblTotal.setText("jLabel5");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -132,33 +153,35 @@ public class DeckPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(jLabel1)
-                            .addComponent(jLabel2)
-                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jLabel3)
-                            .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
-                            .addComponent(jLabel4)
-                            .addComponent(jScrollPane4)
-                            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(jLabel3)
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                    .addComponent(lblLand)
+                    .addComponent(jScrollPane4)
+                    .addComponent(pnlManaCurveHolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblTotal))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(pnlManaCurveHolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -168,7 +191,7 @@ public class DeckPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 110, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabel4)
+                        .addComponent(lblLand)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(0, 0, Short.MAX_VALUE))
@@ -181,19 +204,43 @@ public class DeckPanel extends javax.swing.JPanel {
         setModels(false);
     }//GEN-LAST:event_cbDecksActionPerformed
 
+    private void lstLandMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstLandMouseClicked
+        if(evt.getClickCount() == 2) {
+            DeckCardDialog.showDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)lstLand.getSelectedValue()));
+        }
+    }//GEN-LAST:event_lstLandMouseClicked
+
+    private void tblDeckMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDeckMouseClicked
+        if(evt.getClickCount() == 2) {
+            int row = tblDeck.rowAtPoint(evt.getPoint());
+            DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
+            DeckCardDialog.showDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)));
+        }
+    }//GEN-LAST:event_tblDeckMouseClicked
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        int width = (tblDeck.getWidth() - 250)/2;
+        tblDeck.getColumnModel().getColumn(0).setPreferredWidth(width);
+        tblDeck.getColumnModel().getColumn(1).setPreferredWidth(width);
+        tblDeck.getColumnModel().getColumn(2).setPreferredWidth(50);
+        tblDeck.getColumnModel().getColumn(3).setPreferredWidth(150);
+        tblDeck.getColumnModel().getColumn(4).setPreferredWidth(50);
+    }//GEN-LAST:event_formComponentResized
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox cbDecks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
-    private javax.swing.JList jList1;
-    private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
+    private javax.swing.JLabel lblLand;
+    private javax.swing.JLabel lblTotal;
+    private javax.swing.JList lstLand;
+    private javax.swing.JPanel pnlManaCurveHolder;
     private javax.swing.JTable tblCounts;
     private javax.swing.JTable tblDeck;
     private javax.swing.JTable tblSpreads;
@@ -202,13 +249,29 @@ public class DeckPanel extends javax.swing.JPanel {
     private void setModels(boolean setting) {
         Library l = Library.getInstance();
         ArrayList<Card> cards = new ArrayList<>();
+        ArrayList<String> land = new ArrayList<>();
         String deckName = (String)cbDecks.getSelectedItem();
+        int cmc;
+        int maxCMC = 0;
         for(Card c : l) {
             if(c.decks.contains(deckName)) {
                 cards.add(c);
+                cmc = c.getCMC();
+                if(cmc > maxCMC) {
+                    maxCMC = cmc;
+                }
+                for(String t : c.type) {
+                    if(t.compareToIgnoreCase("land") == 0) {
+                        land.add(c.name);
+                    }
+                }
             }
         }
+        lstLand.setListData(land.toArray());
         int[] counts = new int[cards.size()];
+        int[] curve = new int[maxCMC+1];
+        int total = 0;
+        int totalLand = 0;
         ArrayList<String> countNames = new ArrayList<>();
         ArrayList<Integer> countCounts = new ArrayList<>();
         ArrayList<String> spreadNames = new ArrayList<>();
@@ -216,10 +279,18 @@ public class DeckPanel extends javax.swing.JPanel {
         int mana, index;
         String manaName;
         for(int i = 0; i < cards.size(); i++) {
+            cmc = cards.get(i).getCMC();
+            curve[cmc]++;
             counts[i] = 0;
             for(String d : cards.get(i).decks) {
                 if(d.compareTo(deckName) == 0) {
                     counts[i]++;
+                    total++;
+                }
+            }
+            for(String t : cards.get(i).type) {
+                if(t.compareToIgnoreCase("land") == 0) {
+                    totalLand += counts[i];
                 }
             }
             mana = cards.get(i).getColours();
@@ -246,10 +317,15 @@ public class DeckPanel extends javax.swing.JPanel {
                 }
             }
         }
+        lblTotal.setText("Total Card Count: " +total +" ");
+        lblLand.setText("Land (" +totalLand +")");
         if(setting) {
             tblDeck.setModel(new DeckTableModel(cards, counts));
             tblCounts.setModel(new ColourCountModel(countNames, countCounts));
             tblSpreads.setModel(new ColourCountModel(spreadNames, spreadCounts));
+            pnlManaCurve = new ManaCurvePanel(curve);
+            pnlManaCurveHolder.setLayout(new BorderLayout());
+            pnlManaCurveHolder.add(pnlManaCurve, BorderLayout.CENTER);
         } else {
             DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
             m1.update(cards, counts);
@@ -257,6 +333,7 @@ public class DeckPanel extends javax.swing.JPanel {
             m2.update(countNames, countCounts);
             m2 = (ColourCountModel)tblSpreads.getModel();
             m2.update(spreadNames, spreadCounts);
+            pnlManaCurve.setCurve(curve);
         }
     }
     

@@ -26,7 +26,6 @@ public class ManaPanel extends javax.swing.JPanel {
     
     public static final int DOT_SIZE = 18;
     private static final int DOT_MARGIN = 1;
-    private static final int LINE_WIDTH = 2;
     
     private String[] manaCost;
     private int borderX;
@@ -160,8 +159,8 @@ public class ManaPanel extends javax.swing.JPanel {
                     g.drawString(mana, x + (DOT_SIZE - fm.stringWidth(mana))/2 + 1, (DOT_SIZE + fm.getAscent())/2 - 1);
                 } else if(mana.length() > 1 && mana.charAt(1) == 'P') {
                     g.setColor(Color.black);
-                    g.drawLine(x + DOT_SIZE/2 + 1, 1, x + DOT_SIZE/2 + 1, DOT_SIZE - 1);
-                    g.drawArc(x + MyMath.round(DOT_SIZE/4.0) + 1, MyMath.round(DOT_SIZE/4.0) + 1, DOT_SIZE/2, DOT_SIZE/2, 0, 360);
+                    g.drawLine(x + DOT_SIZE/2, 1, x + DOT_SIZE/2, DOT_SIZE - 1);
+                    g.drawArc(x + MyMath.round(DOT_SIZE/4.0), MyMath.round(DOT_SIZE/4.0), DOT_SIZE/2, DOT_SIZE/2, 0, 360);
                 }
             }
             x += DOT_SIZE + 1 + DOT_MARGIN;

@@ -300,6 +300,7 @@ public class CardDialog extends javax.swing.JDialog {
             String[] mana = EditManaDialog.showDialog(this, pnlMana.getManaCost());
             if(mana != null) {
                 pnlMana.setManaCost(mana);
+                pnlMana.revalidate();
                 this.revalidate();
             }
         }
