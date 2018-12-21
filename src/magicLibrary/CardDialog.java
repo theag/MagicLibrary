@@ -52,6 +52,7 @@ public class CardDialog extends javax.swing.JDialog {
     
     private Card card;
     private String[][] types;
+    private DeckListModel deckModel;
     
     private final ManaPanel pnlMana;
     
@@ -70,6 +71,7 @@ public class CardDialog extends javax.swing.JDialog {
         }
         if(card != null) {
             setTitle("Edit Card");
+            deckModel = new DeckListModel(card);
             txtName.setText(card.name);
             pnlMana = new ManaPanel(card.manaCost);
             if(card.supertype.length > 0) {
@@ -87,7 +89,7 @@ public class CardDialog extends javax.swing.JDialog {
             } else if(card.power != null) {
                 txtLPT.setText(card.power +"/" +card.toughness);
             }
-            txtDecks.setText(card.getDeckString());
+            //todo: txtDecks.setText(Library.getInstance().getDeckString(card));
             if(card.notes != null) {
                 txtNotes.setText(card.notes);
             }
@@ -96,7 +98,9 @@ public class CardDialog extends javax.swing.JDialog {
         } else {
             setTitle("New Card");
             pnlMana = new ManaPanel(new String[]{"0"});
+            deckModel = new DeckListModel();
         }
+        lstDecks.setModel(deckModel);
         pnlManaHolder.setLayout(new BorderLayout());
         pnlManaHolder.add(pnlMana, BorderLayout.LINE_END);
         pnlMana.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -128,14 +132,17 @@ public class CardDialog extends javax.swing.JDialog {
         spnCount = new javax.swing.JSpinner();
         lblUpdated = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        txtDecks = new javax.swing.JTextArea();
         jLabel3 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         txtNotes = new javax.swing.JTextArea();
         btnSave = new javax.swing.JButton();
         btnDelete = new javax.swing.JButton();
         btnCancel = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        lstDecks = new javax.swing.JList();
+        btnAddToDeck = new javax.swing.JButton();
+        btnEditDeckCount = new javax.swing.JButton();
+        btnRemoveFromDeck = new javax.swing.JButton();
 
         txtSuperType.setColumns(6);
 
@@ -170,10 +177,6 @@ public class CardDialog extends javax.swing.JDialog {
 
         jLabel2.setText("Decks");
 
-        txtDecks.setColumns(20);
-        txtDecks.setRows(5);
-        jScrollPane2.setViewportView(txtDecks);
-
         jLabel3.setText("Notes");
 
         txtNotes.setColumns(20);
@@ -201,6 +204,35 @@ public class CardDialog extends javax.swing.JDialog {
             }
         });
 
+        lstDecks.setModel(new javax.swing.AbstractListModel() {
+            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        lstDecks.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        jScrollPane4.setViewportView(lstDecks);
+
+        btnAddToDeck.setText("Add to Deck");
+        btnAddToDeck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddToDeckActionPerformed(evt);
+            }
+        });
+
+        btnEditDeckCount.setText("Edit Count");
+        btnEditDeckCount.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditDeckCountActionPerformed(evt);
+            }
+        });
+
+        btnRemoveFromDeck.setText("Remove from Deck");
+        btnRemoveFromDeck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnRemoveFromDeckActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -208,7 +240,6 @@ public class CardDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2)
                     .addComponent(jScrollPane1)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
@@ -229,18 +260,25 @@ public class CardDialog extends javax.swing.JDialog {
                         .addComponent(txtLPT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane3)
                     .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblUpdated)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel3))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(btnSave)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDelete)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
-                        .addComponent(btnCancel)))
+                        .addComponent(btnCancel))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(lblUpdated)
+                            .addComponent(jLabel2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(btnAddToDeck)
+                                    .addComponent(btnEditDeckCount)
+                                    .addComponent(btnRemoveFromDeck))))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -266,8 +304,15 @@ public class CardDialog extends javax.swing.JDialog {
                 .addComponent(lblUpdated)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(4, 4, 4)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 98, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnAddToDeck)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEditDeckCount)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnRemoveFromDeck)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabel3)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -294,6 +339,44 @@ public class CardDialog extends javax.swing.JDialog {
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
         setVisible(false);
     }//GEN-LAST:event_btnCancelActionPerformed
+
+    private void btnAddToDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddToDeckActionPerformed
+        Deck[] decks = Library.getInstance().getDeckArray();
+        Deck deck = (Deck)JOptionPane.showInputDialog(MainFrame.getInstance(), "Select a deck to add this card to", "Add to Deck", JOptionPane.QUESTION_MESSAGE, null, decks, decks[0]);
+        if(deck != null) {
+            if(!deckModel.add(deck)) {
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), "This card is already in " +deck.name +".", "Add to Deck", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_btnAddToDeckActionPerformed
+
+    private void btnEditDeckCountActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditDeckCountActionPerformed
+        int index = lstDecks.getSelectedIndex();
+        if(index >= 0) {
+            int count = deckModel.getCount(index);
+            Object value = JOptionPane.showInputDialog(MainFrame.getInstance(), "Number of this card in deck:", "Edit Deck Count", JOptionPane.QUESTION_MESSAGE, null, null, ""+count);
+            while(value != null) {
+                try {
+                    count = Integer.parseInt((String)value);
+                    if(count <= 0) {
+                        value = JOptionPane.showInputDialog(MainFrame.getInstance(), "Count can't be zero or less.\nNumber of this card in deck:", "Edit Deck Count", JOptionPane.QUESTION_MESSAGE, null, null, ""+count);
+                    } else {
+                        deckModel.updateCount(index, count);
+                        break;
+                    }
+                } catch(NumberFormatException ex) {
+                    value = JOptionPane.showInputDialog(MainFrame.getInstance(), "That wasn't a number.\nNumber of this card in deck:", "Edit Deck Count", JOptionPane.QUESTION_MESSAGE, null, null, ""+count);
+                }
+            }
+        }
+    }//GEN-LAST:event_btnEditDeckCountActionPerformed
+
+    private void btnRemoveFromDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRemoveFromDeckActionPerformed
+        int index = lstDecks.getSelectedIndex();
+        if(index >= 0) {
+            deckModel.removeAt(index);
+        }
+    }//GEN-LAST:event_btnRemoveFromDeckActionPerformed
 
     private void pnlManaMouseClicked(java.awt.event.MouseEvent evt) {
         if(evt.getClickCount() == 2) {
@@ -358,13 +441,7 @@ public class CardDialog extends javax.swing.JDialog {
             card.toughness = null;
         }
         card.count = (int)spnCount.getValue();
-        String[] decks = txtDecks.getText().trim().split("\n");
-        card.decks.clear();
-        for(String d : decks) {
-            if(!d.isEmpty()) {
-                card.decks.add(d);
-            }
-        }
+        deckModel.save(card);
         if(!txtNotes.getText().trim().isEmpty()) {
             card.notes = txtNotes.getText().trim();
         } else {
@@ -393,19 +470,22 @@ public class CardDialog extends javax.swing.JDialog {
     }
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAddToDeck;
     private javax.swing.JButton btnCancel;
     private javax.swing.JButton btnDelete;
+    private javax.swing.JButton btnEditDeckCount;
+    private javax.swing.JButton btnRemoveFromDeck;
     private javax.swing.JButton btnSave;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel lblUpdated;
+    private javax.swing.JList lstDecks;
     private javax.swing.JPanel pnlManaHolder;
     private javax.swing.JSpinner spnCount;
-    private javax.swing.JTextArea txtDecks;
     private javax.swing.JTextField txtLPT;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextArea txtNotes;

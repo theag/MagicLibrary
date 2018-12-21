@@ -9,6 +9,7 @@ import java.awt.CardLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -16,7 +17,8 @@ import java.io.IOException;
  */
 public class MainFrame extends javax.swing.JFrame implements LibraryPanel.ChangePanelListener {
 
-    public static final String filename = "library.txt";
+    public static final String cardFile = "library.txt";
+    public static final String deckFile = "boxes.txt";
     private static MainFrame instance = null;
     
     public static MainFrame getInstance() {
@@ -24,16 +26,19 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }
     
     private int current;
+    private File fc;
+    private File fd;
     
     /**
      * Creates new form MainFrame
      */
     private MainFrame() {
         initComponents();
-        File f = new File(filename);
-        if(f.exists()) {
+        fc = new File(cardFile);
+        fd = new File(deckFile);
+        if(fc.exists() && fd.exists()) {
             try {
-                Library.makeLibrary(f);
+                Library.makeLibrary(fc, fd);
             } catch (IOException ex) {
                 System.out.println("Library creation failed");
                 System.out.println(ex.getMessage());
@@ -67,7 +72,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         miNewCard = new javax.swing.JMenuItem();
         miJSONCard = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
-        miUpdateDecks = new javax.swing.JMenuItem();
+        miNewDeck = new javax.swing.JMenuItem();
         miDeckMode = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -111,13 +116,13 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
 
         jMenu1.setText("Decks");
 
-        miUpdateDecks.setText("Update Decks");
-        miUpdateDecks.addActionListener(new java.awt.event.ActionListener() {
+        miNewDeck.setText("New Deck");
+        miNewDeck.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miUpdateDecksActionPerformed(evt);
+                miNewDeckActionPerformed(evt);
             }
         });
-        jMenu1.add(miUpdateDecks);
+        jMenu1.add(miNewDeck);
 
         miDeckMode.setText("Deck Mode");
         miDeckMode.addActionListener(new java.awt.event.ActionListener() {
@@ -147,11 +152,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try {
-            try {
-                Library.getInstance().save();
-            } catch (NullPointerException ex) {
-                Library.getInstance().save(new File(filename));
-            }
+            Library.getInstance().save(fc, fd);
         } catch (IOException ex) {
             System.out.println("Library save failed");
             System.out.println(ex.getMessage());
@@ -162,8 +163,18 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private void miNewCardActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewCardActionPerformed
         Card c = CardDialog.showNewDialog(this, true);
         if(c != null) {
-            Library.getInstance().addCard(c);
-            ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
+            if(Library.getInstance().addCard(c)) {
+                ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
+                ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(true);
+            } else {
+                int result = JOptionPane.showConfirmDialog(this, "You already have " +c.name +" in your library, edit now?", "Add to Library", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
+                if(result == JOptionPane.YES_OPTION) {
+                    if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().getCardByName(c.name))) {
+                        ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
+                        ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(true);
+                    }
+                }
+            }
         }
     }//GEN-LAST:event_miNewCardActionPerformed
 
@@ -171,6 +182,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         try {
             if(JSONCardDialog.showDialog(this)) {
                 ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
+                ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(true);
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Couldn't find JSON file.");
@@ -178,10 +190,6 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             ex.printStackTrace(System.out);
         }
     }//GEN-LAST:event_miJSONCardActionPerformed
-
-    private void miUpdateDecksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUpdateDecksActionPerformed
-        Library.getInstance().updateDecks();
-    }//GEN-LAST:event_miUpdateDecksActionPerformed
 
     private void miDeckModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckModeActionPerformed
         CardLayout lo = (CardLayout)pnlMain.getLayout();
@@ -193,6 +201,19 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             lo.show(pnlMain, "Advanced");
         }
     }//GEN-LAST:event_miDeckModeActionPerformed
+
+    private void miNewDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewDeckActionPerformed
+        String result = JOptionPane.showInputDialog(this, "Enter new deck name", "New Deck", JOptionPane.QUESTION_MESSAGE);
+        if(result != null) {
+            Deck d = new Deck(result);
+            if(Library.getInstance().addDeck(d)) {
+                ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(false);
+            } else {
+                JOptionPane.showMessageDialog(this, "You already have a deck called " +result +".", "New Deck", JOptionPane.ERROR_MESSAGE);
+                
+            }
+        }
+    }//GEN-LAST:event_miNewDeckActionPerformed
 
     /**
      * @param args the command line arguments
@@ -237,7 +258,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JCheckBoxMenuItem miDeckMode;
     private javax.swing.JMenuItem miJSONCard;
     private javax.swing.JMenuItem miNewCard;
-    private javax.swing.JMenuItem miUpdateDecks;
+    private javax.swing.JMenuItem miNewDeck;
     private javax.swing.JPanel pnlMain;
     // End of variables declaration//GEN-END:variables
 

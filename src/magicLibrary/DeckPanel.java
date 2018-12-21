@@ -7,7 +7,8 @@ package magicLibrary;
 
 import java.awt.BorderLayout;
 import java.util.ArrayList;
-import javax.swing.DefaultComboBoxModel;
+import javax.swing.AbstractListModel;
+import javax.swing.ComboBoxModel;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -17,11 +18,13 @@ import javax.swing.table.AbstractTableModel;
 public class DeckPanel extends javax.swing.JPanel {
 
     private ManaCurvePanel pnlManaCurve;
+    private DeckComboBoxModel model;
     
     /**
      * Creates new form DeckPanel
      */
     public DeckPanel() {
+        model = new DeckComboBoxModel();
         initComponents();
         setModels(true);
         tblDeck.setRowHeight(ManaPanel.DOT_SIZE + 1 + 4);
@@ -59,7 +62,7 @@ public class DeckPanel extends javax.swing.JPanel {
             }
         });
 
-        cbDecks.setModel(new DefaultComboBoxModel(Library.getInstance().getDeckVector()));
+        cbDecks.setModel(model);
         cbDecks.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 cbDecksActionPerformed(evt);
@@ -219,12 +222,14 @@ public class DeckPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_tblDeckMouseClicked
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
-        int width = (tblDeck.getWidth() - 250)/2;
-        tblDeck.getColumnModel().getColumn(0).setPreferredWidth(width);
-        tblDeck.getColumnModel().getColumn(1).setPreferredWidth(width);
-        tblDeck.getColumnModel().getColumn(2).setPreferredWidth(50);
-        tblDeck.getColumnModel().getColumn(3).setPreferredWidth(150);
-        tblDeck.getColumnModel().getColumn(4).setPreferredWidth(50);
+        if(Library.getInstance().hasDecks()) {
+            int width = (tblDeck.getWidth() - 250)/2;
+            tblDeck.getColumnModel().getColumn(0).setPreferredWidth(width);
+            tblDeck.getColumnModel().getColumn(1).setPreferredWidth(width);
+            tblDeck.getColumnModel().getColumn(2).setPreferredWidth(50);
+            tblDeck.getColumnModel().getColumn(3).setPreferredWidth(150);
+            tblDeck.getColumnModel().getColumn(4).setPreferredWidth(50);
+        }
     }//GEN-LAST:event_formComponentResized
 
 
@@ -247,93 +252,77 @@ public class DeckPanel extends javax.swing.JPanel {
     // End of variables declaration//GEN-END:variables
 
     private void setModels(boolean setting) {
-        Library l = Library.getInstance();
-        ArrayList<Card> cards = new ArrayList<>();
-        ArrayList<String> land = new ArrayList<>();
-        String deckName = (String)cbDecks.getSelectedItem();
-        int cmc;
-        int maxCMC = 0;
-        for(Card c : l) {
-            if(c.decks.contains(deckName)) {
-                cards.add(c);
-                cmc = c.getCMC();
+        Deck d = (Deck)cbDecks.getSelectedItem();
+        if(d != null) {
+            ArrayList<Card> land = new ArrayList<>();
+            int cmc;
+            int maxCMC = 0;
+            int[] curve = new int[maxCMC+1];
+            int total = 0;
+            int totalLand = 0;
+            ArrayList<String> countNames = new ArrayList<>();
+            ArrayList<Integer> countCounts = new ArrayList<>();
+            ArrayList<String> spreadNames = new ArrayList<>();
+            ArrayList<Integer> spreadCounts = new ArrayList<>();
+            int mana, index;
+            String manaName;
+            Deck.DeckCard dc;
+            for(int i = 0; i < d.size(); i++) {
+                dc = d.get(i);
+                for(String t : dc.card.type) {
+                    if(t.compareToIgnoreCase("land") == 0) {
+                        land.add(dc.card);
+                    }
+                }
+                cmc = dc.card.getCMC();
                 if(cmc > maxCMC) {
                     maxCMC = cmc;
                 }
-                for(String t : c.type) {
-                    if(t.compareToIgnoreCase("land") == 0) {
-                        land.add(c.name);
-                    }
-                }
-            }
-        }
-        lstLand.setListData(land.toArray());
-        int[] counts = new int[cards.size()];
-        int[] curve = new int[maxCMC+1];
-        int total = 0;
-        int totalLand = 0;
-        ArrayList<String> countNames = new ArrayList<>();
-        ArrayList<Integer> countCounts = new ArrayList<>();
-        ArrayList<String> spreadNames = new ArrayList<>();
-        ArrayList<Integer> spreadCounts = new ArrayList<>();
-        int mana, index;
-        String manaName;
-        for(int i = 0; i < cards.size(); i++) {
-            cmc = cards.get(i).getCMC();
-            curve[cmc]++;
-            counts[i] = 0;
-            for(String d : cards.get(i).decks) {
-                if(d.compareTo(deckName) == 0) {
-                    counts[i]++;
-                    total++;
-                }
-            }
-            for(String t : cards.get(i).type) {
-                if(t.compareToIgnoreCase("land") == 0) {
-                    totalLand += counts[i];
-                }
-            }
-            mana = cards.get(i).getColours();
-            manaName = getManaName(mana);
-            if(!manaName.isEmpty()) {
-                if(countNames.contains(manaName)) {
-                    index = countNames.indexOf(manaName);
-                    countCounts.set(index, countCounts.get(index)+1);
-                } else {
-                    countNames.add(manaName);
-                    countCounts.add(1);
-                }
-            }
-            for(String m : cards.get(i).manaCost) {
-                manaName = getManaName(m);
+                curve[cmc]++;
+                total += dc.count;
+                mana = dc.card.getColours();
+                manaName = getManaName(mana);
                 if(!manaName.isEmpty()) {
-                    if(spreadNames.contains(manaName)) {
-                        index = spreadNames.indexOf(manaName);
-                        spreadCounts.set(index, spreadCounts.get(index)+1);
+                    if(countNames.contains(manaName)) {
+                        index = countNames.indexOf(manaName);
+                        countCounts.set(index, countCounts.get(index)+1);
                     } else {
-                        spreadNames.add(manaName);
-                        spreadCounts.add(1);
+                        countNames.add(manaName);
+                        countCounts.add(1);
+                    }
+                }
+                for(String m : dc.card.manaCost) {
+                    manaName = getManaName(m);
+                    if(!manaName.isEmpty()) {
+                        if(spreadNames.contains(manaName)) {
+                            index = spreadNames.indexOf(manaName);
+                            spreadCounts.set(index, spreadCounts.get(index)+1);
+                        } else {
+                            spreadNames.add(manaName);
+                            spreadCounts.add(1);
+                        }
                     }
                 }
             }
-        }
-        lblTotal.setText("Total Card Count: " +total +" ");
-        lblLand.setText("Land (" +totalLand +")");
-        if(setting) {
-            tblDeck.setModel(new DeckTableModel(cards, counts));
-            tblCounts.setModel(new ColourCountModel(countNames, countCounts));
-            tblSpreads.setModel(new ColourCountModel(spreadNames, spreadCounts));
-            pnlManaCurve = new ManaCurvePanel(curve);
-            pnlManaCurveHolder.setLayout(new BorderLayout());
-            pnlManaCurveHolder.add(pnlManaCurve, BorderLayout.CENTER);
-        } else {
-            DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
-            m1.update(cards, counts);
-            ColourCountModel m2 = (ColourCountModel)tblCounts.getModel();
-            m2.update(countNames, countCounts);
-            m2 = (ColourCountModel)tblSpreads.getModel();
-            m2.update(spreadNames, spreadCounts);
-            pnlManaCurve.setCurve(curve);
+            lstLand.setListData(land.toArray());
+            lblTotal.setText("Total Card Count: " +total +" ");
+            lblLand.setText("Land (" +totalLand +")");
+            if(setting) {
+                tblDeck.setModel(new DeckTableModel(d));
+                tblCounts.setModel(new ColourCountModel(countNames, countCounts));
+                tblSpreads.setModel(new ColourCountModel(spreadNames, spreadCounts));
+                pnlManaCurve = new ManaCurvePanel(curve);
+                pnlManaCurveHolder.setLayout(new BorderLayout());
+                pnlManaCurveHolder.add(pnlManaCurve, BorderLayout.CENTER);
+            } else {
+                DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
+                m1.update(d);
+                ColourCountModel m2 = (ColourCountModel)tblCounts.getModel();
+                m2.update(countNames, countCounts);
+                m2 = (ColourCountModel)tblSpreads.getModel();
+                m2.update(spreadNames, spreadCounts);
+                pnlManaCurve.setCurve(curve);
+            }
         }
     }
     
@@ -399,27 +388,86 @@ public class DeckPanel extends javax.swing.JPanel {
         return rv;
     }
 
-    private static class DeckTableModel extends AbstractTableModel {
+    void fireLibraryChanged(boolean cardChange) {
+        if(cardChange) {
+            //todo: update other models
+        } else {
+            model.fireLibraryChanged();
+        }
+    }
+    
+    private static class DeckComboBoxModel extends AbstractListModel<Deck> implements ComboBoxModel<Deck> {
+
+        private int selected;
+        private Deck nullDeck;
         
-        private Card[] cards;
-        private int[] counts;
-        
-        public DeckTableModel(ArrayList<Card> cards, int[] counts) {
-            this.cards = new Card[cards.size()];
-            cards.toArray(this.cards);
-            this.counts = counts;
+        DeckComboBoxModel() {
+            selected = 0;
+            nullDeck = new Deck("null");
         }
         
-        public void update(ArrayList<Card> cards, int[] counts) {
-            this.cards = new Card[cards.size()];
-            cards.toArray(this.cards);
-            this.counts = counts;
+        void fireLibraryChanged() {
+            this.fireContentsChanged(this, 0, getSize());
+        }
+        
+        @Override
+        public int getSize() {
+            Library l = Library.getInstance();
+            if(l.hasDecks()) {
+                return l.deckCount();
+            } else {
+                return 1;
+            }
+        }
+
+        @Override
+        public Deck getElementAt(int index) {
+            Library l = Library.getInstance();
+            if(l.hasDecks()) {
+                return l.getDeck(index);
+            } else {
+                return nullDeck;
+            }
+        }
+
+        @Override
+        public void setSelectedItem(Object anItem) {
+            Library l = Library.getInstance();
+            if(l.hasDecks()) {
+                selected = l.getDeckIndex((Deck)anItem);
+            } else {
+                selected = 0;
+            }
+        }
+
+        @Override
+        public Deck getSelectedItem() {
+            Library l = Library.getInstance();
+            if(l.hasDecks()) {
+                return l.getDeck(selected);
+            } else {
+                return nullDeck;
+            }
+        }
+               
+    }
+
+    private static class DeckTableModel extends AbstractTableModel {
+        
+        private Deck deck;
+        
+        public DeckTableModel(Deck deck) {
+            this.deck = deck;
+        }
+        
+        public void update(Deck deck) {
+            this.deck = deck;
             this.fireTableDataChanged();
         }
 
         @Override
         public int getRowCount() {
-            return cards.length;
+            return deck.size();
         }
 
         @Override
@@ -447,22 +495,23 @@ public class DeckPanel extends javax.swing.JPanel {
         
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
+            Deck.DeckCard dc = deck.get(rowIndex);
             switch(columnIndex) {
                 case 0:
-                    return cards[rowIndex].name;
+                    return dc.card.name;
                 case 1:
-                    return cards[rowIndex].manaCost;
+                    return dc.card.manaCost;
                 case 2:
-                    for(String t : cards[rowIndex].type) {
+                    for(String t : dc.card.type) {
                         if(t.compareToIgnoreCase("land") == 0) {
                             return "";
                         }
                     }
-                    return cards[rowIndex].getCMC();
+                    return dc.card.getCMC();
                 case 3:
-                    return cards[rowIndex].getTypeString();
+                    return dc.card.getTypeString();
                 case 4:
-                    return counts[rowIndex];
+                    return dc.count;
                 default:
                     return null;
             }

@@ -372,6 +372,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
             int index = lstCards.locationToIndex(evt.getPoint());
             if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index))) {
                 fireLibraryChanged();
+                //todo: update decks
             }
         }
     }//GEN-LAST:event_lstCardsMouseClicked
@@ -381,7 +382,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
     }//GEN-LAST:event_btnSimpleActionPerformed
 
     private void btnViewDecksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewDecksActionPerformed
-        JOptionPane.showMessageDialog(MainFrame.getInstance(), Library.getInstance().getDeckListString(), "Decks", JOptionPane.INFORMATION_MESSAGE);
+        //todo: JOptionPane.showMessageDialog(MainFrame.getInstance(), Library.getInstance().getDeckListString(), "Decks", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnViewDecksActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed

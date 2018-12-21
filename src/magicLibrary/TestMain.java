@@ -20,14 +20,16 @@ public class TestMain {
      */
     public static void main(String[] args) throws IOException {
         //newLibrary();
-        testDialog();
+        //testDialog();
+        //moveToNewDecks();
     }
     
     public static void testDialog() {
-        File f = new File(MainFrame.filename);
-        if(f.exists()) {
+        File fc = new File(MainFrame.cardFile);
+        File fd = new File(MainFrame.deckFile);
+        if(fc.exists() && fd.exists()) {
             try {
-                Library.makeLibrary(f);
+                Library.makeLibrary(fc, fd);
             } catch (IOException ex) {
                 System.out.println("Library creation failed");
                 System.out.println(ex.getMessage());
@@ -36,6 +38,32 @@ public class TestMain {
         }
         CardDialog.showEditDialog(null, true, Library.getInstance().resultAt(0));
     }
+    
+    /*public static void moveToNewDecks() {
+        File fc = new File(MainFrame.cardFile);
+        File fd = new File(MainFrame.deckFile);
+        if(fc.exists() && fd.exists()) {
+            try {
+                Library.makeLibrary(fc, fd);
+                Library l = Library.getInstance();
+                Deck deck;
+                for(Card c : l) {
+                    for(String d : c.decks) {
+                        deck = new Deck(d);
+                        if(!l.addDeck(deck)) {
+                            deck = l.getDeckByName(d);
+                        }
+                        deck.addCard(c);
+                    }
+                }
+                l.save(fc, fd);
+            } catch (IOException ex) {
+                System.out.println("Library creation failed");
+                System.out.println(ex.getMessage());
+                ex.printStackTrace(System.out);
+            }
+        }
+    }*/
     
     public static void newLibrary() throws IOException {
         Library l = Library.getInstance();
@@ -48,7 +76,7 @@ public class TestMain {
         c.text = "At the beginning of your upkeep, you may put a charge counter of Aether Vial.\ntap: You may put a creature card with converted mana cost equal to the number of charge counters on Aether Vial from your hand onto the battlefield.";
         c.fancyText = "At the beginning of your upkeep, you may put a charge counter of Aether Vial.\n{T}: You may put a creature card with converted mana cost equal to the number of charge counters on Aether Vial from your hand onto the battlefield.";
         c.count = 1;
-        c.decks.add("Sygg");
+        //c.decks.add("Sygg");
         c.lastUpdated = Calendar.getInstance().getTimeInMillis();
         l.addCard(c);
         c = new Card();
@@ -63,8 +91,8 @@ public class TestMain {
         c.toughness = "1";
         c.notes = "Alt to Aether Vial";
         c.count = 2;
-        c.decks.add("Sygg");
-        c.decks.add("Merfolk");
+        //c.decks.add("Sygg");
+        //c.decks.add("Merfolk");
         c.lastUpdated = Calendar.getInstance().getTimeInMillis();
         l.addCard(c);
         c = new Card();
@@ -75,10 +103,10 @@ public class TestMain {
         c.manaCost = new String[]{"GP"};
         c.text = "Target creature gets +2/+2 until end of turn.";
         c.count = 4;
-        c.decks.add("Infect");
+        //c.decks.add("Infect");
         c.lastUpdated = Calendar.getInstance().getTimeInMillis();
         l.addCard(c);
-        l.save(new File("library.txt"));
+        //l.save(new File("library.txt"));
     }
     
 }

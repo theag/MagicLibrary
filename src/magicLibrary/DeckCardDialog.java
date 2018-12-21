@@ -52,7 +52,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
         }
         spnCount.setValue(card.count);
         lblUpdated.setText("Last Updated: " +card.formatUpdate());
-        lblDecks.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblDecks.getWidth(), card.getDeckString()));
+        //todo: lblDecks.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblDecks.getWidth(), card.getDeckString()));
         txtNotes.setText(card.notes);
     }
 

@@ -25,9 +25,9 @@ public class Library implements Iterable<Card> {
     
     private static Library instance = null;
     
-    public static boolean makeLibrary(File file) throws IOException {
+    public static boolean makeLibrary(File cardFile, File deckFile) throws IOException {
         if(instance == null) {
-            instance = new Library(file);
+            instance = new Library(cardFile, deckFile);
             return true;
         } else {
             return false;
@@ -41,55 +41,51 @@ public class Library implements Iterable<Card> {
         return instance;
     }
     
-    private File file;
-
     private final ArrayList<Card> cards;
-    private final ArrayList<String> decks;
+    private final ArrayList<Deck> decks;
     private String lastSearch;
     private AdvancedSearch lastSearch2;
     private int[] results;
     
     private Library() {
         cards = new ArrayList<>();
-        file = null;
         results = null;
         decks = new ArrayList<>();
     }
     
-    private Library(File file) throws IOException {
+    private Library(File cardFile, File deckFile) throws IOException {
         cards = new ArrayList<>();
         decks = new ArrayList<>();
-        if(file.length() > Integer.MAX_VALUE) {
-            throw new ArrayIndexOutOfBoundsException(file.getName() +".length() = " +file.length() +" > " +Integer.MAX_VALUE +" (maximum int)");
+        if(cardFile.length() > Integer.MAX_VALUE) {
+            throw new ArrayIndexOutOfBoundsException(cardFile.getName() +".length() = " +cardFile.length() +" > " +Integer.MAX_VALUE +" (maximum int)");
         }
-        byte[] bytes = new byte[(int)file.length()];
-        FileInputStream fin = new FileInputStream(file);
+        if(deckFile.length() > Integer.MAX_VALUE) {
+            throw new ArrayIndexOutOfBoundsException(deckFile.getName() +".length() = " +deckFile.length() +" > " +Integer.MAX_VALUE +" (maximum int)");
+        }
+        byte[] bytes = new byte[(int)cardFile.length()];
+        FileInputStream fin = new FileInputStream(cardFile);
         fin.read(bytes);
         fin.close();
         ByteBuffer buffer = ByteBuffer.wrap(bytes);
         int count = buffer.getInt();
         while(count > 0) {
             cards.add(new Card(buffer));
-            addDecks(cards.get(cards.size() - 1));
             count--;
         }
+        bytes = new byte[(int)deckFile.length()];
+        fin = new FileInputStream(deckFile);
+        fin.read(bytes);
+        fin.close();
+        buffer = ByteBuffer.wrap(bytes);
         count = buffer.getInt();
         while(count > 0) {
+            decks.add(new Deck(buffer, cards));
             count--;
         }
-        this.file = file;
         results = null;
     }
     
-    public void save() throws IOException {
-        if(file != null) {
-            save(file);
-        } else {
-            throw new NullPointerException("No File");
-        }
-    }
-    
-    public void save(File file) throws IOException {
+    public void save(File cardFile, File deckFile) throws IOException {
         int size = 8;
         for(Card c : cards) {
             size += c.saveSize();
@@ -99,16 +95,30 @@ public class Library implements Iterable<Card> {
         for(Card c : cards) {
             c.save(buffer);
         }
-        FileOutputStream fOut = new FileOutputStream(file);
+        FileOutputStream fOut = new FileOutputStream(cardFile);
+        fOut.write(buffer.array());
+        fOut.close();
+        size = 4;
+        for(Deck d : decks) {
+            size += d.saveSize();
+        }
+        buffer = ByteBuffer.allocate(size);
+        buffer.putInt(decks.size());
+        for(Deck d : decks) {
+            d.save(buffer);
+        }
+        fOut = new FileOutputStream(deckFile);
         fOut.write(buffer.array());
         fOut.close();
     }
     
-    public void addCard(Card c) {
+    public boolean addCard(Card c) {
         if(!cards.contains(c)) {
             cards.add(c);
             Collections.sort(cards);
-            addDecks(c);
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -183,52 +193,56 @@ public class Library implements Iterable<Card> {
         return cards.indexOf(card);
     }
     
-    public void updateDecks() {
-        decks.clear();
-        for(Card c : cards) {
-            for(String d : c.decks) {
-                if(!decks.contains(d)) {
-                    decks.add(d);
-                }
-            }
-        }
-        Collections.sort(decks);
-    }
-
-    private void addDecks(Card c) {
-        for(String d : c.decks) {
-            if(!decks.contains(d)) {
-                decks.add(d);
-            }
-        }
-        Collections.sort(decks);
-    }
-
-    public String getDeckListString() {
-        String rv = "";
-        for(String d : decks) {
-            if(!rv.isEmpty()) {
-                rv += "\n";
-            }
-            rv += d;
-        }
-        return rv;
-    }
-
-    String[] getDeckVector() {
-        String[] rv = new String[decks.size()];
-        rv = decks.toArray(rv);
-        return rv;
-    }
-
-    Card getCardByName(String string) {
+    Card getCardByName(String name) {
         //todo: update with better search
         for(Card c : cards) {
-            if(c.name.compareToIgnoreCase(string) == 0) {
+            if(c.name.compareToIgnoreCase(name) == 0) {
                 return c;
             }
         }
         return null;
+    }
+
+    Deck[] getDeckArray() {
+        Deck[] arr = new Deck[decks.size()];
+        arr = decks.toArray(arr);
+        return arr;
+    }
+
+    boolean addDeck(Deck deck) {
+        if(!decks.contains(deck)) {
+            decks.add(deck);
+            Collections.sort(decks);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    Deck getDeckByName(String name) {
+        //todo: update with better search
+        for(Deck d : decks) {
+            if(d.name.compareToIgnoreCase(name) == 0) {
+                return d;
+            }
+        }
+        return null;
+    }
+
+    boolean hasDecks() {
+        return !decks.isEmpty();
+    }
+
+    int deckCount() {
+        return decks.size();
+    }
+
+    Deck getDeck(int index) {
+        return decks.get(index);
+    }
+
+    int getDeckIndex(Deck deck) {
+        return decks.indexOf(deck);
     }
     
 }

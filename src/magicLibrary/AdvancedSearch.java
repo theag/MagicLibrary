@@ -141,10 +141,10 @@ public class AdvancedSearch {
                 }
             }
         }
-        //decks
-        if(decks == null) {
+        //todo:decks
+        //if(decks == null) {
             results[5] = allAnd;
-        } else {
+        /*} else {
             results[5] = false;
             for(String d : decks) {
                 if(card.decks.contains(d)) {
@@ -152,7 +152,7 @@ public class AdvancedSearch {
                     break;
                 }
             }
-        }
+        }*/
         
         boolean rv = allAnd;
         if(allAnd) {

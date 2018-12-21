@@ -32,10 +32,8 @@ public class Card implements Comparable<Card> {
     public String notes;
     public int count;
     public long lastUpdated;
-    public ArrayList<String> decks;
 
     public Card() {
-        decks = new ArrayList<>();
     }
 
     protected Card(ByteBuffer buffer) {
@@ -143,53 +141,11 @@ public class Card implements Comparable<Card> {
         }
         count = buffer.getInt();
         lastUpdated = buffer.getLong();
-        decks = new ArrayList<>();
-        int count = buffer.getInt();
-        String s;
-        for(; count > 0; count--) {
-            s = "";
-            chr = buffer.getChar();
-            while(chr != Library.ETX) {
-                s += chr;
-                chr = buffer.getChar();
-            }
-            decks.add(s);
-        }
     }
     
     @Override
     public String toString() {
-        String rv = "[" +name +"    ";
-        for(String s : manaCost) {
-            rv += s;
-        }
-        rv += "]\n[";
-        for(int i = 0; i < supertype.length; i++) {
-            if(i > 0) {
-                rv += " ";
-            }
-            rv += supertype[i];
-        }
-        for(int i = 0; i < type.length; i++) {
-            if(supertype.length > 0 || i > 0) {
-                rv += " ";
-            }
-            rv += type[i];
-        }
-        if(subtype.length > 0) {
-            rv += " -- " +subtype[0];
-        }
-        for(int i = 1; i < subtype.length; i++) {
-            rv += " " +subtype[i];
-        }
-        rv += "]\n[" +text +"]";
-        if(power != null) {
-            rv += "\n[" +power +"/" +toughness +"]";
-        } else if(loyalty != null) {
-            rv += "\n[" +loyalty+"]";
-        }
-        rv += "\nHave: " +count +"\nNotes: " +notes +"\nLast Updated: " +formatUpdate();
-        return rv;
+        return name;
     }
 
     public String formatUpdate() {
@@ -268,10 +224,7 @@ public class Card implements Comparable<Card> {
         } else {
             rv += 2*(notes.length() + 1);
         }
-        rv += 4 + 8 + 4;
-        for(String s : decks) {
-            rv += 2*(s.length() + 1);
-        }
+        rv += 4 + 8;
         return rv;
     }
 
@@ -358,13 +311,6 @@ public class Card implements Comparable<Card> {
         }
         buffer.putInt(count);
         buffer.putLong(lastUpdated);
-        buffer.putInt(decks.size());
-        for(String s : decks) {
-            for(int i = 0; i < s.length(); i++) {
-                buffer.putChar(s.charAt(i));
-            }
-            buffer.putChar(Library.ETX);
-        }
     }
 
     public String getTypeString() {
@@ -400,14 +346,6 @@ public class Card implements Comparable<Card> {
                 rv += " ";
             }
             rv += subtype[i];
-        }
-        return rv;
-    }
-
-    String getDeckString() {
-        String rv = "";
-        for(String s : decks) {
-            rv += s +"\n";
         }
         return rv;
     }

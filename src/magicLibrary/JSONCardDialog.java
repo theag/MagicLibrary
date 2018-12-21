@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
+import javax.swing.JOptionPane;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -159,8 +160,9 @@ public class JSONCardDialog extends javax.swing.JDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnAddActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddActionPerformed
-        addSelected();
-        setVisible(false);
+        if(addSelected()) {
+            setVisible(false);
+        }
     }//GEN-LAST:event_btnAddActionPerformed
 
     private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
@@ -177,9 +179,10 @@ public class JSONCardDialog extends javax.swing.JDialog {
     }//GEN-LAST:event_txtNameKeyReleased
 
     private void btnAddPlusActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPlusActionPerformed
-        addSelected();
-        txtName.setText("");
-        model.clearSearch();
+        if(addSelected()) {
+            txtName.setText("");
+            model.clearSearch();
+        }
     }//GEN-LAST:event_btnAddPlusActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -194,7 +197,7 @@ public class JSONCardDialog extends javax.swing.JDialog {
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 
-    private void addSelected() {
+    private boolean addSelected() {
         java.util.List<String> cards = lstCards.getSelectedValuesList();
         if(cards.size() > 0) {
             Library l = Library.getInstance();
@@ -212,68 +215,82 @@ public class JSONCardDialog extends javax.swing.JDialog {
                 }
             }
             long now = Calendar.getInstance().getTimeInMillis();
+            String err = "";
             for(String name : cards) {
-                c = new Card();
-                c.name = name;
-                obj = this.cards.getJSONObject(name);
-                if(obj.has("supertypes")) {
-                    arr = obj.getJSONArray("supertypes");
-                    c.supertype = new String[arr.length()];
-                    for(int i = 0; i < arr.length(); i++) {
-                        c.supertype[i] = arr.getString(i);
+                if(l.getCardByName(name) != null) {
+                    err += "\n" +name;
+                } else {
+                    c = new Card();
+                    c.name = name;
+                    obj = this.cards.getJSONObject(name);
+                    if(obj.has("supertypes")) {
+                        arr = obj.getJSONArray("supertypes");
+                        c.supertype = new String[arr.length()];
+                        for(int i = 0; i < arr.length(); i++) {
+                            c.supertype[i] = arr.getString(i);
+                        }
+                    } else {
+                        c.supertype = new String[0];
                     }
-                } else {
-                    c.supertype = new String[0];
-                }
-                if(obj.has("types")) {
-                    arr = obj.getJSONArray("types");
-                    c.type = new String[arr.length()];
-                    for(int i = 0; i < arr.length(); i++) {
-                        c.type[i] = arr.getString(i);
+                    if(obj.has("types")) {
+                        arr = obj.getJSONArray("types");
+                        c.type = new String[arr.length()];
+                        for(int i = 0; i < arr.length(); i++) {
+                            c.type[i] = arr.getString(i);
+                        }
+                    } else {
+                        c.type = new String[0];
                     }
-                } else {
-                    c.type = new String[0];
-                }
-                if(obj.has("subtypes")) {
-                    arr = obj.getJSONArray("subtypes");
-                    c.subtype = new String[arr.length()];
-                    for(int i = 0; i < arr.length(); i++) {
-                        c.subtype[i] = arr.getString(i);
+                    if(obj.has("subtypes")) {
+                        arr = obj.getJSONArray("subtypes");
+                        c.subtype = new String[arr.length()];
+                        for(int i = 0; i < arr.length(); i++) {
+                            c.subtype[i] = arr.getString(i);
+                        }
+                    } else {
+                        c.subtype = new String[0];
                     }
-                } else {
-                    c.subtype = new String[0];
+                    if(obj.has("manaCost")) {
+                        String cost = obj.getString("manaCost");
+                        cost = cost.substring(1, cost.length() - 1).replaceAll("/","");
+                        c.manaCost = cost.split("\\}\\{");
+                    } else {
+                        c.manaCost = new String[]{"0"};
+                    }
+                    if(obj.has("text")) {
+                        c.fancyText = obj.getString("text");
+                        c.text = c.fancyText;
+                    } else {
+                        c.text = "";
+                        c.fancyText = "";
+                    }
+                    if(obj.has("power")) {
+                        c.power = obj.getString("power");
+                    }
+                    if(obj.has("toughness")) {
+                        c.toughness = obj.getString("toughness");
+                    }
+                    if(obj.has("loyalty")) {
+                        c.loyalty = obj.getString("loyalty");
+                    }
+                    //todo: if(deckList != null) {
+                        /*c.decks.addAll(deckList);
+                    }*/
+                    c.lastUpdated = now;
+                    l.addCard(c);
                 }
-                if(obj.has("manaCost")) {
-                    String cost = obj.getString("manaCost");
-                    cost = cost.substring(1, cost.length() - 1).replaceAll("/","");
-                    c.manaCost = cost.split("\\}\\{");
-                } else {
-                    c.manaCost = new String[]{"0"};
-                }
-                if(obj.has("text")) {
-                    c.fancyText = obj.getString("text");
-                    c.text = c.fancyText;
-                } else {
-                    c.text = "";
-                    c.fancyText = "";
-                }
-                if(obj.has("power")) {
-                    c.power = obj.getString("power");
-                }
-                if(obj.has("toughness")) {
-                    c.toughness = obj.getString("toughness");
-                }
-                if(obj.has("loyalty")) {
-                    c.loyalty = obj.getString("loyalty");
-                }
-                if(deckList != null) {
-                    c.decks.addAll(deckList);
-                }
-                c.lastUpdated = now;
-                l.addCard(c);
             }
+            if(err.isEmpty()) {
+                saved = true;
+                return true;
+            } else {
+                JOptionPane.showMessageDialog(MainFrame.getInstance(), "The following cards are already in your library:" +err, "Add to Library", JOptionPane.ERROR_MESSAGE);
+                return false;
+            }
+        } else {
+            saved = true;
+            return true;
         }
-        saved = true;
     }
 
 }

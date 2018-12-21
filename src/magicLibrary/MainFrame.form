@@ -32,12 +32,12 @@
             <Property name="text" type="java.lang.String" value="Decks"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="miUpdateDecks">
+            <MenuItem class="javax.swing.JMenuItem" name="miNewDeck">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Update Decks"/>
+                <Property name="text" type="java.lang.String" value="New Deck"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miUpdateDecksActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miNewDeckActionPerformed"/>
               </Events>
             </MenuItem>
             <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miDeckMode">

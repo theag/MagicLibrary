@@ -109,6 +109,7 @@ public class SimpleLibraryPanel extends LibraryPanel {
             int index = lstCards.locationToIndex(evt.getPoint());
             if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index))) {
                 fireLibraryChanged();
+                //todo: update deck panel
             }
         }
     }//GEN-LAST:event_lstCardsMouseClicked
