@@ -9,8 +9,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
 import java.util.Iterator;
 
@@ -25,13 +28,8 @@ public class Library implements Iterable<Card> {
     
     private static Library instance = null;
     
-    public static boolean makeLibrary(File cardFile, File deckFile) throws IOException {
-        if(instance == null) {
-            instance = new Library(cardFile, deckFile);
-            return true;
-        } else {
-            return false;
-        }
+    public static void makeLibrary(File cardFile, File deckFile) throws IOException {
+        instance = new Library(cardFile, deckFile);
     }
     
     public static Library getInstance() {
@@ -39,6 +37,45 @@ public class Library implements Iterable<Card> {
             instance = new Library();
         }
         return instance;
+    }
+    
+    public static Differences getDifferences(File cardFile, File deckFile) throws IOException {
+        Library other = new Library(cardFile, deckFile);
+        Differences diff = new Differences();
+        Modification m;
+        for(Card local : instance.cards) {
+            if(other.cards.contains(local)) {
+                m = new Modification(local.name);
+                local.listDifferences(other.getCardByName(local.name), m.differences);
+                if(!m.differences.isEmpty()) {
+                    diff.modifiedC.add(m);
+                }
+            } else {
+                diff.localC.add(local.name);
+            }
+        }
+        for(Card drive : other.cards) {
+            if(!instance.cards.contains(drive)) {
+                diff.driveC.add(drive.name);
+            }
+        }
+        for(Deck local : instance.decks) {
+            if(other.decks.contains(local)) {
+                m = new Modification(local.name);
+                local.listDifferences(other.getDeckByName(local.name), m.differences);
+                if(!m.differences.isEmpty()) {
+                    diff.modifiedD.add(m);
+                }
+            } else {
+                diff.localD.add(local.name);
+            }
+        }
+        for(Deck drive : other.decks) {
+            if(!instance.decks.contains(drive)) {
+                diff.driveD.add(drive.name);
+            }
+        }
+        return diff;
     }
     
     private final ArrayList<Card> cards;
@@ -145,6 +182,11 @@ public class Library implements Iterable<Card> {
 
     void deleteCard(Card card) {
         cards.remove(card);
+        for(Deck d : decks) {
+            if(d.hasCard(card)) {
+                d.removeCard(card);
+            }
+        }
     }
 
     void clearSearch() {
@@ -267,6 +309,88 @@ public class Library implements Iterable<Card> {
             }
         }
         return rv;
+    }
+    
+    public static class Differences {
+        
+        private static final SimpleDateFormat dateF = new SimpleDateFormat("MMM d, yyyy h:mm:ss aa");
+        
+        long timestamp;
+        ArrayList<String> driveC;
+        ArrayList<String> localC;
+        ArrayList<Modification> modifiedC;
+        ArrayList<String> driveD;
+        ArrayList<String> localD;
+        ArrayList<Modification> modifiedD;
+        
+        public Differences() {
+            timestamp = Calendar.getInstance().getTimeInMillis();
+            driveC = new ArrayList<>();
+            localC = new ArrayList<>();
+            modifiedC = new ArrayList<>();
+            driveD = new ArrayList<>();
+            localD = new ArrayList<>();
+            modifiedD = new ArrayList<>();
+        }
+        
+        public void save(File file) throws IOException {
+            PrintWriter fOut = new PrintWriter(file);
+            fOut.println("Magic Library");
+            fOut.println("Difference Report");
+            fOut.println(dateF.format(new java.util.Date(timestamp)));
+            fOut.println();
+            fOut.println("Cards");
+            fOut.println("-----");
+            fOut.println("Drive Only:");
+            for(String s : driveC) {
+                fOut.println("\t" +s);
+            }
+            fOut.println();
+            fOut.println("Local Only:");
+            for(String s : localC) {
+                fOut.println("\t" +s);
+            }
+            fOut.println();
+            fOut.println("Modified:");
+            for(Modification m : modifiedC) {
+                fOut.println("\t" +m.name);
+                for(String s : m.differences) {
+                    fOut.println("\t\t" +s);
+                }
+            }
+            fOut.println();
+            fOut.println("Decks");
+            fOut.println("-----");
+            fOut.println("Drive Only:");
+            for(String s : driveD) {
+                fOut.println("\t" +s);
+            }
+            fOut.println();
+            fOut.println("Local Only:");
+            for(String s : localD) {
+                fOut.println("\t" +s);
+            }
+            fOut.println();
+            fOut.println("Modified:");
+            for(Modification m : modifiedD) {
+                fOut.println("\t" +m.name);
+                for(String s : m.differences) {
+                    fOut.println("\t\t" +s);
+                }
+            }
+            fOut.close();
+        }
+        
+    }
+    
+    private static class Modification {
+        String name;
+        ArrayList<String> differences;
+        
+        public Modification(String name) {
+            this.name = name;
+            differences = new ArrayList<>();
+        }
     }
     
 }

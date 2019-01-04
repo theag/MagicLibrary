@@ -398,5 +398,289 @@ public class Card implements Comparable<Card> {
         }
         return rv;
     }
+
+    void listDifferences(Card otherCard, ArrayList<String> differences) {
+        //type
+        String mine = getAllTypeString();
+        String other = otherCard.getAllTypeString();
+        if(mine.compareToIgnoreCase(other) != 0) {
+            differences.add("Type (Local: " +mine +" Drive: " +other +")");
+        }
+        //mana
+        int untypedMine = 0;
+        int xCountMine = 0;
+        int[] manaCountMine = new int[20];
+        int index, prime;
+        for(String s : manaCost) {
+            index = -1;
+            switch(s.charAt(0)) {
+                case 'W':
+                    index = 0;
+                    prime = 2;
+                    break;
+                case 'U':
+                    index = 1;
+                    prime = 3;
+                    break;
+                case 'B':
+                    index = 2;
+                    prime = 5;
+                    break;
+                case 'R':
+                    index = 3;
+                    prime = 7;
+                    break;
+                case 'G':
+                    index = 4;
+                    prime = 11;
+                    break;
+                case 'X':
+                    prime = 0;
+                    xCountMine++;
+                    break;
+                default:
+                    prime = 0;
+                    untypedMine += Integer.parseInt(s);
+                    break;
+            }
+            if(index >= 0 && s.length() == 2) {
+                switch(s.charAt(1)) {
+                    case 'W':
+                        prime *= 2;
+                        break;
+                    case 'U':
+                        prime *= 3;
+                        break;
+                    case 'B':
+                        prime *= 5;
+                        break;
+                    case 'R':
+                        prime *= 7;
+                        break;
+                    case 'G':
+                        prime *= 11;
+                        break;
+                    case 'P':
+                        prime = 0;
+                        index += 5;
+                        break;
+                }
+                if(prime != 0) {
+                    switch(prime) {
+                        case 4:
+                            index = 0;
+                            break;
+                        case 6:
+                            index = 10;
+                            break;
+                        case 10:
+                            index = 11;
+                            break;
+                        case 14:
+                            index = 12;
+                            break;
+                        case 22:
+                            index = 13;
+                            break;
+                        case 9:
+                            index = 1;
+                            break;
+                        case 15:
+                            index = 14;
+                            break;
+                        case 21:
+                            index = 15;
+                            break;
+                        case 33:
+                            index = 16;
+                            break;
+                        case 25:
+                            index = 2;
+                            break;
+                        case 35:
+                            index = 17;
+                            break;
+                        case 55:
+                            index = 18;
+                            break;
+                        case 49:
+                            index = 3;
+                            break;
+                        case 77:
+                            index = 19;
+                            break;
+                        case 121:
+                            index = 4;
+                            break;
+                    }
+                }
+                manaCountMine[index]++;
+            } else if(index >= 0) {
+                manaCountMine[index]++;
+            }
+        }
+        int untypedOther = 0;
+        int xCountOther = 0;
+        int[] manaCountOther = new int[20];
+        for(String s : otherCard.manaCost) {
+            index = -1;
+            switch(s.charAt(0)) {
+                case 'W':
+                    index = 0;
+                    prime = 2;
+                    break;
+                case 'U':
+                    index = 1;
+                    prime = 3;
+                    break;
+                case 'B':
+                    index = 2;
+                    prime = 5;
+                    break;
+                case 'R':
+                    index = 3;
+                    prime = 7;
+                    break;
+                case 'G':
+                    index = 4;
+                    prime = 11;
+                    break;
+                case 'X':
+                    prime = 0;
+                    xCountOther++;
+                    break;
+                default:
+                    prime = 0;
+                    untypedOther += Integer.parseInt(s);
+                    break;
+            }
+            if(index >= 0 && s.length() == 2) {
+                switch(s.charAt(1)) {
+                    case 'W':
+                        prime *= 2;
+                        break;
+                    case 'U':
+                        prime *= 3;
+                        break;
+                    case 'B':
+                        prime *= 5;
+                        break;
+                    case 'R':
+                        prime *= 7;
+                        break;
+                    case 'G':
+                        prime *= 11;
+                        break;
+                    case 'P':
+                        prime = 0;
+                        index += 5;
+                        break;
+                }
+                if(prime != 0) {
+                    switch(prime) {
+                        case 4:
+                            index = 0;
+                            break;
+                        case 6:
+                            index = 10;
+                            break;
+                        case 10:
+                            index = 11;
+                            break;
+                        case 14:
+                            index = 12;
+                            break;
+                        case 22:
+                            index = 13;
+                            break;
+                        case 9:
+                            index = 1;
+                            break;
+                        case 15:
+                            index = 14;
+                            break;
+                        case 21:
+                            index = 15;
+                            break;
+                        case 33:
+                            index = 16;
+                            break;
+                        case 25:
+                            index = 2;
+                            break;
+                        case 35:
+                            index = 17;
+                            break;
+                        case 55:
+                            index = 18;
+                            break;
+                        case 49:
+                            index = 3;
+                            break;
+                        case 77:
+                            index = 19;
+                            break;
+                        case 121:
+                            index = 4;
+                            break;
+                    }
+                }
+                manaCountOther[index]++;
+            } else if(index >= 0) {
+                manaCountOther[index]++;
+            }
+        }
+        boolean foundDiff = false;
+        for(int i = 0; i < 20; i++) {
+            if(manaCountMine[i] != manaCountOther[i]) {
+                foundDiff = true;
+                break;
+            }
+        }
+        if(foundDiff || untypedMine != untypedOther || xCountMine != xCountOther) {
+            differences.add("Mana Cost (Local: " +getManaString() +" Drive: " +otherCard.getManaString() +")");
+        }
+        //text
+        if(text.compareToIgnoreCase(otherCard.text) != 0) {
+            differences.add("Text (Local: " +text +" Drive: " +otherCard.text +")");
+        }
+        //power toughnes loyalty
+        if(stringCompare(power, otherCard.power) != 0 || stringCompare(toughness,otherCard.toughness) != 0) {
+            differences.add("Power/Toughness (Local: " +power +"/" +toughness +" Drive: " +otherCard.power +"/" +otherCard.toughness +")");
+        } else if(stringCompare(loyalty,otherCard.loyalty) != 0) {
+            differences.add("Loyalty (Local: " +loyalty +" Drive: " +otherCard.loyalty +")");
+        }
+        //notes
+        if(stringCompare(notes,otherCard.notes) != 0) {
+            differences.add("Notes (Local: " +notes +" Drive: " +otherCard.notes +")");
+        }
+        //count
+        if(count != otherCard.count) {
+            differences.add("Count (Local: " +count +" Drive: " +otherCard.count +")");
+        }
+    }
+
+    private String getManaString() {
+        String rv = "";
+        for(String s : manaCost) {
+            if(!rv.isEmpty()) {
+                rv += ",";
+            }
+            rv += s;
+        }
+        return rv;
+    }
+
+    private int stringCompare(String s1, String s2) {
+        if(s1 == null && s2 == null) {
+            return 0;
+        } else if(s1 == null) {
+            return -1;
+        } else if(s2 == null) {
+            return 1;
+        } else {
+            return s1.compareToIgnoreCase(s2);
+        }
+    }
     
 }

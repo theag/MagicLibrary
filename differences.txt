@@ -1,0 +1,23 @@
+Magic Library
+Difference Report
+Jan 4, 2019 1:01:10 PM
+
+Cards
+-----
+Drive Only:
+	Aether Vial
+
+Local Only:
+	Sapphire Medallion
+
+Modified:
+	Glistener Elf
+		Count (Local: 4 Drive: 0)
+
+Decks
+-----
+Drive Only:
+
+Local Only:
+
+Modified:

@@ -135,6 +135,10 @@ public class Deck implements Comparable<Deck>, Iterable<Deck.DeckCard> {
             Collections.sort(cards);
         }
     }
+
+    void listDifferences(Deck otherDeck, ArrayList<String> differences) {
+        
+    }
     
     public static class DeckCard implements Comparable<DeckCard> {
         

@@ -40,7 +40,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         if(fc.exists() && fd.exists()) {
             try {
                 Library.makeLibrary(fc, fd);
-            } catch (IOException ex) {
+            } catch (Exception ex) {
                 System.out.println("Library creation failed");
                 System.out.println(ex.getMessage());
                 ex.printStackTrace(System.out);
@@ -81,6 +81,10 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         miJSONCard = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         miNewDeck = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        miUpload = new javax.swing.JMenuItem();
+        miDownload = new javax.swing.JMenuItem();
+        miDifferences = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magic Library");
@@ -159,6 +163,34 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         jMenu1.add(miNewDeck);
 
         mbMain.add(jMenu1);
+
+        jMenu2.setText("Google Sync");
+
+        miUpload.setText("Upload to Google");
+        miUpload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miUploadActionPerformed(evt);
+            }
+        });
+        jMenu2.add(miUpload);
+
+        miDownload.setText("Download from Google");
+        miDownload.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miDownloadActionPerformed(evt);
+            }
+        });
+        jMenu2.add(miDownload);
+
+        miDifferences.setText("Show Differences");
+        miDifferences.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miDifferencesActionPerformed(evt);
+            }
+        });
+        jMenu2.add(miDifferences);
+
+        mbMain.add(jMenu2);
 
         setJMenuBar(mbMain);
 
@@ -255,6 +287,44 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         }
     }//GEN-LAST:event_btnDecksActionPerformed
 
+    private void miUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUploadActionPerformed
+        try {
+            GoogleDriveInterface gdi = new GoogleDriveInterface();
+            //todo: branch off and show upload dialog
+            gdi.uploadFiles(fc, fd);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace(System.out);
+        }
+    }//GEN-LAST:event_miUploadActionPerformed
+
+    private void miDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDownloadActionPerformed
+        try {
+            GoogleDriveInterface gdi = new GoogleDriveInterface();
+            //todo: branch off and show download dialog
+            gdi.downloadFiles(fc, fd);
+            Library.makeLibrary(fc, fd);
+            ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
+            updateDecks();
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace(System.out);
+        }
+    }//GEN-LAST:event_miDownloadActionPerformed
+
+    private void miDifferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDifferencesActionPerformed
+        try {
+            GoogleDriveInterface gdi = new GoogleDriveInterface();
+            //todo: branch off and show download dialog
+            gdi.downloadFiles(fc, fd);
+            Library.Differences differences = Library.getDifferences(fc, fd);
+            differences.save(new File("differences.txt"));
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace(System.out);
+        }
+    }//GEN-LAST:event_miDifferencesActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -295,11 +365,15 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JToggleButton btnCards;
     private javax.swing.JToggleButton btnDecks;
     private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu mCard;
     private javax.swing.JMenuBar mbMain;
+    private javax.swing.JMenuItem miDifferences;
+    private javax.swing.JMenuItem miDownload;
     private javax.swing.JMenuItem miJSONCard;
     private javax.swing.JMenuItem miNewCard;
     private javax.swing.JMenuItem miNewDeck;
+    private javax.swing.JMenuItem miUpload;
     private javax.swing.JPanel pnlMain;
     private javax.swing.JToolBar tbMain;
     // End of variables declaration//GEN-END:variables
