@@ -89,7 +89,6 @@ public class CardDialog extends javax.swing.JDialog {
             } else if(card.power != null) {
                 txtLPT.setText(card.power +"/" +card.toughness);
             }
-            //todo: txtDecks.setText(Library.getInstance().getDeckString(card));
             if(card.notes != null) {
                 txtNotes.setText(card.notes);
             }

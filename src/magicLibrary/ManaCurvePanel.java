@@ -8,7 +8,6 @@ package magicLibrary;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Graphics2D;
 
 /**
  *
@@ -101,7 +100,9 @@ public class ManaCurvePanel extends javax.swing.JPanel {
         for(int i = 1; i <= max; i++) {
             y = xAxis - dy*i;
             g.drawLine(yAxis - 2, y, yAxis, y);
-            g.drawString(""+i, yAxis - 2 - fm.stringWidth(""+i), y + fm.getAscent()/2);
+            if(fm.getAscent() < dy || i%2 == 0) {
+                g.drawString(""+i, yAxis - 2 - fm.stringWidth(""+i), y + fm.getAscent()/2);
+            }
         }
         g.drawString("C", 4, (xAxis - 2 + fm.getAscent())/2 - 2*fm.getAscent());
         g.drawString("o", 4, (xAxis - 2 + fm.getAscent())/2 - fm.getAscent());

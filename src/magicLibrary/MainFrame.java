@@ -26,6 +26,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }
     
     private int current;
+    private String[] panels;
     private File fc;
     private File fd;
     
@@ -45,16 +46,20 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
                 ex.printStackTrace(System.out);
             }
         }
+        panels = new String[2];
         pnlMain.setLayout(new CardLayout());
         LibraryPanel pnlLib = new SimpleLibraryPanel();
         pnlLib.addChangePanelListener(this);
-        pnlMain.add(pnlLib, "Simple");
+        panels[0] = "Simple";
+        pnlMain.add(pnlLib, panels[0]);
         pnlLib = new AdvancedLibraryPanel();
         pnlLib.addChangePanelListener(this);
-        pnlMain.add(pnlLib, "Advanced");
-        pnlMain.add(new DeckPanel(), "Deck");
+        panels[1] = "Advanced";
+        pnlMain.add(pnlLib, panels[1]);
+        pnlMain.add(new DeckPanel(), "Decks");
         current = 0;
         setLocationRelativeTo(null);
+        pack();
     }
 
     /**
@@ -67,13 +72,15 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private void initComponents() {
 
         pnlMain = new javax.swing.JPanel();
+        tbMain = new javax.swing.JToolBar();
+        btnCards = new javax.swing.JToggleButton();
+        btnDecks = new javax.swing.JToggleButton();
         mbMain = new javax.swing.JMenuBar();
         mCard = new javax.swing.JMenu();
         miNewCard = new javax.swing.JMenuItem();
         miJSONCard = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         miNewDeck = new javax.swing.JMenuItem();
-        miDeckMode = new javax.swing.JCheckBoxMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Magic Library");
@@ -91,8 +98,35 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 662, Short.MAX_VALUE)
+            .addGap(0, 618, Short.MAX_VALUE)
         );
+
+        tbMain.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, java.awt.Color.gray));
+        tbMain.setFloatable(false);
+        tbMain.setRollover(true);
+
+        btnCards.setSelected(true);
+        btnCards.setText("Cards");
+        btnCards.setFocusable(false);
+        btnCards.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnCards.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnCards.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCardsActionPerformed(evt);
+            }
+        });
+        tbMain.add(btnCards);
+
+        btnDecks.setText("Decks");
+        btnDecks.setFocusable(false);
+        btnDecks.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        btnDecks.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        btnDecks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDecksActionPerformed(evt);
+            }
+        });
+        tbMain.add(btnDecks);
 
         mCard.setText("Card");
 
@@ -124,14 +158,6 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         });
         jMenu1.add(miNewDeck);
 
-        miDeckMode.setText("Deck Mode");
-        miDeckMode.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                miDeckModeActionPerformed(evt);
-            }
-        });
-        jMenu1.add(miDeckMode);
-
         mbMain.add(jMenu1);
 
         setJMenuBar(mbMain);
@@ -141,10 +167,15 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addComponent(tbMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tbMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(2, 2, 2))
         );
 
         pack();
@@ -165,13 +196,13 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         if(c != null) {
             if(Library.getInstance().addCard(c)) {
                 ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
-                ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(true);
+                updateDecks();
             } else {
                 int result = JOptionPane.showConfirmDialog(this, "You already have " +c.name +" in your library, edit now?", "Add to Library", JOptionPane.YES_NO_OPTION, JOptionPane.ERROR_MESSAGE);
                 if(result == JOptionPane.YES_OPTION) {
                     if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().getCardByName(c.name))) {
                         ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
-                        ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(true);
+                        updateDecks();
                     }
                 }
             }
@@ -182,7 +213,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         try {
             if(JSONCardDialog.showDialog(this)) {
                 ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
-                ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(true);
+                updateDecks();
             }
         } catch (FileNotFoundException ex) {
             System.out.println("Couldn't find JSON file.");
@@ -190,17 +221,6 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             ex.printStackTrace(System.out);
         }
     }//GEN-LAST:event_miJSONCardActionPerformed
-
-    private void miDeckModeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckModeActionPerformed
-        CardLayout lo = (CardLayout)pnlMain.getLayout();
-        if(miDeckMode.isSelected()) {
-            lo.show(pnlMain, "Deck");
-        } else if(current == 0) {
-            lo.show(pnlMain, "Simple");
-        } else {
-            lo.show(pnlMain, "Advanced");
-        }
-    }//GEN-LAST:event_miDeckModeActionPerformed
 
     private void miNewDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewDeckActionPerformed
         String result = JOptionPane.showInputDialog(this, "Enter new deck name", "New Deck", JOptionPane.QUESTION_MESSAGE);
@@ -214,6 +234,26 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             }
         }
     }//GEN-LAST:event_miNewDeckActionPerformed
+
+    private void btnCardsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCardsActionPerformed
+        if(btnCards.isSelected()) {
+            CardLayout lo = (CardLayout)pnlMain.getLayout();
+            lo.show(pnlMain, panels[current]);
+            btnDecks.setSelected(false);
+        } else {
+            btnCards.setSelected(true);
+        }
+    }//GEN-LAST:event_btnCardsActionPerformed
+
+    private void btnDecksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDecksActionPerformed
+        if(btnDecks.isSelected()) {
+            CardLayout lo = (CardLayout)pnlMain.getLayout();
+            lo.show(pnlMain, "Decks");
+            btnCards.setSelected(false);
+        } else {
+            btnDecks.setSelected(true);
+        }
+    }//GEN-LAST:event_btnDecksActionPerformed
 
     /**
      * @param args the command line arguments
@@ -252,14 +292,16 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JToggleButton btnCards;
+    private javax.swing.JToggleButton btnDecks;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu mCard;
     private javax.swing.JMenuBar mbMain;
-    private javax.swing.JCheckBoxMenuItem miDeckMode;
     private javax.swing.JMenuItem miJSONCard;
     private javax.swing.JMenuItem miNewCard;
     private javax.swing.JMenuItem miNewDeck;
     private javax.swing.JPanel pnlMain;
+    private javax.swing.JToolBar tbMain;
     // End of variables declaration//GEN-END:variables
 
     @Override
@@ -276,6 +318,10 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         }
         CardLayout lo = (CardLayout)pnlMain.getLayout();
         lo.show(pnlMain, newPanelName);
+    }
+
+    void updateDecks() {
+        ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(true);
     }
 
 }

@@ -20,6 +20,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
         cd.pack();
         cd.setVisible(true);
         if(cd.saved) {
+            card.count = (int)cd.spnCount.getValue();
             card.notes = cd.txtNotes.getText();
         }
         cd.dispose();
@@ -52,7 +53,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
         }
         spnCount.setValue(card.count);
         lblUpdated.setText("Last Updated: " +card.formatUpdate());
-        //todo: lblDecks.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblDecks.getWidth(), card.getDeckString()));
+        lblDecks.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblDecks.getWidth(), Library.getInstance().getDeckListString(card)));
         txtNotes.setText(card.notes);
     }
 

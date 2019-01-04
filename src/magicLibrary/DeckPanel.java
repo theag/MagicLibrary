@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.util.ArrayList;
 import javax.swing.AbstractListModel;
 import javax.swing.ComboBoxModel;
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 /**
@@ -18,7 +19,7 @@ import javax.swing.table.AbstractTableModel;
 public class DeckPanel extends javax.swing.JPanel {
 
     private ManaCurvePanel pnlManaCurve;
-    private DeckComboBoxModel model;
+    private final DeckComboBoxModel model;
     
     /**
      * Creates new form DeckPanel
@@ -26,7 +27,7 @@ public class DeckPanel extends javax.swing.JPanel {
     public DeckPanel() {
         model = new DeckComboBoxModel();
         initComponents();
-        setModels(true);
+        setModels(true, true);
         tblDeck.setRowHeight(ManaPanel.DOT_SIZE + 1 + 4);
         tblDeck.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
     }
@@ -204,12 +205,12 @@ public class DeckPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void cbDecksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDecksActionPerformed
-        setModels(false);
+        setModels(false, true);
     }//GEN-LAST:event_cbDecksActionPerformed
 
     private void lstLandMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstLandMouseClicked
         if(evt.getClickCount() == 2) {
-            DeckCardDialog.showDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)lstLand.getSelectedValue()));
+            DeckCardDialog.showDialog(MainFrame.getInstance(), ((Deck.DeckCard)lstLand.getSelectedValue()).card);
         }
     }//GEN-LAST:event_lstLandMouseClicked
 
@@ -251,12 +252,18 @@ public class DeckPanel extends javax.swing.JPanel {
     private javax.swing.JTable tblSpreads;
     // End of variables declaration//GEN-END:variables
 
-    private void setModels(boolean setting) {
+    private void setModels(boolean setting, boolean deckChange) {
         Deck d = (Deck)cbDecks.getSelectedItem();
         if(d != null) {
-            ArrayList<Card> land = new ArrayList<>();
+            ArrayList<Deck.DeckCard> land = new ArrayList<>();
             int cmc;
             int maxCMC = 0;
+            for(int i = 0; i < d.size(); i++) {
+                cmc = d.get(i).card.getCMC();
+                if(cmc > maxCMC) {
+                    maxCMC = cmc;
+                }
+            }
             int[] curve = new int[maxCMC+1];
             int total = 0;
             int totalLand = 0;
@@ -271,24 +278,25 @@ public class DeckPanel extends javax.swing.JPanel {
                 dc = d.get(i);
                 for(String t : dc.card.type) {
                     if(t.compareToIgnoreCase("land") == 0) {
-                        land.add(dc.card);
+                        land.add(dc);
+                        totalLand += dc.count;
                     }
                 }
                 cmc = dc.card.getCMC();
                 if(cmc > maxCMC) {
                     maxCMC = cmc;
                 }
-                curve[cmc]++;
+                curve[cmc] += dc.count;
                 total += dc.count;
                 mana = dc.card.getColours();
                 manaName = getManaName(mana);
                 if(!manaName.isEmpty()) {
                     if(countNames.contains(manaName)) {
                         index = countNames.indexOf(manaName);
-                        countCounts.set(index, countCounts.get(index)+1);
+                        countCounts.set(index, countCounts.get(index)+dc.count);
                     } else {
                         countNames.add(manaName);
-                        countCounts.add(1);
+                        countCounts.add(dc.count);
                     }
                 }
                 for(String m : dc.card.manaCost) {
@@ -296,10 +304,10 @@ public class DeckPanel extends javax.swing.JPanel {
                     if(!manaName.isEmpty()) {
                         if(spreadNames.contains(manaName)) {
                             index = spreadNames.indexOf(manaName);
-                            spreadCounts.set(index, spreadCounts.get(index)+1);
+                            spreadCounts.set(index, spreadCounts.get(index)+dc.count);
                         } else {
                             spreadNames.add(manaName);
-                            spreadCounts.add(1);
+                            spreadCounts.add(dc.count);
                         }
                     }
                 }
@@ -308,15 +316,34 @@ public class DeckPanel extends javax.swing.JPanel {
             lblTotal.setText("Total Card Count: " +total +" ");
             lblLand.setText("Land (" +totalLand +")");
             if(setting) {
-                tblDeck.setModel(new DeckTableModel(d));
+                DeckTableModel m = new DeckTableModel(d);
+                m.addCardCountListener(new CardCountListener() {
+                    @Override
+                    public void error(String message) {
+                        cardCountError(message);
+                    }
+
+                    @Override
+                    public void removeCard(int row) {
+                        removeCardFromDeck(row);
+                    }
+
+                    @Override
+                    public void updatedCard() {
+                        setModels(false, false);
+                    }
+                });
+                tblDeck.setModel(m);
                 tblCounts.setModel(new ColourCountModel(countNames, countCounts));
                 tblSpreads.setModel(new ColourCountModel(spreadNames, spreadCounts));
                 pnlManaCurve = new ManaCurvePanel(curve);
                 pnlManaCurveHolder.setLayout(new BorderLayout());
                 pnlManaCurveHolder.add(pnlManaCurve, BorderLayout.CENTER);
             } else {
-                DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
-                m1.update(d);
+                if(deckChange) {
+                    DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
+                    m1.update(d);
+                }
                 ColourCountModel m2 = (ColourCountModel)tblCounts.getModel();
                 m2.update(countNames, countCounts);
                 m2 = (ColourCountModel)tblSpreads.getModel();
@@ -387,10 +414,24 @@ public class DeckPanel extends javax.swing.JPanel {
         }
         return rv;
     }
+    
+    private void cardCountError(String message) {
+        JOptionPane.showMessageDialog(MainFrame.getInstance(), message, "Edit Card Count", JOptionPane.ERROR_MESSAGE);
+    }
+    
+    private void removeCardFromDeck(int row) {
+        Deck d = (Deck)cbDecks.getSelectedItem();
+        Deck.DeckCard dc = d.get(row);
+        int result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), "This will remove " +dc.card.name +" from " +d.name +". Are you sure?", "Edit Card Count", JOptionPane.YES_NO_OPTION, JOptionPane.WARNING_MESSAGE);
+        if(result == JOptionPane.YES_OPTION) {
+            d.removeCard(dc.card);
+            fireLibraryChanged(true);
+        }
+    }
 
     void fireLibraryChanged(boolean cardChange) {
         if(cardChange) {
-            //todo: update other models
+            setModels(false, false);
         } else {
             model.fireLibraryChanged();
         }
@@ -517,6 +558,47 @@ public class DeckPanel extends javax.swing.JPanel {
             }
         }
         
+        public void addCardCountListener(CardCountListener listener) {
+            listenerList.add(CardCountListener.class, listener);
+        }
+        
+        @Override
+        public boolean isCellEditable(int rowIndex, int columnIndex) {
+            return columnIndex == 4;
+        }
+        
+        @Override
+        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            try {
+                int count = Integer.parseInt((String)aValue);
+                if(count == 0) {
+                    for(CardCountListener listener : listenerList.getListeners(CardCountListener.class)) {
+                        listener.removeCard(rowIndex);
+                    }
+                } else if(count < 0) {
+                    for(CardCountListener listener : listenerList.getListeners(CardCountListener.class)) {
+                        listener.error("Card count cannot be below zero.");
+                    }
+                } else {
+                    Deck.DeckCard dc = deck.get(rowIndex);
+                    dc.count = count;
+                    for(CardCountListener listener : listenerList.getListeners(CardCountListener.class)) {
+                        listener.updatedCard();
+                    }
+                }
+            } catch(NumberFormatException ex) {
+                for(CardCountListener listener : listenerList.getListeners(CardCountListener.class)) {
+                    listener.error(aValue +" is not a number.");
+                }
+            }
+        }
+        
+    }
+    
+    private static interface CardCountListener extends java.util.EventListener {
+        void error(String message);
+        void removeCard(int row);
+        void updatedCard();
     }
     
     private static class ColourCountModel extends AbstractTableModel {

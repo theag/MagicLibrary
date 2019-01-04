@@ -36,6 +36,7 @@ public class Deck implements Comparable<Deck>, Iterable<Deck.DeckCard> {
         this.cards = new ArrayList<>();
         while(count > 0) {
             this.cards.add(new DeckCard(cards.get(buffer.getInt()), buffer.getInt()));
+            count--;
         }
     }
     
@@ -148,6 +149,11 @@ public class Deck implements Comparable<Deck>, Iterable<Deck.DeckCard> {
         public DeckCard(Card card, int count) {
             this.card = card;
             this.count = count;
+        }
+        
+        @Override
+        public String toString() {
+            return card.name +" (" +count +")";
         }
 
         @Override

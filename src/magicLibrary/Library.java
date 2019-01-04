@@ -86,7 +86,7 @@ public class Library implements Iterable<Card> {
     }
     
     public void save(File cardFile, File deckFile) throws IOException {
-        int size = 8;
+        int size = 4;
         for(Card c : cards) {
             size += c.saveSize();
         }
@@ -243,6 +243,30 @@ public class Library implements Iterable<Card> {
 
     int getDeckIndex(Deck deck) {
         return decks.indexOf(deck);
+    }
+
+    String getDeckListString() {
+        String rv = "";
+        for(Deck d : decks) {
+            if(!rv.isEmpty()) {
+                rv += "\n";
+            }
+            rv += d.name;
+        }
+        return rv;
+    }
+    
+    String getDeckListString(Card card) {
+        String rv = "";
+        for(Deck d : decks) {
+            if(d.hasCard(card)) {
+                if(!rv.isEmpty()) {
+                    rv += "\n";
+                }
+                rv += d.name;
+            }
+        }
+        return rv;
     }
     
 }

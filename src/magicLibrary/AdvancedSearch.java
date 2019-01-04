@@ -21,7 +21,7 @@ public class AdvancedSearch {
     public int[] cmc;
     public boolean textAnd;
     public String[] text;
-    public String[] decks;
+    public Deck[] decks;
     
     public AdvancedSearch() {
         allAnd = true;
@@ -141,18 +141,17 @@ public class AdvancedSearch {
                 }
             }
         }
-        //todo:decks
-        //if(decks == null) {
+        if(decks == null) {
             results[5] = allAnd;
-        /*} else {
+        } else {
             results[5] = false;
-            for(String d : decks) {
-                if(card.decks.contains(d)) {
+            for(Deck d : decks) {
+                if(d.hasCard(card)) {
                     results[5] = true;
                     break;
                 }
             }
-        }*/
+        }
         
         boolean rv = allAnd;
         if(allAnd) {

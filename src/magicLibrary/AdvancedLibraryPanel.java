@@ -47,6 +47,16 @@ public class AdvancedLibraryPanel extends LibraryPanel {
                 btnAndOrActionPerformed(evt);
             }
         });
+        txtDecks.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
+        txtCMC.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSearchActionPerformed(evt);
+            }
+        });
     }
 
     /**
@@ -372,7 +382,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
             int index = lstCards.locationToIndex(evt.getPoint());
             if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index))) {
                 fireLibraryChanged();
-                //todo: update decks
+                MainFrame.getInstance().updateDecks();
             }
         }
     }//GEN-LAST:event_lstCardsMouseClicked
@@ -382,7 +392,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
     }//GEN-LAST:event_btnSimpleActionPerformed
 
     private void btnViewDecksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnViewDecksActionPerformed
-        //todo: JOptionPane.showMessageDialog(MainFrame.getInstance(), Library.getInstance().getDeckListString(), "Decks", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(MainFrame.getInstance(), Library.getInstance().getDeckListString(), "Decks", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_btnViewDecksActionPerformed
 
     private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
@@ -466,7 +476,18 @@ public class AdvancedLibraryPanel extends LibraryPanel {
         value = txtDecks.getText().trim();
         if(!value.isEmpty()) {
             something = true;
-            search.decks = value.split(",");
+            String[] deckNames = value.split(",");
+            Deck[] foundDecks = new Deck[deckNames.length];
+            count = 0;
+            Library l = Library.getInstance();
+            for(String d : deckNames) {
+                foundDecks[count] = l.getDeckByName(d);
+                if(foundDecks[count] != null) {
+                    count++;
+                }
+            }
+            search.decks = new Deck[count];
+            System.arraycopy(foundDecks, 0, search.decks, 0, count);
         }
         if(!something) {
             JOptionPane.showMessageDialog(MainFrame.getInstance(), "You must enter some criteria.", "Search", JOptionPane.ERROR_MESSAGE);
