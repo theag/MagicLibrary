@@ -288,21 +288,12 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }//GEN-LAST:event_btnDecksActionPerformed
 
     private void miUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUploadActionPerformed
-        try {
-            GoogleDriveInterface gdi = new GoogleDriveInterface();
-            //todo: branch off and show upload dialog
-            gdi.uploadFiles(fc, fd);
-        } catch (IOException ex) {
-            System.out.println(ex.getMessage());
-            ex.printStackTrace(System.out);
-        }
+        DriveDialog.showUploadDialog(this, fc, fd);
     }//GEN-LAST:event_miUploadActionPerformed
 
     private void miDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDownloadActionPerformed
         try {
-            GoogleDriveInterface gdi = new GoogleDriveInterface();
-            //todo: branch off and show download dialog
-            gdi.downloadFiles(fc, fd);
+            DriveDialog.showDownloadDialog(this, fc, fd);
             Library.makeLibrary(fc, fd);
             ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
             updateDecks();
@@ -314,11 +305,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
 
     private void miDifferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDifferencesActionPerformed
         try {
-            GoogleDriveInterface gdi = new GoogleDriveInterface();
-            //todo: branch off and show download dialog
-            gdi.downloadFiles(fc, fd);
-            Library.Differences differences = Library.getDifferences(fc, fd);
-            differences.save(new File("differences.txt"));
+            DriveDialog.showDifferenceDialog(this, fc, fd).save(new File("differences.txt"));
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace(System.out);

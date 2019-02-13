@@ -56,6 +56,8 @@ public class DeckPanel extends javax.swing.JPanel {
         jScrollPane4 = new javax.swing.JScrollPane();
         lstLand = new javax.swing.JList();
         lblTotal = new javax.swing.JLabel();
+        btnEditName = new javax.swing.JButton();
+        btnDeleteDeck = new javax.swing.JButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -149,6 +151,15 @@ public class DeckPanel extends javax.swing.JPanel {
         lblTotal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTotal.setText("jLabel5");
 
+        btnEditName.setText("Edit Name");
+        btnEditName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditNameActionPerformed(evt);
+            }
+        });
+
+        btnDeleteDeck.setText("Delete Deck");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -158,9 +169,13 @@ public class DeckPanel extends javax.swing.JPanel {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnEditName)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnDeleteDeck)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 155, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 312, Short.MAX_VALUE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addComponent(jLabel1)
@@ -179,7 +194,9 @@ public class DeckPanel extends javax.swing.JPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(lblTotal))
+                    .addComponent(lblTotal)
+                    .addComponent(btnEditName)
+                    .addComponent(btnDeleteDeck))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
@@ -233,8 +250,19 @@ public class DeckPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_formComponentResized
 
+    private void btnEditNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditNameActionPerformed
+        String result = (String)JOptionPane.showInputDialog(this, "Enter new deck name", "Change " +cbDecks.getSelectedItem() +" Name", JOptionPane.QUESTION_MESSAGE, null, null, cbDecks.getSelectedItem());
+        if(result != null) {
+            Deck d = (Deck)cbDecks.getSelectedItem();
+            d.name = result;
+            model.fireLibraryChanged();
+        }
+    }//GEN-LAST:event_btnEditNameActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnDeleteDeck;
+    private javax.swing.JButton btnEditName;
     private javax.swing.JComboBox cbDecks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;

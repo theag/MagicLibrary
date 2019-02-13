@@ -137,7 +137,38 @@ public class Deck implements Comparable<Deck>, Iterable<Deck.DeckCard> {
     }
 
     void listDifferences(Deck otherDeck, ArrayList<String> differences) {
+        //drive only cards
+        int count = differences.size();
+        for(DeckCard dc : otherDeck.cards) {
+            if(!cards.contains(dc)) {
+                differences.add("\t" +dc.card.name);
+            }
+        }
+        if(differences.size() > count) {
+            differences.add(count, "Drive Only:");
+        }
+        //local only cards
+        count = differences.size();
+        for(DeckCard dc : cards) {
+            if(!otherDeck.cards.contains(dc)) {
+                differences.add("\t" +dc.card.name);
+            }
+        }
+        if(differences.size() > count) {
+            differences.add(count, "Local Only:");
+        }
         
+        //diff number cards
+        count = differences.size();
+        for(DeckCard dc : otherDeck.cards) {
+            int index = cards.indexOf(dc);
+            if(index >= 0 && cards.get(index).count != dc.count) {
+                differences.add("\t" +dc.card.name +" Drive: " +dc.count +", Local: " +cards.get(index).count);
+            }
+        }
+        if(differences.size() > count) {
+            differences.add(count, "Modified:");
+        }
     }
     
     public static class DeckCard implements Comparable<DeckCard> {
