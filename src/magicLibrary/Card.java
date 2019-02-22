@@ -30,6 +30,7 @@ public class Card implements Comparable<Card> {
     public String toughness;
     public String loyalty;
     public String notes;
+    public boolean addsMana;
     public int count;
     public long lastUpdated;
 
@@ -139,6 +140,8 @@ public class Card implements Comparable<Card> {
                 chr = buffer.getChar();
             }
         }
+        Byte b = buffer.get();
+        addsMana = b == 1;
         count = buffer.getInt();
         lastUpdated = buffer.getLong();
     }
@@ -224,7 +227,7 @@ public class Card implements Comparable<Card> {
         } else {
             rv += 2*(notes.length() + 1);
         }
-        rv += 4 + 8;
+        rv += 4 + 8 + 1;
         return rv;
     }
 
@@ -308,6 +311,11 @@ public class Card implements Comparable<Card> {
                 buffer.putChar(notes.charAt(i));
             }
             buffer.putChar(Library.ETX);
+        }
+        if(addsMana) {
+           buffer.put((byte)1);
+        } else {
+            buffer.put((byte)0);
         }
         buffer.putInt(count);
         buffer.putLong(lastUpdated);
@@ -681,6 +689,15 @@ public class Card implements Comparable<Card> {
         } else {
             return s1.compareToIgnoreCase(s2);
         }
+    }
+
+    boolean hasType(String type) {
+        for(String t : this.type) {
+            if(t.compareToIgnoreCase(type) == 0) {
+                return true;
+            }
+        }
+        return false;
     }
     
 }

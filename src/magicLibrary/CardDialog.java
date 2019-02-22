@@ -93,6 +93,7 @@ public class CardDialog extends javax.swing.JDialog {
                 txtNotes.setText(card.notes);
             }
             spnCount.setValue(card.count);
+            cbAddsMana.setSelected(card.addsMana);
             lblUpdated.setText("Last Updated: " +card.formatUpdate());
         } else {
             setTitle("New Card");
@@ -142,6 +143,7 @@ public class CardDialog extends javax.swing.JDialog {
         btnAddToDeck = new javax.swing.JButton();
         btnEditDeckCount = new javax.swing.JButton();
         btnRemoveFromDeck = new javax.swing.JButton();
+        cbAddsMana = new javax.swing.JCheckBox();
 
         txtSuperType.setColumns(6);
 
@@ -232,6 +234,8 @@ public class CardDialog extends javax.swing.JDialog {
             }
         });
 
+        cbAddsMana.setText("Adds Mana");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -267,11 +271,15 @@ public class CardDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
-                            .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblUpdated)
                             .addComponent(jLabel2)
                             .addGroup(layout.createSequentialGroup()
-                                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                        .addComponent(cbAddsMana))
+                                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 180, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(btnAddToDeck)
@@ -298,7 +306,9 @@ public class CardDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtLPT, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbAddsMana))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblUpdated)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -440,6 +450,7 @@ public class CardDialog extends javax.swing.JDialog {
             card.toughness = null;
         }
         card.count = (int)spnCount.getValue();
+        card.addsMana = cbAddsMana.isSelected();
         deckModel.save(card);
         if(!txtNotes.getText().trim().isEmpty()) {
             card.notes = txtNotes.getText().trim();
@@ -475,6 +486,7 @@ public class CardDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnEditDeckCount;
     private javax.swing.JButton btnRemoveFromDeck;
     private javax.swing.JButton btnSave;
+    private javax.swing.JCheckBox cbAddsMana;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;

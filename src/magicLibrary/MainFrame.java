@@ -81,6 +81,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         miJSONCard = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         miNewDeck = new javax.swing.JMenuItem();
+        miDeckList = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         miUpload = new javax.swing.JMenuItem();
         miDownload = new javax.swing.JMenuItem();
@@ -161,6 +162,14 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             }
         });
         jMenu1.add(miNewDeck);
+
+        miDeckList.setText("Deck List");
+        miDeckList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miDeckListActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miDeckList);
 
         mbMain.add(jMenu1);
 
@@ -312,6 +321,13 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         }
     }//GEN-LAST:event_miDifferencesActionPerformed
 
+    private void miDeckListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckListActionPerformed
+        Deck result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        if(result != null) {
+            DeckListDialog.showDialog(this, result);
+        }
+    }//GEN-LAST:event_miDeckListActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -355,6 +371,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu mCard;
     private javax.swing.JMenuBar mbMain;
+    private javax.swing.JMenuItem miDeckList;
     private javax.swing.JMenuItem miDifferences;
     private javax.swing.JMenuItem miDownload;
     private javax.swing.JMenuItem miJSONCard;

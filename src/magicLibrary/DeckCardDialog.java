@@ -21,6 +21,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
         cd.setVisible(true);
         if(cd.saved) {
             card.count = (int)cd.spnCount.getValue();
+            card.addsMana = cd.cbAddsMana.isSelected();
             card.notes = cd.txtNotes.getText();
         }
         cd.dispose();
@@ -52,6 +53,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
             lblPTL.setText("");
         }
         spnCount.setValue(card.count);
+        cbAddsMana.setSelected(card.addsMana);
         lblUpdated.setText("Last Updated: " +card.formatUpdate());
         lblDecks.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblDecks.getWidth(), Library.getInstance().getDeckListString(card)));
         txtNotes.setText(card.notes);
@@ -81,6 +83,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
         txtNotes = new javax.swing.JTextArea();
         lblDecks = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        cbAddsMana = new javax.swing.JCheckBox();
 
         setTitle("View Card");
         setBackground(new java.awt.Color(255, 255, 255));
@@ -128,6 +131,8 @@ public class DeckCardDialog extends javax.swing.JDialog {
 
         lblDecks.setText("jLabel1");
 
+        cbAddsMana.setText("Adds Mana");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -153,10 +158,13 @@ public class DeckCardDialog extends javax.swing.JDialog {
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblType)
-                            .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblUpdated)
                             .addComponent(jLabel2)
-                            .addComponent(jLabel3))
+                            .addComponent(jLabel3)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addComponent(cbAddsMana)))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -176,7 +184,9 @@ public class DeckCardDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cbAddsMana))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblUpdated)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -209,6 +219,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnSave;
+    private javax.swing.JCheckBox cbAddsMana;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane3;

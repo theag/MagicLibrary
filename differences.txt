@@ -1,12 +1,15 @@
 Magic Library
 Difference Report
-Feb 13, 2019 4:06:44 PM
+Feb 14, 2019 11:01:24 AM
 
 Cards
 -----
 Drive Only:
 
 Local Only:
+	Fertilid
+	Krosan Grip
+	Rishkar, Peema Renegade
 
 Modified:
 
@@ -17,3 +20,8 @@ Drive Only:
 Local Only:
 
 Modified:
+	Zegana
+		Local Only:
+			Fertilid
+			Krosan Grip
+			Rishkar, Peema Renegade

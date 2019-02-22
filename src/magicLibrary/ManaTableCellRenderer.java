@@ -27,14 +27,13 @@ public class ManaTableCellRenderer implements TableCellRenderer {
 
         @Override
         public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            mp.setBorder(0, 0);
             if(value instanceof String) {
                 mp.setManaCost(new String[]{(String)value});
             } else {
                 mp.setManaCost((String[])value);
             }
-            if(mp.getBorderX() == 0) {
-                mp.setBorder((table.getColumnModel().getColumn(column).getWidth() - mp.getPreferredSize().width - 1)/2, 2);
-            }
+            mp.setBorder((table.getColumnModel().getColumn(column).getWidth() - mp.getPreferredSize().width - 1)/2, 2);
             if(isSelected) {
                 mp.setBackground(bg_sel);
             } else if(row%2 == 1) {
