@@ -82,6 +82,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         jMenu1 = new javax.swing.JMenu();
         miNewDeck = new javax.swing.JMenuItem();
         miDeckList = new javax.swing.JMenuItem();
+        miDeckNeedList = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         miUpload = new javax.swing.JMenuItem();
         miDownload = new javax.swing.JMenuItem();
@@ -170,6 +171,14 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             }
         });
         jMenu1.add(miDeckList);
+
+        miDeckNeedList.setText("Deck Need List");
+        miDeckNeedList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miDeckNeedListActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miDeckNeedList);
 
         mbMain.add(jMenu1);
 
@@ -328,6 +337,13 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         }
     }//GEN-LAST:event_miDeckListActionPerformed
 
+    private void miDeckNeedListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckNeedListActionPerformed
+        Deck result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck Need List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        if(result != null) {
+            DeckListDialog.showNeedDialog(this, result);
+        }
+    }//GEN-LAST:event_miDeckNeedListActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -372,6 +388,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JMenu mCard;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miDeckList;
+    private javax.swing.JMenuItem miDeckNeedList;
     private javax.swing.JMenuItem miDifferences;
     private javax.swing.JMenuItem miDownload;
     private javax.swing.JMenuItem miJSONCard;

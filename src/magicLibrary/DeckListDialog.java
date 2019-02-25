@@ -12,23 +12,35 @@ package magicLibrary;
 public class DeckListDialog extends javax.swing.JDialog {
 
     public static void showDialog(java.awt.Frame parent, Deck d) {
-        DeckListDialog dld = new DeckListDialog(parent, d);
+        DeckListDialog dld = new DeckListDialog(parent, d, false);
+        dld.setVisible(true);
+    }
+    
+    public static void showNeedDialog(java.awt.Frame parent, Deck d) {
+        DeckListDialog dld = new DeckListDialog(parent, d, true);
         dld.setVisible(true);
     }
     
     /**
      * Creates new form DeckListDialog
      */
-    private DeckListDialog(java.awt.Frame parent, Deck d) {
+    private DeckListDialog(java.awt.Frame parent, Deck d, boolean needOnly) {
         super(parent, true);
         initComponents();
         setTitle(d +" Deck List");
         String t = "";
         for(Deck.DeckCard dc : d) {
-            if(!t.isEmpty()) {
-                t += "\n";
+            if(needOnly && dc.count > dc.card.count) {
+                if(!t.isEmpty()) {
+                    t += "\n";
+                }
+                t += (dc.count - dc.card.count) +"x " +dc.card.name;
+            } else if(!needOnly) {
+                if(!t.isEmpty()) {
+                    t += "\n";
+                }
+                t += dc.count +"x " +dc.card.name;
             }
-            t += dc.count +"x " +dc.card.name;
         }
         txtList.setText(t);
         setLocationRelativeTo(parent);
