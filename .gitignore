@@ -7,5 +7,5 @@
 !/nbproject/project.properties
 
 # exclude google credentials
-/credentials/*
-/dist/credentials/*
+/credentials
+/dist/credentials
