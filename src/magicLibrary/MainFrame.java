@@ -81,6 +81,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         miJSONCard = new javax.swing.JMenuItem();
         jMenu1 = new javax.swing.JMenu();
         miNewDeck = new javax.swing.JMenuItem();
+        miNewDeckFromList = new javax.swing.JMenuItem();
         miDeckList = new javax.swing.JMenuItem();
         miDeckNeedList = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
@@ -163,6 +164,14 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             }
         });
         jMenu1.add(miNewDeck);
+
+        miNewDeckFromList.setText("New Deck from List");
+        miNewDeckFromList.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miNewDeckFromListActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miNewDeckFromList);
 
         miDeckList.setText("Deck List");
         miDeckList.addActionListener(new java.awt.event.ActionListener() {
@@ -329,7 +338,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
 
     private void miDifferencesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDifferencesActionPerformed
         try {
-            DriveDialog.showDifferenceDialog(this, fc, fd).save(new File("differences.txt"));
+            GoogleDifferenceDialog.showDialog(this, DriveDialog.showDifferenceDialog(this, fc, fd));
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
             ex.printStackTrace(System.out);
@@ -361,6 +370,22 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             DeckListDialog.showNeedDialog(this, result);
         }
     }//GEN-LAST:event_miDeckNeedListActionPerformed
+
+    private void miNewDeckFromListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miNewDeckFromListActionPerformed
+        try {
+            Deck d = NewDeckListDialog.showDialog(this);
+            if(d != null) {
+                if(Library.getInstance().addDeck(d)) {
+                    ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(false);
+                } else {
+                    JOptionPane.showMessageDialog(this, "You already have a deck called " +d.name +".", "New Deck", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        } catch (FileNotFoundException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace(System.out);
+        }
+    }//GEN-LAST:event_miNewDeckFromListActionPerformed
 
     /**
      * @param args the command line arguments
@@ -412,6 +437,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JMenuItem miJSONCard;
     private javax.swing.JMenuItem miNewCard;
     private javax.swing.JMenuItem miNewDeck;
+    private javax.swing.JMenuItem miNewDeckFromList;
     private javax.swing.JMenuItem miUpload;
     private javax.swing.JPanel pnlMain;
     private javax.swing.JToolBar tbMain;

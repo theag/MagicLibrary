@@ -381,6 +381,55 @@ public class Library implements Iterable<Card> {
             fOut.close();
         }
         
+        @Override
+        public String toString() {
+            String rv = "";
+            rv += "Magic Library\n";
+            rv += "Difference Report\n";
+            rv += dateF.format(new java.util.Date(timestamp))+"\n";
+            rv += "\n";
+            rv += "Cards\n";
+            rv += "-----\n";
+            rv += "Drive Only:\n";
+            for(String s : driveC) {
+                rv += "\t" +s +"\n";
+            }
+            rv += "\n";
+            rv += "Local Only:\n";
+            for(String s : localC) {
+                rv += "\t" +s +"\n";
+            }
+            rv += "\n";
+            rv += "Modified:\n";
+            for(Modification m : modifiedC) {
+                rv += "\t" +m.name +"\n";
+                for(String s : m.differences) {
+                    rv += "\t\t" +s +"\n";
+                }
+            }
+            rv += "\n";
+            rv += "Decks\n";
+            rv += "-----\n";
+            rv += "Drive Only:\n";
+            for(String s : driveD) {
+                rv += "\t" +s +"\n";
+            }
+            rv += "\n";
+            rv += "Local Only:\n";
+            for(String s : localD) {
+                rv += "\t" +s +"\n";
+            }
+            rv += "\n";
+            rv += "Modified:\n";
+            for(Modification m : modifiedD) {
+                rv += "\t" +m.name +"\n";
+                for(String s : m.differences) {
+                    rv += "\t\t" +s +"\n";
+                }
+            }
+            return rv;
+        }
+        
     }
     
     private static class Modification {

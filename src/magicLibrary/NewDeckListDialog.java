@@ -1,0 +1,258 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package magicLibrary;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+/**
+ *
+ * @author nbp184
+ */
+public class NewDeckListDialog extends javax.swing.JDialog {
+
+    public static Deck showDialog(java.awt.Frame parent) throws FileNotFoundException {
+        NewDeckListDialog dld = new NewDeckListDialog(parent);
+        dld.setVisible(true);
+        Deck d = null;
+        if(dld.saved) {
+            d = new Deck(dld.txtName.getText().trim());
+            Library l = Library.getInstance();
+            String[] lines = dld.txtList.getText().split("\n");
+            Matcher mat;
+            Card c;
+            JSONObject obj;
+            JSONArray arr;
+            long now = Calendar.getInstance().getTimeInMillis();
+            for(String line : lines) {
+                mat = patt.matcher(line);
+                mat.find();
+                c = l.getCardByName(mat.group(2));
+                if(c == null) {
+                    c = new Card();
+                    c.name = mat.group(2);
+                    obj = dld.cards.getJSONObject(mat.group(2));
+                    if(obj.has("supertypes")) {
+                        arr = obj.getJSONArray("supertypes");
+                        c.supertype = new String[arr.length()];
+                        for(int i = 0; i < arr.length(); i++) {
+                            c.supertype[i] = arr.getString(i);
+                        }
+                    } else {
+                        c.supertype = new String[0];
+                    }
+                    if(obj.has("types")) {
+                        arr = obj.getJSONArray("types");
+                        c.type = new String[arr.length()];
+                        for(int i = 0; i < arr.length(); i++) {
+                            c.type[i] = arr.getString(i);
+                        }
+                    } else {
+                        c.type = new String[0];
+                    }
+                    if(obj.has("subtypes")) {
+                        arr = obj.getJSONArray("subtypes");
+                        c.subtype = new String[arr.length()];
+                        for(int i = 0; i < arr.length(); i++) {
+                            c.subtype[i] = arr.getString(i);
+                        }
+                    } else {
+                        c.subtype = new String[0];
+                    }
+                    if(obj.has("manaCost")) {
+                        String cost = obj.getString("manaCost");
+                        cost = cost.substring(1, cost.length() - 1).replaceAll("/","");
+                        c.manaCost = cost.split("\\}\\{");
+                    } else {
+                        c.manaCost = new String[]{"0"};
+                    }
+                    if(obj.has("text")) {
+                        c.fancyText = obj.getString("text");
+                        c.text = c.fancyText;
+                    } else {
+                        c.text = "";
+                        c.fancyText = "";
+                    }
+                    if(obj.has("power")) {
+                        c.power = obj.getString("power");
+                    }
+                    if(obj.has("toughness")) {
+                        c.toughness = obj.getString("toughness");
+                    }
+                    if(obj.has("loyalty")) {
+                        c.loyalty = obj.getString("loyalty");
+                    }
+                    c.lastUpdated = now;
+                    l.addCard(c);
+                }
+                d.addCard(c, Integer.parseInt(mat.group(1)));
+            }
+        }
+        dld.dispose();
+        return d;
+    }
+    
+    private static final Pattern patt = Pattern.compile("(\\d+)x (.+)");
+    
+    private boolean saved;
+    private final JSONObject cards;
+    private final ArrayList<String> names;
+    
+    
+    /**
+     * Creates new form DeckListDialog
+     */
+    private NewDeckListDialog(java.awt.Frame parent) throws FileNotFoundException {
+        super(parent, true);
+        initComponents();
+        setLocationRelativeTo(parent);
+        cards = new JSONObject(new JSONTokener(new FileInputStream("AllCards.json")));
+        names = new ArrayList<>();
+        names.addAll(cards.keySet());
+        Collections.sort(names);
+        saved = false;
+    }
+
+    /**
+     * This method is called from within the constructor to initialize the form.
+     * WARNING: Do NOT modify this code. The content of this method is always
+     * regenerated by the Form Editor.
+     */
+    @SuppressWarnings("unchecked")
+    // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
+    private void initComponents() {
+
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtList = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        txtName = new javax.swing.JTextField();
+        jLabel2 = new javax.swing.JLabel();
+        btnSave = new javax.swing.JButton();
+        btnCancel = new javax.swing.JButton();
+
+        setTitle("New Deck From List");
+
+        txtList.setColumns(20);
+        txtList.setRows(5);
+        jScrollPane1.setViewportView(txtList);
+
+        jLabel1.setText("Deck Name");
+
+        jLabel2.setText("Deck List");
+
+        btnSave.setText("Save");
+        btnSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSaveActionPerformed(evt);
+            }
+        });
+
+        btnCancel.setText("Cancel");
+        btnCancel.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCancelActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                    .addComponent(txtName)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(btnSave)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnCancel)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSave)
+                    .addComponent(btnCancel))
+                .addContainerGap())
+        );
+
+        pack();
+    }// </editor-fold>//GEN-END:initComponents
+
+    private void btnSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSaveActionPerformed
+        if(txtName.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "You must enter a deck name.", "Save", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        Library l = Library.getInstance();
+        if(l.getDeckByName(txtName.getText().trim()) != null) {
+            JOptionPane.showMessageDialog(this, "You already have a deck called " +txtName.getText().trim() +".", "Save", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        String[] lines = txtList.getText().split("\n");
+        Matcher mat;
+        for(String line : lines) {
+            mat = patt.matcher(line);
+            if(mat.find()) {
+                try {
+                    int count = Integer.parseInt(mat.group(1));
+                } catch(NumberFormatException ex) {
+                    JOptionPane.showMessageDialog(this, "Line \"" +line +"\" isn't formatted correctly.", "Save", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                if(l.getCardByName(mat.group(2)) == null && !names.contains(mat.group(2))) {
+                    JOptionPane.showMessageDialog(this, "Can't find card \"" +mat.group(2) +"\".", "Save", JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Line \"" +line +"\" isn't formatted correctly.", "Save", JOptionPane.ERROR_MESSAGE);
+                return;
+            }
+        }
+        saved = true;
+        setVisible(false);
+    }//GEN-LAST:event_btnSaveActionPerformed
+
+    private void btnCancelActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelActionPerformed
+        saved = false;
+        setVisible(false);
+    }//GEN-LAST:event_btnCancelActionPerformed
+
+    // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCancel;
+    private javax.swing.JButton btnSave;
+    private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea txtList;
+    private javax.swing.JTextField txtName;
+    // End of variables declaration//GEN-END:variables
+}
