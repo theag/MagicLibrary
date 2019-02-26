@@ -6,3 +6,6 @@
 !/nbproject/project.xml
 !/nbproject/project.properties
 
+# exclude google credentials
+/credentials/*
+/dist/credentials/*

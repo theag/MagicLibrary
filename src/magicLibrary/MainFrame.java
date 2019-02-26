@@ -6,11 +6,10 @@
 package magicLibrary;
 
 import java.awt.CardLayout;
+import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -224,7 +223,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addComponent(pnlMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(pnlMain, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(tbMain, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(2, 2, 2))
@@ -339,7 +338,14 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }//GEN-LAST:event_miDifferencesActionPerformed
 
     private void miDeckListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckListActionPerformed
-        Deck result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        Deck result;
+        if(btnDecks.isSelected()) {
+            Component componentAt = pnlMain.getComponentAt(50, 50);
+            System.out.println(componentAt);
+            result = null;
+        } else {
+            result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        }
         if(result != null) {
             DeckListDialog.showDialog(this, result);
         }
