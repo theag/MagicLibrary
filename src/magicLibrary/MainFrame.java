@@ -6,7 +6,6 @@
 package magicLibrary;
 
 import java.awt.CardLayout;
-import java.awt.Component;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,7 +26,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }
     
     private int current;
-    private String[] panels;
+    private final String[] panels;
     private File fc;
     private File fd;
     
@@ -340,9 +339,8 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private void miDeckListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckListActionPerformed
         Deck result;
         if(btnDecks.isSelected()) {
-            Component componentAt = pnlMain.getComponentAt(50, 50);
-            System.out.println(componentAt);
-            result = null;
+            DeckPanel dp = (DeckPanel)pnlMain.getComponent(2);
+            result = dp.getSelectedDeck();
         } else {
             result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
         }
@@ -352,7 +350,13 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }//GEN-LAST:event_miDeckListActionPerformed
 
     private void miDeckNeedListActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeckNeedListActionPerformed
-        Deck result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck Need List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        Deck result;
+        if(btnDecks.isSelected()) {
+            DeckPanel dp = (DeckPanel)pnlMain.getComponent(2);
+            result = dp.getSelectedDeck();
+        } else {
+            result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck Need List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        }
         if(result != null) {
             DeckListDialog.showNeedDialog(this, result);
         }

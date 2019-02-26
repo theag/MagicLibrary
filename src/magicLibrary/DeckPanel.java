@@ -509,6 +509,10 @@ public class DeckPanel extends javax.swing.JPanel {
         }
     }
     
+    Deck getSelectedDeck() {
+        return (Deck)cbDecks.getSelectedItem();
+    }
+    
     private static class DeckComboBoxModel extends AbstractListModel<Deck> implements ComboBoxModel<Deck> {
 
         private int selected;
