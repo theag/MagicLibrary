@@ -1,17 +1,31 @@
 Magic Library
 Difference Report
-Feb 14, 2019 11:01:24 AM
+Feb 26, 2019 8:50:22 AM
 
 Cards
 -----
 Drive Only:
+	Ancestral Recall
+	Bioshift
+	Cyclonic Rift
+	Engulf the Shore
+	Evacuation
+	Hadana's Climb
+	Hardened Scales
+	Hedron Archive
+	Herald of Secret Streams
+	Nevinyrral's Disk
+	Novijen, Heart of Progress
+	Oblivion Stone
+	Plaxcaster Frogling
+	Titanic Brawl
+	Vorel of the Hull Clade
 
 Local Only:
-	Fertilid
-	Krosan Grip
-	Rishkar, Peema Renegade
 
 Modified:
+	Breeding Pool
+		Count (Local: 4 Drive: 0)
 
 Decks
 -----
@@ -21,7 +35,21 @@ Local Only:
 
 Modified:
 	Zegana
-		Local Only:
-			Fertilid
-			Krosan Grip
-			Rishkar, Peema Renegade
+		Drive Only:
+			Ancestral Recall
+			Bioshift
+			Cyclonic Rift
+			Engulf the Shore
+			Evacuation
+			Hadana's Climb
+			Hardened Scales
+			Hedron Archive
+			Herald of Secret Streams
+			Nevinyrral's Disk
+			Novijen, Heart of Progress
+			Oblivion Stone
+			Plaxcaster Frogling
+			Titanic Brawl
+			Vorel of the Hull Clade
+		Modified:
+			Island Drive: 15, Local: 16

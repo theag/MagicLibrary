@@ -9,6 +9,8 @@ import java.awt.CardLayout;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 
 /**
@@ -306,7 +308,13 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     }//GEN-LAST:event_btnDecksActionPerformed
 
     private void miUploadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUploadActionPerformed
-        DriveDialog.showUploadDialog(this, fc, fd);
+        try {
+            Library.getInstance().save(fc, fd);
+            DriveDialog.showUploadDialog(this, fc, fd);
+        } catch (IOException ex) {
+            System.out.println(ex.getMessage());
+            ex.printStackTrace(System.out);
+        }
     }//GEN-LAST:event_miUploadActionPerformed
 
     private void miDownloadActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDownloadActionPerformed
