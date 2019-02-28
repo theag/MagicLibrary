@@ -22,8 +22,10 @@ public class AdvancedSearch {
     public boolean textAnd;
     public String[] text;
     public Deck[] decks;
+    public boolean noDeck;
     public boolean notesAnd;
     public String[] notes;
+    public boolean noNotes;
     public int countOperator;//<,<=,=,>=,>
     public int countNumber;
     public boolean addsMana;
@@ -148,7 +150,16 @@ public class AdvancedSearch {
                 }
             }
         }
-        if(decks == null) {
+        //decks
+        if(noDeck) {
+            results[5] = true;
+            for(Deck d : Library.getInstance().getDeckArray()) {
+                if(d.hasCard(card)) {
+                    results[5] = false;
+                    break;
+                }
+            }
+        } else if(decks == null) {
             results[5] = allAnd;
         } else {
             results[5] = false;
@@ -160,7 +171,9 @@ public class AdvancedSearch {
             }
         }
         //notes
-        if(notes == null) {
+        if(noNotes) {
+            results[6] = card.notes == null || card.notes.trim().isEmpty();
+        } else if(notes == null) {
             results[6] = allAnd;
         } else if(card.notes == null) {
             results[6] = false;

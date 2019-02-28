@@ -491,6 +491,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         }
         CardLayout lo = (CardLayout)pnlMain.getLayout();
         lo.show(pnlMain, newPanelName);
+        ((LibraryPanel)pnlMain.getComponent(current)).fireLibraryChanged();
     }
 
     void updateDecks() {

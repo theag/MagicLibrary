@@ -81,6 +81,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
         btnSimple = new javax.swing.JButton();
         jScrollPane4 = new javax.swing.JScrollPane();
         tblCards = new javax.swing.JTable();
+        lblCount = new javax.swing.JLabel();
         jPanel2 = new javax.swing.JPanel();
         btnAndOr = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
@@ -121,6 +122,8 @@ public class AdvancedLibraryPanel extends LibraryPanel {
         cbCount = new javax.swing.JComboBox();
         spnCount = new javax.swing.JSpinner();
         cbAddsMana = new javax.swing.JCheckBox();
+        cbNoDeck = new javax.swing.JCheckBox();
+        cbNoNotes = new javax.swing.JCheckBox();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -145,21 +148,27 @@ public class AdvancedLibraryPanel extends LibraryPanel {
         });
         jScrollPane4.setViewportView(tblCards);
 
+        lblCount.setText("Count: 0");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(651, Short.MAX_VALUE)
+                .addContainerGap()
+                .addComponent(lblCount)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(btnSimple)
                 .addContainerGap())
-            .addComponent(jScrollPane4)
+            .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 724, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(btnSimple)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSimple)
+                    .addComponent(lblCount))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE))
         );
@@ -266,6 +275,10 @@ public class AdvancedLibraryPanel extends LibraryPanel {
         cbAddsMana.setText("Adds Mana");
         cbAddsMana.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
 
+        cbNoDeck.setText("Not in a deck");
+
+        cbNoNotes.setText("Has no notes");
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -306,10 +319,6 @@ public class AdvancedLibraryPanel extends LibraryPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(btnTextAndOr))
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnViewDecks))
-                            .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(btnSearch)
                                 .addGap(18, 18, 18)
                                 .addComponent(btnReset))
@@ -333,15 +342,23 @@ public class AdvancedLibraryPanel extends LibraryPanel {
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(jLabel7)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnNotesAndOr))
+                                .addComponent(btnNotesAndOr)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbNoNotes))
                             .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel8)
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addComponent(cbCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(cbAddsMana))
-                        .addGap(0, 44, Short.MAX_VALUE)))
+                            .addComponent(cbAddsMana)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel6)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnViewDecks)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(cbNoDeck)))
+                        .addGap(0, 29, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -398,13 +415,15 @@ public class AdvancedLibraryPanel extends LibraryPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(btnViewDecks))
+                    .addComponent(btnViewDecks)
+                    .addComponent(cbNoDeck))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(btnNotesAndOr))
+                    .addComponent(btnNotesAndOr)
+                    .addComponent(cbNoNotes))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -522,27 +541,37 @@ public class AdvancedLibraryPanel extends LibraryPanel {
             something = true;
             search.text = value.split("\n");
         }
-        value = txtDecks.getText().trim();
-        if(!value.isEmpty()) {
+        if(cbNoDeck.isSelected()) {
+            search.noDeck = true;
             something = true;
-            String[] deckNames = value.split(",");
-            Deck[] foundDecks = new Deck[deckNames.length];
-            count = 0;
-            Library l = Library.getInstance();
-            for(String d : deckNames) {
-                foundDecks[count] = l.getDeckByName(d);
-                if(foundDecks[count] != null) {
-                    count++;
+        } else {
+            value = txtDecks.getText().trim();
+            if(!value.isEmpty()) {
+                something = true;
+                String[] deckNames = value.split(",");
+                Deck[] foundDecks = new Deck[deckNames.length];
+                count = 0;
+                Library l = Library.getInstance();
+                for(String d : deckNames) {
+                    foundDecks[count] = l.getDeckByName(d);
+                    if(foundDecks[count] != null) {
+                        count++;
+                    }
                 }
+                search.decks = new Deck[count];
+                System.arraycopy(foundDecks, 0, search.decks, 0, count);
             }
-            search.decks = new Deck[count];
-            System.arraycopy(foundDecks, 0, search.decks, 0, count);
         }
-        search.notesAnd = !btnNotesAndOr.isSelected();
-        value = txtNotes.getText().trim();
-        if(!value.isEmpty()) {
+        if(cbNoNotes.isSelected()) {
+            search.noNotes = true;
             something = true;
-            search.notes = value.split("\n");
+        } else {
+            search.notesAnd = !btnNotesAndOr.isSelected();
+            value = txtNotes.getText().trim();
+            if(!value.isEmpty()) {
+                something = true;
+                search.notes = value.split("\n");
+            }
         }
         search.countOperator = cbCount.getSelectedIndex();
         search.countNumber = (Integer)spnCount.getValue();
@@ -641,6 +670,8 @@ public class AdvancedLibraryPanel extends LibraryPanel {
     private javax.swing.JButton btnViewDecks;
     private javax.swing.JCheckBox cbAddsMana;
     private javax.swing.JComboBox cbCount;
+    private javax.swing.JCheckBox cbNoDeck;
+    private javax.swing.JCheckBox cbNoNotes;
     private javax.swing.JCheckBox chkArtifact;
     private javax.swing.JCheckBox chkBlack;
     private javax.swing.JCheckBox chkBlue;
@@ -669,6 +700,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane1;
+    private javax.swing.JLabel lblCount;
     private javax.swing.JSpinner spnCount;
     private javax.swing.JTable tblCards;
     private javax.swing.JTextField txtCMC;
@@ -695,6 +727,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
     public void fireLibraryChanged() {
         Library.getInstance().redoSesarch();
         model.updateData();
+        lblCount.setText("Count: " +Library.getInstance().resultSize());
     }
     
     

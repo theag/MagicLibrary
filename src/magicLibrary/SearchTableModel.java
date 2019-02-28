@@ -51,6 +51,15 @@ public class SearchTableModel extends AbstractTableModel {
     }
     
     public void updateData() {
+        if(sort != 1) {
+            if(order.length != lib.resultSize()) {
+                order = new int[lib.resultSize()];
+                for(int i = 0; i < order.length; i++) {
+                    order[i] = i;
+                }
+            }
+            updateOrder();
+        }
         this.fireTableDataChanged();
     }
 

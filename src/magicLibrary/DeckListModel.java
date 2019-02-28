@@ -34,7 +34,7 @@ public class DeckListModel extends AbstractListModel<String> {
                 counts.add(d.count(c));
             }
         }
-        if(decks.isEmpty()) {
+        if(!decks.isEmpty()) {
             originalDecks = new Deck[decks.size()];
             decks.toArray(originalDecks);
         } else {

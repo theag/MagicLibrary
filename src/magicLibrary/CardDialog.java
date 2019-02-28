@@ -7,8 +7,6 @@ package magicLibrary;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JOptionPane;

@@ -682,12 +682,6 @@ public class DeckPanel extends javax.swing.JPanel {
         
         public void update() {
             if(sort != 1) {
-                if(deck.size() != order.length) {
-                    order = new int[deck.size()];
-                    for(int i = 0; i < order.length; i++) {
-                        order[i] = i;
-                    }
-                }
                 updateOrder();
             }
             if(showOnlyMissing) {
@@ -717,6 +711,12 @@ public class DeckPanel extends javax.swing.JPanel {
         }
         
         private void updateOrder() {
+            if(deck.size() != order.length) {
+                order = new int[deck.size()];
+                for(int i = 0; i < order.length; i++) {
+                    order[i] = i;
+                }
+            }
             int j;
             int temp;
             for(int i = 1; i < deck.size(); i++) {
