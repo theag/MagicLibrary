@@ -7,6 +7,7 @@ package magicLibrary;
 
 import javax.swing.JOptionPane;
 import javax.swing.JToggleButton;
+import javax.swing.SpinnerNumberModel;
 
 /**
  *
@@ -14,15 +15,22 @@ import javax.swing.JToggleButton;
  */
 public class AdvancedLibraryPanel extends LibraryPanel {
 
-    private final int[][] selected;
+    private SearchTableModel model;
         
     /**
      * Creates new form AdvancedLibraryPanel
      */
     public AdvancedLibraryPanel() {
+        model = new SearchTableModel();
         initComponents();
-        lstCards.setCellRenderer(new CardCellRenderer());
-        selected = new int[2][0];
+        tblCards.setRowHeight(ManaPanel.DOT_SIZE + 1 + 4);
+        tblCards.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+        tblCards.getTableHeader().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblCardsHeaderMouseClicked(evt);
+            }
+        });
         btnAndOr.addActionListener(new java.awt.event.ActionListener() {
             @Override
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -70,9 +78,9 @@ public class AdvancedLibraryPanel extends LibraryPanel {
 
         jSplitPane1 = new javax.swing.JSplitPane();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        lstCards = new javax.swing.JList();
         btnSimple = new javax.swing.JButton();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        tblCards = new javax.swing.JTable();
         jPanel2 = new javax.swing.JPanel();
         btnAndOr = new javax.swing.JToggleButton();
         jLabel1 = new javax.swing.JLabel();
@@ -105,16 +113,22 @@ public class AdvancedLibraryPanel extends LibraryPanel {
         jScrollPane3 = new javax.swing.JScrollPane();
         txtText = new javax.swing.JTextArea();
         chkBlack = new javax.swing.JCheckBox();
+        jLabel7 = new javax.swing.JLabel();
+        btnNotesAndOr = new javax.swing.JToggleButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtNotes = new javax.swing.JTextArea();
+        jLabel8 = new javax.swing.JLabel();
+        cbCount = new javax.swing.JComboBox();
+        spnCount = new javax.swing.JSpinner();
+        cbAddsMana = new javax.swing.JCheckBox();
 
-        jSplitPane1.setDividerLocation(250);
-
-        lstCards.setModel(new LibraryListModel());
-        lstCards.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lstCardsMouseClicked(evt);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
             }
         });
-        jScrollPane2.setViewportView(lstCards);
+
+        jSplitPane1.setDividerLocation(250);
 
         btnSimple.setText("Simple");
         btnSimple.addActionListener(new java.awt.event.ActionListener() {
@@ -123,15 +137,23 @@ public class AdvancedLibraryPanel extends LibraryPanel {
             }
         });
 
+        tblCards.setModel(model);
+        tblCards.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblCardsMouseClicked(evt);
+            }
+        });
+        jScrollPane4.setViewportView(tblCards);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap(651, Short.MAX_VALUE)
                 .addComponent(btnSimple)
                 .addContainerGap())
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 455, Short.MAX_VALUE)
+            .addComponent(jScrollPane4)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -139,7 +161,7 @@ public class AdvancedLibraryPanel extends LibraryPanel {
                 .addContainerGap()
                 .addComponent(btnSimple)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 526, Short.MAX_VALUE))
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 806, Short.MAX_VALUE))
         );
 
         jSplitPane1.setRightComponent(jPanel1);
@@ -223,6 +245,27 @@ public class AdvancedLibraryPanel extends LibraryPanel {
 
         chkBlack.setText("Black");
 
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel7.setText("Notes");
+
+        btnNotesAndOr.setText("And");
+
+        txtNotes.setColumns(20);
+        txtNotes.setRows(5);
+        jScrollPane1.setViewportView(txtNotes);
+
+        jLabel8.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel8.setText("Card Count");
+
+        cbCount.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "<", "<=", "=", ">=", ">" }));
+        cbCount.setSelectedIndex(3);
+
+        spnCount.setModel(new SpinnerNumberModel(0, 0, null, 1));
+
+        cbAddsMana.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        cbAddsMana.setText("Adds Mana");
+        cbAddsMana.setHorizontalTextPosition(javax.swing.SwingConstants.LEADING);
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -286,7 +329,18 @@ public class AdvancedLibraryPanel extends LibraryPanel {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(chkBlack)
-                                    .addComponent(chkColourless))))
+                                    .addComponent(chkColourless)))
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(jLabel7)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(btnNotesAndOr))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel8)
+                            .addGroup(jPanel2Layout.createSequentialGroup()
+                                .addComponent(cbCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(cbAddsMana))
                         .addGap(0, 44, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -347,7 +401,21 @@ public class AdvancedLibraryPanel extends LibraryPanel {
                     .addComponent(btnViewDecks))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txtDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel7)
+                    .addComponent(btnNotesAndOr))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel8)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cbCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(cbAddsMana)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 79, Short.MAX_VALUE)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSearch)
                     .addComponent(btnReset))
@@ -367,25 +435,6 @@ public class AdvancedLibraryPanel extends LibraryPanel {
             .addComponent(jSplitPane1)
         );
     }// </editor-fold>//GEN-END:initComponents
-
-    private void lstCardsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstCardsMouseClicked
-        if(evt.getClickCount() == 1) {
-            selected[1] = selected[0];
-            selected[0] = lstCards.getSelectedIndices();
-            if(selected[0].length == 1 && selected[1].length == 1 && selected[0][0] == selected[1][0]) {
-                lstCards.clearSelection();
-                selected[0] = new int[0];
-            }
-        } else if(evt.getClickCount() == 2) {
-            selected[0] = selected[1];
-            lstCards.setSelectedIndices(selected[0]);
-            int index = lstCards.locationToIndex(evt.getPoint());
-            if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index))) {
-                fireLibraryChanged();
-                MainFrame.getInstance().updateDecks();
-            }
-        }
-    }//GEN-LAST:event_lstCardsMouseClicked
 
     private void btnSimpleActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSimpleActionPerformed
         this.fireChangePanel("Simple");
@@ -489,6 +538,22 @@ public class AdvancedLibraryPanel extends LibraryPanel {
             search.decks = new Deck[count];
             System.arraycopy(foundDecks, 0, search.decks, 0, count);
         }
+        search.notesAnd = !btnNotesAndOr.isSelected();
+        value = txtNotes.getText().trim();
+        if(!value.isEmpty()) {
+            something = true;
+            search.notes = value.split("\n");
+        }
+        search.countOperator = cbCount.getSelectedIndex();
+        search.countNumber = (Integer)spnCount.getValue();
+        if(search.countOperator != 3 || search.countNumber != 0) {
+            something = true;
+        }
+        if(cbAddsMana.isSelected()) {
+            search.addsMana = true;
+            something = true;
+        }
+        
         if(!something) {
             JOptionPane.showMessageDialog(MainFrame.getInstance(), "You must enter some criteria.", "Search", JOptionPane.ERROR_MESSAGE);
             Library.getInstance().doSearch(""+Library.NULL);
@@ -535,20 +600,47 @@ public class AdvancedLibraryPanel extends LibraryPanel {
         btnTextAndOr.setSelected(false);
         txtText.setText("");
         txtDecks.setText("");
+        txtNotes.setText("");
+        cbCount.setSelectedIndex(3);
+        spnCount.setValue(0);
         Library.getInstance().doSearch(""+Library.NULL);
         fireLibraryChanged();
     }//GEN-LAST:event_btnResetActionPerformed
+
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        tblCards.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+        int width = (tblCards.getWidth() - 270)/2;
+        tblCards.getColumnModel().getColumn(0).setPreferredWidth(width);
+        tblCards.getColumnModel().getColumn(1).setPreferredWidth(width);
+        tblCards.getColumnModel().getColumn(2).setPreferredWidth(60);
+        tblCards.getColumnModel().getColumn(3).setPreferredWidth(150);
+        tblCards.getColumnModel().getColumn(4).setPreferredWidth(60);
+    }//GEN-LAST:event_formComponentResized
+
+    private void tblCardsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCardsMouseClicked
+        if(evt.getClickCount() == 2) {
+            int row = tblCards.rowAtPoint(evt.getPoint());
+            boolean saved = CardDialog.showEditDialog(MainFrame.getInstance(), true, model.getCardAt(row));
+            if(saved) {
+                fireLibraryChanged();
+                MainFrame.getInstance().updateDecks();
+            }
+        }
+    }//GEN-LAST:event_tblCardsMouseClicked
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JToggleButton btnAndOr;
     private javax.swing.JToggleButton btnColourAndOr;
+    private javax.swing.JToggleButton btnNotesAndOr;
     private javax.swing.JButton btnReset;
     private javax.swing.JButton btnSearch;
     private javax.swing.JButton btnSimple;
     private javax.swing.JToggleButton btnTextAndOr;
     private javax.swing.JToggleButton btnTypeAndOr;
     private javax.swing.JButton btnViewDecks;
+    private javax.swing.JCheckBox cbAddsMana;
+    private javax.swing.JComboBox cbCount;
     private javax.swing.JCheckBox chkArtifact;
     private javax.swing.JCheckBox chkBlack;
     private javax.swing.JCheckBox chkBlue;
@@ -569,21 +661,40 @@ public class AdvancedLibraryPanel extends LibraryPanel {
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
+    private javax.swing.JLabel jLabel8;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JSplitPane jSplitPane1;
-    private javax.swing.JList lstCards;
+    private javax.swing.JSpinner spnCount;
+    private javax.swing.JTable tblCards;
     private javax.swing.JTextField txtCMC;
     private javax.swing.JTextField txtDecks;
+    private javax.swing.JTextArea txtNotes;
     private javax.swing.JTextArea txtText;
     // End of variables declaration//GEN-END:variables
 
+    private void tblCardsHeaderMouseClicked(java.awt.event.MouseEvent evt) {
+        int col = tblCards.columnAtPoint(evt.getPoint());
+        if(col != 1) {
+            model.setSort(col);
+            tblCards.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+            int width = (tblCards.getWidth() - 270)/2;
+            tblCards.getColumnModel().getColumn(0).setPreferredWidth(width);
+            tblCards.getColumnModel().getColumn(1).setPreferredWidth(width);
+            tblCards.getColumnModel().getColumn(2).setPreferredWidth(60);
+            tblCards.getColumnModel().getColumn(3).setPreferredWidth(150);
+            tblCards.getColumnModel().getColumn(4).setPreferredWidth(60);
+        }
+    }
+    
     @Override
     public void fireLibraryChanged() {
         Library.getInstance().redoSesarch();
-        ((LibraryListModel)lstCards.getModel()).fireLibraryChanged();
+        model.updateData();
     }
     
     

@@ -15,16 +15,22 @@ import javax.swing.SpinnerNumberModel;
  */
 public class DeckCardDialog extends javax.swing.JDialog {
 
-    public static void showDialog(java.awt.Frame parent, Card card) {
+    public static boolean showDialog(java.awt.Frame parent, Card card) {
         DeckCardDialog cd = new DeckCardDialog(parent, card);
         cd.pack();
         cd.setVisible(true);
         if(cd.saved) {
             card.count = (int)cd.spnCount.getValue();
             card.addsMana = cd.cbAddsMana.isSelected();
-            card.notes = cd.txtNotes.getText();
+            if(!cd.txtNotes.getText().trim().isEmpty()) {
+                card.notes = cd.txtNotes.getText().trim();
+            } else {
+                card.notes = null;
+            }
         }
+        boolean rv = cd.saved;
         cd.dispose();
+        return rv;
     }
     
     private boolean saved;
@@ -44,7 +50,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
             ManaPanel pnlMana = new ManaPanel(card.manaCost);
             pnlManaHolder.add(pnlMana, BorderLayout.LINE_END);
         }
-        lblText.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblText.getWidth(), card.text));
+        lblText.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblText.getWidth(), card.text.replaceAll("\n", "<br/>")));
         if(card.loyalty != null) {
             lblPTL.setText(card.loyalty);
         } else if(card.power != null) {
@@ -178,7 +184,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblText)
+                .addComponent(lblText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblPTL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)

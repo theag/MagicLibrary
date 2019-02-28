@@ -77,6 +77,9 @@ public class JSONCardDialog extends javax.swing.JDialog {
         jLabel1 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
         lstDecks = new javax.swing.JList();
+        jLabel2 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtNotes = new javax.swing.JTextArea();
 
         setTitle("New Card from JSON");
 
@@ -115,6 +118,12 @@ public class JSONCardDialog extends javax.swing.JDialog {
         lstDecks.setModel(decks);
         jScrollPane3.setViewportView(lstDecks);
 
+        jLabel2.setText("Add to Notes");
+
+        txtNotes.setColumns(20);
+        txtNotes.setRows(5);
+        jScrollPane2.setViewportView(txtNotes);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -130,10 +139,13 @@ public class JSONCardDialog extends javax.swing.JDialog {
                         .addComponent(btnAddPlus)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(btnCancel))
+                    .addComponent(jScrollPane3)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(jLabel1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addComponent(jLabel2))
                         .addGap(0, 0, Short.MAX_VALUE))
-                    .addComponent(jScrollPane3))
+                    .addComponent(jScrollPane2))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -147,6 +159,10 @@ public class JSONCardDialog extends javax.swing.JDialog {
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -190,11 +206,14 @@ public class JSONCardDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnAddPlus;
     private javax.swing.JButton btnCancel;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JList lstCards;
     private javax.swing.JList lstDecks;
     private javax.swing.JTextField txtName;
+    private javax.swing.JTextArea txtNotes;
     // End of variables declaration//GEN-END:variables
 
     private boolean addSelected() {
@@ -262,6 +281,9 @@ public class JSONCardDialog extends javax.swing.JDialog {
                     }
                     if(obj.has("loyalty")) {
                         c.loyalty = obj.getString("loyalty");
+                    }
+                    if(!txtNotes.getText().trim().isEmpty()) {
+                        c.notes = txtNotes.getText().trim();
                     }
                     c.lastUpdated = now;
                     l.addCard(c);

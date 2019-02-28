@@ -77,7 +77,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblType" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="lblText" min="-2" max="-2" attributes="0"/>
+              <Component id="lblText" max="32767" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="lblPTL" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>

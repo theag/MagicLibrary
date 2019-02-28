@@ -649,7 +649,7 @@ public class Card implements Comparable<Card> {
             differences.add("Mana Cost (Local: " +getManaString() +" Drive: " +otherCard.getManaString() +")");
         }
         //text
-        if(text.compareToIgnoreCase(otherCard.text) != 0) {
+        if(stringCompare(text, otherCard.text) != 0) {
             differences.add("Text (Local: " +text +" Drive: " +otherCard.text +")");
         }
         //power toughnes loyalty

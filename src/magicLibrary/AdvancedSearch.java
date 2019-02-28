@@ -22,6 +22,11 @@ public class AdvancedSearch {
     public boolean textAnd;
     public String[] text;
     public Deck[] decks;
+    public boolean notesAnd;
+    public String[] notes;
+    public int countOperator;//<,<=,=,>=,>
+    public int countNumber;
+    public boolean addsMana;
     
     public AdvancedSearch() {
         allAnd = true;
@@ -38,7 +43,7 @@ public class AdvancedSearch {
     }
     
     public boolean matches(Card card) {
-        boolean[] results = new boolean[6];
+        boolean[] results = new boolean[9];
         //colour
         if(!colourless && colourMask == 0) {
             results[0] = allAnd;
@@ -124,6 +129,8 @@ public class AdvancedSearch {
         //text
         if(text == null) {
             results[4] = allAnd;
+        } else if(card.text == null) {
+            results[4] = false;
         } else if(textAnd) {
             results[4] = true;
             for(String t : text) {
@@ -151,6 +158,52 @@ public class AdvancedSearch {
                     break;
                 }
             }
+        }
+        //notes
+        if(notes == null) {
+            results[6] = allAnd;
+        } else if(card.notes == null) {
+            results[6] = false;
+        } else if(notesAnd) {
+            results[6] = true;
+            for(String t : notes) {
+                if(!card.notes.toLowerCase().contains(t.toLowerCase())) {
+                    results[6] = false;
+                    break;
+                }
+            }
+        } else {
+            results[6] = false;
+            for(String t : notes) {
+                if(card.notes.toLowerCase().contains(t.toLowerCase())) {
+                    results[6] = true;
+                    break;
+                }
+            }
+        }
+        //card count
+        switch(countOperator) {
+            case 0:
+                results[7] = card.getCMC() < countNumber;
+                break;
+            case 1:
+                results[7] = card.getCMC() <= countNumber;
+                break;
+            case 2:
+                results[7] = card.getCMC() == countNumber;
+                break;
+            case 3:
+                results[7] = card.getCMC() >= countNumber;
+                break;
+            case 4:
+                results[7] = card.getCMC() > countNumber;
+                break;
+        }
+        //adds mana
+        if(addsMana) {
+            results[8] = card.addsMana;
+        } else {
+            results[8] = allAnd;
         }
         
         boolean rv = allAnd;

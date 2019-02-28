@@ -199,7 +199,7 @@ public class Library implements Iterable<Card> {
         int[] temp = new int[cards.size()];
         int count = 0;
         for(int i = 0; i < cards.size(); i++) {
-            if(cards.get(i).name.toLowerCase().contains(searchStr)) {
+            if(cards.get(i).name.toLowerCase().startsWith(searchStr)) {
                 temp[count++] = i;
             }
         }
@@ -309,6 +309,10 @@ public class Library implements Iterable<Card> {
             }
         }
         return rv;
+    }
+
+    void deleteDeck(Deck deck) {
+        decks.remove(deck);
     }
     
     public static class Differences {

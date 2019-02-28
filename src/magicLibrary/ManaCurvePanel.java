@@ -93,14 +93,20 @@ public class ManaCurvePanel extends javax.swing.JPanel {
         int y;
         for(int i = 1; i <= max; i++) {
             y = xAxis - dy*i;
+            if(i%5 == 0) {
+                g.setColor(Color.BLACK);
+            }
             g.drawLine(yAxis, y, getWidth() - 2, y);
+            if(i%5 == 0) {
+                g.setColor(Color.LIGHT_GRAY);
+            }
         }
         g.setColor(Color.BLACK);
         g.drawLine(yAxis, 2, yAxis, getHeight() - 2);
         for(int i = 1; i <= max; i++) {
             y = xAxis - dy*i;
             g.drawLine(yAxis - 2, y, yAxis, y);
-            if(fm.getAscent() < dy || i%2 == 0) {
+            if(fm.getAscent() < dy || i%5 == 0) {
                 g.drawString(""+i, yAxis - 2 - fm.stringWidth(""+i), y + fm.getAscent()/2);
             }
         }

@@ -30,6 +30,12 @@ public class DeckPanel extends javax.swing.JPanel {
         setModels(true, true);
         tblDeck.setRowHeight(ManaPanel.DOT_SIZE + 1 + 4);
         tblDeck.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+        tblDeck.getTableHeader().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblDeckHeaderMouseClicked(evt);
+            }
+        });
     }
 
     /**
@@ -61,6 +67,7 @@ public class DeckPanel extends javax.swing.JPanel {
         jScrollPane4 = new javax.swing.JScrollPane();
         lstLand = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
+        btnShowOnlyMissing = new javax.swing.JToggleButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -104,6 +111,11 @@ public class DeckPanel extends javax.swing.JPanel {
         });
 
         btnDeleteDeck.setText("Delete Deck");
+        btnDeleteDeck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnDeleteDeckActionPerformed(evt);
+            }
+        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -203,7 +215,7 @@ public class DeckPanel extends javax.swing.JPanel {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblLand)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 102, Short.MAX_VALUE)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 329, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -217,10 +229,17 @@ public class DeckPanel extends javax.swing.JPanel {
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 571, Short.MAX_VALUE)
+            .addGap(0, 798, Short.MAX_VALUE)
         );
 
         jTabbedPane1.addTab("Types", jPanel2);
+
+        btnShowOnlyMissing.setText("Show Only Missing");
+        btnShowOnlyMissing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowOnlyMissingActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -235,9 +254,11 @@ public class DeckPanel extends javax.swing.JPanel {
                         .addComponent(btnEditName)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnDeleteDeck)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(lblTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 100, Short.MAX_VALUE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnShowOnlyMissing)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 278, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap())
@@ -253,7 +274,8 @@ public class DeckPanel extends javax.swing.JPanel {
                             .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblTotal)
                             .addComponent(btnEditName)
-                            .addComponent(btnDeleteDeck))
+                            .addComponent(btnDeleteDeck)
+                            .addComponent(btnShowOnlyMissing))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1)))
                 .addContainerGap())
@@ -262,6 +284,14 @@ public class DeckPanel extends javax.swing.JPanel {
 
     private void cbDecksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbDecksActionPerformed
         setModels(false, true);
+        tblDeck.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+        int width = (tblDeck.getWidth() - 330)/2;
+        tblDeck.getColumnModel().getColumn(0).setPreferredWidth(width);
+        tblDeck.getColumnModel().getColumn(1).setPreferredWidth(width);
+        tblDeck.getColumnModel().getColumn(2).setPreferredWidth(60);
+        tblDeck.getColumnModel().getColumn(3).setPreferredWidth(150);
+        tblDeck.getColumnModel().getColumn(4).setPreferredWidth(60);
+        tblDeck.getColumnModel().getColumn(5).setPreferredWidth(60);
     }//GEN-LAST:event_cbDecksActionPerformed
 
     private void lstLandMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstLandMouseClicked
@@ -274,18 +304,22 @@ public class DeckPanel extends javax.swing.JPanel {
         if(evt.getClickCount() == 2) {
             int row = tblDeck.rowAtPoint(evt.getPoint());
             DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
-            DeckCardDialog.showDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)));
+            boolean saved = DeckCardDialog.showDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)));
+            if(saved) {
+                setModels(false, false);
+            }
         }
     }//GEN-LAST:event_tblDeckMouseClicked
 
     private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
         if(Library.getInstance().hasDecks()) {
-            int width = (tblDeck.getWidth() - 250)/2;
+            int width = (tblDeck.getWidth() - 330)/2;
             tblDeck.getColumnModel().getColumn(0).setPreferredWidth(width);
             tblDeck.getColumnModel().getColumn(1).setPreferredWidth(width);
-            tblDeck.getColumnModel().getColumn(2).setPreferredWidth(50);
+            tblDeck.getColumnModel().getColumn(2).setPreferredWidth(60);
             tblDeck.getColumnModel().getColumn(3).setPreferredWidth(150);
-            tblDeck.getColumnModel().getColumn(4).setPreferredWidth(50);
+            tblDeck.getColumnModel().getColumn(4).setPreferredWidth(60);
+            tblDeck.getColumnModel().getColumn(5).setPreferredWidth(60);
         }
     }//GEN-LAST:event_formComponentResized
 
@@ -298,10 +332,23 @@ public class DeckPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_btnEditNameActionPerformed
 
+    private void btnDeleteDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteDeckActionPerformed
+        int result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), "Are you sure you wish to delete this deck?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if(result == JOptionPane.YES_OPTION) {
+            Library.getInstance().deleteDeck((Deck)cbDecks.getSelectedItem());
+            model.fireLibraryChanged();
+        }
+    }//GEN-LAST:event_btnDeleteDeckActionPerformed
+
+    private void btnShowOnlyMissingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowOnlyMissingActionPerformed
+        ((DeckTableModel)tblDeck.getModel()).setShowOnlyChanged(btnShowOnlyMissing.isSelected());
+    }//GEN-LAST:event_btnShowOnlyMissingActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnDeleteDeck;
     private javax.swing.JButton btnEditName;
+    private javax.swing.JToggleButton btnShowOnlyMissing;
     private javax.swing.JComboBox cbDecks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -322,6 +369,21 @@ public class DeckPanel extends javax.swing.JPanel {
     private javax.swing.JTable tblSpreads;
     // End of variables declaration//GEN-END:variables
 
+    private void tblDeckHeaderMouseClicked(java.awt.event.MouseEvent evt) {
+        int col = tblDeck.columnAtPoint(evt.getPoint());
+        if(col != 1) {
+            ((DeckTableModel)tblDeck.getModel()).setSort(col);
+            tblDeck.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+            int width = (tblDeck.getWidth() - 330)/2;
+            tblDeck.getColumnModel().getColumn(0).setPreferredWidth(width);
+            tblDeck.getColumnModel().getColumn(1).setPreferredWidth(width);
+            tblDeck.getColumnModel().getColumn(2).setPreferredWidth(60);
+            tblDeck.getColumnModel().getColumn(3).setPreferredWidth(150);
+            tblDeck.getColumnModel().getColumn(4).setPreferredWidth(60);
+            tblDeck.getColumnModel().getColumn(5).setPreferredWidth(60);
+        }
+    }
+    
     private void setModels(boolean setting, boolean deckChange) {
         Deck d = (Deck)cbDecks.getSelectedItem();
         if(d != null) {
@@ -412,9 +474,11 @@ public class DeckPanel extends javax.swing.JPanel {
                 pnlManaCurveHolder.setLayout(new BorderLayout());
                 pnlManaCurveHolder.add(pnlManaCurve, BorderLayout.CENTER);
             } else {
+                DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
                 if(deckChange) {
-                    DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
                     m1.update(d);
+                } else {
+                    m1.update();
                 }
                 ColourCountModel m2 = (ColourCountModel)tblCounts.getModel();
                 m2.update(countNames, countCounts);
@@ -572,46 +636,192 @@ public class DeckPanel extends javax.swing.JPanel {
     private static class DeckTableModel extends AbstractTableModel {
         
         private Deck deck;
+        private boolean showOnlyMissing;
+        private int[] missing;
+        private int sort;
+        private int[] order;
         
         public DeckTableModel(Deck deck) {
             this.deck = deck;
+            showOnlyMissing = false;
+            sort = 1;
+            order = new int[deck.size()];
+            for(int i = 0; i < order.length; i++) {
+                order[i] = i;
+            }
+        }
+        
+        public void setSort(int col) {
+            if(col+1 == Math.abs(sort)) {
+                sort = -sort;
+            } else {
+                sort = col + 1;
+            }
+            if(sort != 1) {
+                updateOrder();
+                if(showOnlyMissing) {
+                    updateMissing();
+                }
+            }
+            this.fireTableStructureChanged();
         }
         
         public void update(Deck deck) {
             this.deck = deck;
+            order = new int[deck.size()];
+            for(int i = 0; i < order.length; i++) {
+                order[i] = i;
+            }
+            sort = 1;
+            this.fireTableStructureChanged();
+            if(showOnlyMissing) {
+                updateMissing();
+            }
             this.fireTableDataChanged();
+        }
+        
+        public void update() {
+            if(sort != 1) {
+                if(deck.size() != order.length) {
+                    order = new int[deck.size()];
+                    for(int i = 0; i < order.length; i++) {
+                        order[i] = i;
+                    }
+                }
+                updateOrder();
+            }
+            if(showOnlyMissing) {
+                updateMissing();
+            }
+            this.fireTableDataChanged();
+        }
+        
+        public void setShowOnlyChanged(boolean showOnlyMissing) {
+            this.showOnlyMissing = showOnlyMissing;
+            updateMissing();
+            this.fireTableDataChanged();
+        }
+        
+        private void updateMissing() {
+            int[] temp = new int[deck.size()];
+            int count = 0;
+            Deck.DeckCard dc;
+            for(int i = 0; i < deck.size(); i++) {
+                dc = deck.get(order[i]);
+                if(dc.count > dc.card.count) {
+                    temp[count++] = order[i];
+                }
+            }
+            missing = new int[count];
+            System.arraycopy(temp, 0, missing, 0, count);
+        }
+        
+        private void updateOrder() {
+            int j;
+            int temp;
+            for(int i = 1; i < deck.size(); i++) {
+                temp = order[i];
+                for(j = i - 1; j >= 0; j--) {
+                    if(orderCompare(deck.get(order[j]),deck.get(temp)) > 0) {
+                        order[j+1] = order[j];
+                    } else {
+                        break;
+                    }
+                }
+                order[j+1] = temp;
+            }
+        }
+        
+        private int orderCompare(Deck.DeckCard d1, Deck.DeckCard d2) {
+            //name
+            if(sort == -1) {
+                return -d1.card.name.compareTo(d2.card.name);
+            } 
+            //todo:mana
+            //cmc
+            else if(sort == 3) {
+                return d1.card.getCMC() - d2.card.getCMC();
+            } else if(sort == -3) {
+                return d2.card.getCMC() - d1.card.getCMC();
+            }
+            //type
+            else if(sort == 4) {
+                return d1.card.getTypeString().compareTo(d2.card.getTypeString());
+            } else if(sort == -4) {
+                return -d1.card.getTypeString().compareTo(d2.card.getTypeString());
+            }
+            //count
+            else if(sort == 5) {
+                return d1.count - d2.count;
+            } else if(sort == -5) {
+                return d2.count - d1.count;
+            }
+            //have
+            else if(sort == 6) {
+                return d1.card.count - d2.card.count;
+            } else if(sort == -6) {
+                return d2.card.count - d1.card.count;
+            }
+            //other
+            else {
+                return d1.compareTo(d2);
+            }
         }
 
         @Override
         public int getRowCount() {
-            return deck.size();
+            if(showOnlyMissing) {
+                return missing.length;
+            } else {
+                return deck.size();
+            }
         }
 
         @Override
         public int getColumnCount() {
-            return 5;
+            return 6;
         }
         
         @Override
         public String getColumnName(int columnIndex) {
+            String rv = "";
             switch(columnIndex) {
                 case 0:
-                    return "Name";
+                    rv = "Name";
+                    break;
                 case 1:
-                    return "Mana";
+                    rv = "Mana";
+                    break;
                 case 2:
-                    return "CMC";
+                    rv = "CMC";
+                    break;
                 case 3:
-                    return "Type";
+                    rv = "Type";
+                    break;
                 case 4:
-                    return "Count";
+                    rv = "Count";
+                    break;
+                case 5:
+                    rv = "Have";
+                    break;
                 default:
                     return super.getColumnName(columnIndex);
             }
+            if(columnIndex+1 == sort) {
+                rv += " V";
+            } else if(columnIndex+1 == -sort) {
+                rv += " ^";
+            }
+            return rv;
         }
         
         @Override
         public Object getValueAt(int rowIndex, int columnIndex) {
+            if(showOnlyMissing) {
+                rowIndex = missing[rowIndex];
+            } else if(sort != 1) {
+                rowIndex = order[rowIndex];
+            }
             Deck.DeckCard dc = deck.get(rowIndex);
             switch(columnIndex) {
                 case 0:
@@ -629,6 +839,8 @@ public class DeckPanel extends javax.swing.JPanel {
                     return dc.card.getTypeString();
                 case 4:
                     return dc.count;
+                case 5:
+                    return dc.card.count;
                 default:
                     return null;
             }
@@ -645,6 +857,11 @@ public class DeckPanel extends javax.swing.JPanel {
         
         @Override
         public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+            if(showOnlyMissing) {
+                rowIndex = missing[rowIndex];
+            } else if(sort != 1) {
+                rowIndex = order[rowIndex];
+            }
             try {
                 int count = Integer.parseInt((String)aValue);
                 if(count == 0) {

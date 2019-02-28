@@ -73,5 +73,6 @@
     <target name="-post-compile">
         <copy file="credentials.json" todir="${dist.dir}"/>
         <copy file="AllCards.json" todir="${dist.dir}"/>
+        <copy file="SetList.json" todir="${dist.dir}"/>
     </target>
 </project>

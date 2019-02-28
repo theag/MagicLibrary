@@ -11,15 +11,22 @@ package magicLibrary;
  */
 public class SimpleLibraryPanel extends LibraryPanel {
 
-    private final int[][] selected;
+    private final SearchTableModel model;
   
     /**
      * Creates new form LibraryPanel
      */
     public SimpleLibraryPanel() {
+        model = new SearchTableModel();
         initComponents();
-        lstCards.setCellRenderer(new CardCellRenderer());
-        selected = new int[2][0];
+        tblCards.setRowHeight(ManaPanel.DOT_SIZE + 1 + 4);
+        tblCards.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+        tblCards.getTableHeader().addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tblCardsHeaderMouseClicked(evt);
+            }
+        });
     }
 
     /**
@@ -33,13 +40,18 @@ public class SimpleLibraryPanel extends LibraryPanel {
 
         txtName = new javax.swing.JTextField();
         btnAdvanced = new javax.swing.JButton();
-        btnSearch = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        lstCards = new javax.swing.JList();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        tblCards = new javax.swing.JTable();
 
-        txtName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                txtNameActionPerformed(evt);
+        addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentResized(java.awt.event.ComponentEvent evt) {
+                formComponentResized(evt);
+            }
+        });
+
+        txtName.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                txtNameKeyReleased(evt);
             }
         });
 
@@ -50,20 +62,13 @@ public class SimpleLibraryPanel extends LibraryPanel {
             }
         });
 
-        btnSearch.setText("Search");
-        btnSearch.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnSearchActionPerformed(evt);
-            }
-        });
-
-        lstCards.setModel(new LibraryListModel());
-        lstCards.addMouseListener(new java.awt.event.MouseAdapter() {
+        tblCards.setModel(model);
+        tblCards.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
-                lstCardsMouseClicked(evt);
+                tblCardsMouseClicked(evt);
             }
         });
-        jScrollPane1.setViewportView(lstCards);
+        jScrollPane2.setViewportView(tblCards);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -72,11 +77,9 @@ public class SimpleLibraryPanel extends LibraryPanel {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 637, Short.MAX_VALUE)
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(txtName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnSearch)
+                        .addComponent(txtName, javax.swing.GroupLayout.DEFAULT_SIZE, 873, Short.MAX_VALUE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnAdvanced)))
                 .addContainerGap())
@@ -87,34 +90,18 @@ public class SimpleLibraryPanel extends LibraryPanel {
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(btnAdvanced)
-                    .addComponent(btnSearch))
+                    .addComponent(btnAdvanced))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 498, Short.MAX_VALUE)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 797, Short.MAX_VALUE)
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void lstCardsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lstCardsMouseClicked
-        if(evt.getClickCount() == 1) {
-            selected[1] = selected[0];
-            selected[0] = lstCards.getSelectedIndices();
-            if(selected[0].length == 1 && selected[1].length == 1 && selected[0][0] == selected[1][0]) {
-                lstCards.clearSelection();
-                selected[0] = new int[0];
-            }
-        } else if(evt.getClickCount() == 2) {
-            selected[0] = selected[1];
-            lstCards.setSelectedIndices(selected[0]);
-            int index = lstCards.locationToIndex(evt.getPoint());
-            if(CardDialog.showEditDialog(MainFrame.getInstance(), true, Library.getInstance().resultAt(index))) {
-                fireLibraryChanged();
-                MainFrame.getInstance().updateDecks();
-            }
-        }
-    }//GEN-LAST:event_lstCardsMouseClicked
+    private void btnAdvancedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdvancedActionPerformed
+        this.fireChangePanel("Advanced");
+    }//GEN-LAST:event_btnAdvancedActionPerformed
 
-    private void btnSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSearchActionPerformed
+    private void txtNameKeyReleased(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_txtNameKeyReleased
         String searchStr = txtName.getText().trim().toLowerCase();
         if(searchStr.isEmpty()) {
             Library.getInstance().clearSearch();
@@ -122,16 +109,42 @@ public class SimpleLibraryPanel extends LibraryPanel {
             Library.getInstance().doSearch(searchStr);
         }
         fireLibraryChanged();
-    }//GEN-LAST:event_btnSearchActionPerformed
+    }//GEN-LAST:event_txtNameKeyReleased
 
-    private void txtNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNameActionPerformed
-        btnSearchActionPerformed(null);
-    }//GEN-LAST:event_txtNameActionPerformed
+    private void formComponentResized(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_formComponentResized
+        tblCards.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+        int width = (tblCards.getWidth() - 270)/2;
+        tblCards.getColumnModel().getColumn(0).setPreferredWidth(width);
+        tblCards.getColumnModel().getColumn(1).setPreferredWidth(width);
+        tblCards.getColumnModel().getColumn(2).setPreferredWidth(60);
+        tblCards.getColumnModel().getColumn(3).setPreferredWidth(150);
+        tblCards.getColumnModel().getColumn(4).setPreferredWidth(60);
+    }//GEN-LAST:event_formComponentResized
 
-    private void btnAdvancedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAdvancedActionPerformed
-        this.fireChangePanel("Advanced");
-    }//GEN-LAST:event_btnAdvancedActionPerformed
+    private void tblCardsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblCardsMouseClicked
+        if(evt.getClickCount() == 2) {
+            int row = tblCards.rowAtPoint(evt.getPoint());
+            boolean saved = CardDialog.showEditDialog(MainFrame.getInstance(), true, model.getCardAt(row));
+            if(saved) {
+                fireLibraryChanged();
+                MainFrame.getInstance().updateDecks();
+            }
+        }
+    }//GEN-LAST:event_tblCardsMouseClicked
 
+    private void tblCardsHeaderMouseClicked(java.awt.event.MouseEvent evt) {
+        int col = tblCards.columnAtPoint(evt.getPoint());
+        if(col != 1) {
+            model.setSort(col);
+            tblCards.getColumnModel().getColumn(1).setCellRenderer(new ManaTableCellRenderer());
+            int width = (tblCards.getWidth() - 270)/2;
+            tblCards.getColumnModel().getColumn(0).setPreferredWidth(width);
+            tblCards.getColumnModel().getColumn(1).setPreferredWidth(width);
+            tblCards.getColumnModel().getColumn(2).setPreferredWidth(60);
+            tblCards.getColumnModel().getColumn(3).setPreferredWidth(150);
+            tblCards.getColumnModel().getColumn(4).setPreferredWidth(60);
+        }
+    }
     
     private String printArr(int[] arr) {
         String rv = "[";
@@ -147,15 +160,14 @@ public class SimpleLibraryPanel extends LibraryPanel {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAdvanced;
-    private javax.swing.JButton btnSearch;
-    private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JList lstCards;
+    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JTable tblCards;
     private javax.swing.JTextField txtName;
     // End of variables declaration//GEN-END:variables
 
     @Override
     public void fireLibraryChanged() {
         Library.getInstance().redoSesarch();
-        ((LibraryListModel)lstCards.getModel()).fireLibraryChanged();
+        model.updateData();
     }
 }
