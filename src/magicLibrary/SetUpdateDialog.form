@@ -70,7 +70,7 @@
       <SubComponents>
         <Component class="javax.swing.JLabel" name="lblMessage">
           <Properties>
-            <Property name="text" type="java.lang.String" value="jLabel1"/>
+            <Property name="text" type="java.lang.String" value="Updating sets for"/>
           </Properties>
         </Component>
       </SubComponents>

@@ -50,7 +50,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
             ManaPanel pnlMana = new ManaPanel(card.manaCost);
             pnlManaHolder.add(pnlMana, BorderLayout.LINE_END);
         }
-        lblText.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblText.getWidth(), card.text.replaceAll("\n", "<br/>")));
+        lblText.setText(String.format("<html><div style=\"width:%dpx;\">%s</div></html>", lblText.getWidth(), card.text.replaceAll("\n", "<br/>")));
         if(card.loyalty != null) {
             lblPTL.setText(card.loyalty);
         } else if(card.power != null) {
@@ -61,8 +61,9 @@ public class DeckCardDialog extends javax.swing.JDialog {
         spnCount.setValue(card.count);
         cbAddsMana.setSelected(card.addsMana);
         lblUpdated.setText("Last Updated: " +card.formatUpdate());
-        lblDecks.setText(String.format("<html><div style=\"width:%dpx;\">%s</div><html>", lblDecks.getWidth(), Library.getInstance().getDeckListString(card)));
+        lblDecks.setText(String.format("<html><div style=\"width:%dpx;\">%s</div></html>", lblDecks.getWidth(), Library.getInstance().getDeckListString(card)));
         txtNotes.setText(card.notes);
+        lblSets.setText(String.format("<html><div style=\"width:%dpx;\">%s</div></html>", lblSets.getWidth(), card.getSetString()));
     }
 
     /**
@@ -90,6 +91,8 @@ public class DeckCardDialog extends javax.swing.JDialog {
         lblDecks = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
         cbAddsMana = new javax.swing.JCheckBox();
+        jLabel1 = new javax.swing.JLabel();
+        lblSets = new javax.swing.JLabel();
 
         setTitle("View Card");
         setBackground(new java.awt.Color(255, 255, 255));
@@ -139,6 +142,11 @@ public class DeckCardDialog extends javax.swing.JDialog {
 
         cbAddsMana.setText("Adds Mana");
 
+        jLabel1.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel1.setText("Sets");
+
+        lblSets.setText("jLabel4");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -146,21 +154,21 @@ public class DeckCardDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 182, Short.MAX_VALUE)
                         .addComponent(pnlManaHolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(lblText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnSave)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnClose))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.DEFAULT_SIZE, 316, Short.MAX_VALUE)
                     .addComponent(jSeparator1)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lblPTL))
                     .addComponent(lblDecks, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(btnSave)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(btnClose))
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblType)
@@ -170,8 +178,10 @@ public class DeckCardDialog extends javax.swing.JDialog {
                             .addGroup(layout.createSequentialGroup()
                                 .addComponent(spnCount, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(18, 18, 18)
-                                .addComponent(cbAddsMana)))
-                        .addGap(0, 0, Short.MAX_VALUE)))
+                                .addComponent(cbAddsMana))
+                            .addComponent(jLabel1))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(lblSets, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -184,7 +194,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(lblText, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(lblText)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblPTL)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -204,10 +214,14 @@ public class DeckCardDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(lblSets)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
                     .addComponent(btnClose))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -226,6 +240,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnClose;
     private javax.swing.JButton btnSave;
     private javax.swing.JCheckBox cbAddsMana;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JScrollPane jScrollPane3;
@@ -233,6 +248,7 @@ public class DeckCardDialog extends javax.swing.JDialog {
     private javax.swing.JLabel lblDecks;
     private javax.swing.JLabel lblName;
     private javax.swing.JLabel lblPTL;
+    private javax.swing.JLabel lblSets;
     private javax.swing.JLabel lblText;
     private javax.swing.JLabel lblType;
     private javax.swing.JLabel lblUpdated;

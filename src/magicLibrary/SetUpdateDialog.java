@@ -5,56 +5,40 @@
  */
 package magicLibrary;
 
-import java.io.File;
 import java.io.IOException;
 
 /**
  *
  * @author nbp184
  */
-public class DriveDialog extends javax.swing.JDialog {
+public class SetUpdateDialog extends javax.swing.JDialog {
 
-    public static void showUploadDialog(java.awt.Frame parent, File cardFile, File deckFile) {
-        DriveDialog dd = new DriveDialog(parent);
-        dd.cardFile = cardFile;
-        dd.deckFile = deckFile;
-        dd.lblMessage.setText("Uploading");
-        dd.mode = 1;
+    public static void showDeckDialog(java.awt.Frame parent, Deck d) {
+        SetUpdateDialog dd = new SetUpdateDialog(parent);
+        dd.deck = d;
+        dd.lblMessage.setText("Updating sets for " +d.name);
         dd.setVisible(true);
         dd.dispose();
     }
     
-    public static void showDownloadDialog(java.awt.Frame parent, File cardFile, File deckFile) {
-        DriveDialog dd = new DriveDialog(parent);
-        dd.cardFile = cardFile;
-        dd.deckFile = deckFile;
-        dd.lblMessage.setText("Downloading");
-        dd.mode = 2;
+    public static String[] showCardDialog(java.awt.Frame parent, String name) {
+        SetUpdateDialog dd = new SetUpdateDialog(parent);
+        dd.name = name;
+        dd.lblMessage.setText("Updating sets for " +name);
         dd.setVisible(true);
-        dd.dispose();
-    }
-    
-    public static Library.Differences showDifferenceDialog(java.awt.Frame parent, File cardFile, File deckFile) {
-        DriveDialog dd = new DriveDialog(parent);
-        dd.cardFile = cardFile;
-        dd.deckFile = deckFile;
-        dd.lblMessage.setText("Computing Differences");
-        dd.mode = 3;
-        dd.setVisible(true);
-        Library.Differences rv = dd.differences;
+        String[] rv = dd.results;
         dd.dispose();
         return rv;
     }
     
-    private File cardFile;
-    private File deckFile;
-    private int mode;//1 - upload, 2 - download, 3 - diff
-    private Library.Differences differences;
+    private Deck deck;
+    private String name;
+    private String[] results;
     
     /**
      * Creates new form DriveDialog
      */
-    private DriveDialog(java.awt.Frame parent) {
+    private SetUpdateDialog(java.awt.Frame parent) {
         super(parent, true);
         initComponents();
         setLocationRelativeTo(parent);
@@ -81,7 +65,7 @@ public class DriveDialog extends javax.swing.JDialog {
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(102, 102, 102), 2));
 
-        lblMessage.setText("jLabel1");
+        lblMessage.setText("Updating sets for");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -116,18 +100,13 @@ public class DriveDialog extends javax.swing.JDialog {
 
     private void formWindowOpened(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowOpened
         try {
-            GoogleDriveInterface gdi = new GoogleDriveInterface();
-            switch(mode) {
-                case 1:
-                    gdi.uploadFiles(cardFile, deckFile);
-                    break;
-                case 2:
-                    gdi.downloadFiles(cardFile, deckFile);
-                    break;
-                case 3:
-                    gdi.downloadFiles(cardFile, deckFile);
-                    differences = Library.getDifferences(cardFile, deckFile);
-                    break;
+            JSONSets sets = new JSONSets();
+            if(deck != null) {
+                for(Deck.DeckCard dc : deck) {
+                    dc.card.sets = sets.getSets(dc.card.name);
+                }
+            } else {
+                results = sets.getSets(name);
             }
             setVisible(false);
         } catch (IOException ex) {

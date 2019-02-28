@@ -82,8 +82,12 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         jMenu1 = new javax.swing.JMenu();
         miNewDeck = new javax.swing.JMenuItem();
         miNewDeckFromList = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JPopupMenu.Separator();
         miDeckList = new javax.swing.JMenuItem();
         miDeckNeedList = new javax.swing.JMenuItem();
+        miSortDeckListBySet = new javax.swing.JCheckBoxMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        miUpdateSets = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         miUpload = new javax.swing.JMenuItem();
         miDownload = new javax.swing.JMenuItem();
@@ -172,6 +176,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             }
         });
         jMenu1.add(miNewDeckFromList);
+        jMenu1.add(jSeparator1);
 
         miDeckList.setText("Deck List");
         miDeckList.addActionListener(new java.awt.event.ActionListener() {
@@ -188,6 +193,18 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             }
         });
         jMenu1.add(miDeckNeedList);
+
+        miSortDeckListBySet.setText("Sort Deck List by Set");
+        jMenu1.add(miSortDeckListBySet);
+        jMenu1.add(jSeparator2);
+
+        miUpdateSets.setText("Update Sets");
+        miUpdateSets.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miUpdateSetsActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miUpdateSets);
 
         mbMain.add(jMenu1);
 
@@ -354,7 +371,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
         }
         if(result != null) {
-            DeckListDialog.showDialog(this, result);
+            DeckListDialog.showDialog(this, result, miSortDeckListBySet.isSelected());
         }
     }//GEN-LAST:event_miDeckListActionPerformed
 
@@ -367,7 +384,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to export?", "Deck Need List", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
         }
         if(result != null) {
-            DeckListDialog.showNeedDialog(this, result);
+            DeckListDialog.showNeedDialog(this, result, miSortDeckListBySet.isSelected());
         }
     }//GEN-LAST:event_miDeckNeedListActionPerformed
 
@@ -386,6 +403,19 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             ex.printStackTrace(System.out);
         }
     }//GEN-LAST:event_miNewDeckFromListActionPerformed
+
+    private void miUpdateSetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miUpdateSetsActionPerformed
+        Deck result;
+        if(btnDecks.isSelected()) {
+            DeckPanel dp = (DeckPanel)pnlMain.getComponent(2);
+            result = dp.getSelectedDeck();
+        } else {
+            result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to update sets for?", "Update Sets", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        }
+        if(result != null) {
+            SetUpdateDialog.showDeckDialog(this, result);
+        }
+    }//GEN-LAST:event_miUpdateSetsActionPerformed
 
     /**
      * @param args the command line arguments
@@ -428,6 +458,8 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JToggleButton btnDecks;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
+    private javax.swing.JPopupMenu.Separator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
     private javax.swing.JMenu mCard;
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miDeckList;
@@ -438,6 +470,8 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JMenuItem miNewCard;
     private javax.swing.JMenuItem miNewDeck;
     private javax.swing.JMenuItem miNewDeckFromList;
+    private javax.swing.JCheckBoxMenuItem miSortDeckListBySet;
+    private javax.swing.JMenuItem miUpdateSets;
     private javax.swing.JMenuItem miUpload;
     private javax.swing.JPanel pnlMain;
     private javax.swing.JToolBar tbMain;

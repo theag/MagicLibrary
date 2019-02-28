@@ -5,41 +5,96 @@
  */
 package magicLibrary;
 
+import java.util.ArrayList;
+
 /**
  *
  * @author nbp184
  */
 public class DeckListDialog extends javax.swing.JDialog {
 
-    public static void showDialog(java.awt.Frame parent, Deck d) {
-        DeckListDialog dld = new DeckListDialog(parent, d, false);
+    public static void showDialog(java.awt.Frame parent, Deck d, boolean sortBySet) {
+        DeckListDialog dld = new DeckListDialog(parent, d, false, sortBySet);
         dld.setVisible(true);
     }
     
-    public static void showNeedDialog(java.awt.Frame parent, Deck d) {
-        DeckListDialog dld = new DeckListDialog(parent, d, true);
+    public static void showNeedDialog(java.awt.Frame parent, Deck d, boolean sortBySet) {
+        DeckListDialog dld = new DeckListDialog(parent, d, true, sortBySet);
         dld.setVisible(true);
     }
     
     /**
      * Creates new form DeckListDialog
      */
-    private DeckListDialog(java.awt.Frame parent, Deck d, boolean needOnly) {
+    private DeckListDialog(java.awt.Frame parent, Deck d, boolean needOnly, boolean sortBySet) {
         super(parent, true);
         initComponents();
         setTitle(d +" Deck List");
         String t = "";
-        for(Deck.DeckCard dc : d) {
-            if(needOnly && dc.count > dc.card.count) {
-                if(!t.isEmpty()) {
-                    t += "\n";
+        if(sortBySet) {
+            ArrayList<String> setNames = new ArrayList<>();
+            Deck.DeckCard[][] sorted = new Deck.DeckCard[500][d.size()];
+            int count = 0;
+            int[] counts = new int[500];
+            int index;
+            for(Deck.DeckCard dc : d) {
+                if(dc.count > dc.card.count || !needOnly) {
+                    if(dc.card.hasSuperType("Basic")) {
+                        index = setNames.indexOf("Basic Land");
+                        if(index < 0) {
+                            setNames.add("Basic Land");
+                            index = count++;
+                        }
+                        sorted[index][counts[index]++] = dc;
+                    } else if(dc.card.sets == null || dc.card.sets.length == 0) {
+                        index = setNames.indexOf("No Set");
+                        if(index < 0) {
+                            setNames.add("No Set");
+                            index = count++;
+                        }
+                        sorted[index][counts[index]++] = dc;
+                    } else {
+                        for(String s : dc.card.sets) {
+                            index = setNames.indexOf(s);
+                            if(index < 0) {
+                                setNames.add(s);
+                                index = count++;
+                            }
+                            sorted[index][counts[index]++] = dc;
+                        }
+                    }
                 }
-                t += (dc.count - dc.card.count) +"x " +dc.card.name;
-            } else if(!needOnly) {
-                if(!t.isEmpty()) {
-                    t += "\n";
+            }
+            for(int i = 0; i < count; i++) {
+                if(i > 0) {
+                    t += "\n\n";
                 }
-                t += dc.count +"x " +dc.card.name;
+                t += setNames.get(i) +":";
+                for(int j = 0; j < counts[i]; j++) {
+                    t += "\n    ";
+                    if(needOnly && sorted[i][j].count > sorted[i][j].card.count) {
+                        t += (sorted[i][j].count - sorted[i][j].card.count) +"x " +sorted[i][j].card.name;
+                    } else if(!needOnly) {
+                        t += sorted[i][j].count +"x " +sorted[i][j].card.name;
+                    }
+                    if(!sorted[i][j].card.hasSuperType("Basic") && sorted[i][j].card.sets != null && sorted[i][j].card.sets.length > 1) {
+                        t += " (M)";
+                    }
+                }
+            }
+        } else {
+            for(Deck.DeckCard dc : d) {
+                if(needOnly && dc.count > dc.card.count) {
+                    if(!t.isEmpty()) {
+                        t += "\n";
+                    }
+                    t += (dc.count - dc.card.count) +"x " +dc.card.name;
+                } else if(!needOnly) {
+                    if(!t.isEmpty()) {
+                        t += "\n";
+                    }
+                    t += dc.count +"x " +dc.card.name;
+                }
             }
         }
         txtList.setText(t);

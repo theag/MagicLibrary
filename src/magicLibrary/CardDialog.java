@@ -7,6 +7,8 @@ package magicLibrary;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import javax.swing.JOptionPane;
@@ -51,8 +53,8 @@ public class CardDialog extends javax.swing.JDialog {
     private boolean saved;
     
     private Card card;
-    private String[][] types;
     private DeckListModel deckModel;
+    private String[] sets;
     
     private final ManaPanel pnlMana;
     
@@ -94,11 +96,14 @@ public class CardDialog extends javax.swing.JDialog {
             }
             spnCount.setValue(card.count);
             cbAddsMana.setSelected(card.addsMana);
+            txtSets.setText(card.getSetString());
+            sets = card.sets;
             lblUpdated.setText("Last Updated: " +card.formatUpdate());
         } else {
             setTitle("New Card");
             pnlMana = new ManaPanel(new String[]{"0"});
             deckModel = new DeckListModel();
+            sets = null;
         }
         lstDecks.setModel(deckModel);
         pnlManaHolder.setLayout(new BorderLayout());
@@ -144,6 +149,10 @@ public class CardDialog extends javax.swing.JDialog {
         btnEditDeckCount = new javax.swing.JButton();
         btnRemoveFromDeck = new javax.swing.JButton();
         cbAddsMana = new javax.swing.JCheckBox();
+        jLabel4 = new javax.swing.JLabel();
+        jScrollPane2 = new javax.swing.JScrollPane();
+        txtSets = new javax.swing.JTextArea();
+        btnUpdateSets = new javax.swing.JButton();
 
         txtSuperType.setColumns(6);
 
@@ -236,6 +245,21 @@ public class CardDialog extends javax.swing.JDialog {
 
         cbAddsMana.setText("Adds Mana");
 
+        jLabel4.setText("Sets");
+
+        txtSets.setEditable(false);
+        txtSets.setColumns(20);
+        txtSets.setLineWrap(true);
+        txtSets.setRows(3);
+        jScrollPane2.setViewportView(txtSets);
+
+        btnUpdateSets.setText("Update Sets from JSON");
+        btnUpdateSets.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnUpdateSetsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -268,6 +292,7 @@ public class CardDialog extends javax.swing.JDialog {
                         .addComponent(btnDelete)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 206, Short.MAX_VALUE)
                         .addComponent(btnCancel))
+                    .addComponent(jScrollPane2)
                     .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel3)
@@ -284,7 +309,9 @@ public class CardDialog extends javax.swing.JDialog {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                                     .addComponent(btnAddToDeck)
                                     .addComponent(btnEditDeckCount)
-                                    .addComponent(btnRemoveFromDeck))))
+                                    .addComponent(btnRemoveFromDeck)))
+                            .addComponent(jLabel4)
+                            .addComponent(btnUpdateSets))
                         .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
@@ -327,11 +354,17 @@ public class CardDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnUpdateSets)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnSave)
                     .addComponent(btnDelete)
                     .addComponent(btnCancel))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap())
         );
 
         pack();
@@ -386,6 +419,20 @@ public class CardDialog extends javax.swing.JDialog {
             deckModel.removeAt(index);
         }
     }//GEN-LAST:event_btnRemoveFromDeckActionPerformed
+
+    private void btnUpdateSetsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUpdateSetsActionPerformed
+        sets = SetUpdateDialog.showCardDialog(MainFrame.getInstance(), txtName.getText().trim());
+        String rv = "";
+        if(sets != null) {
+            for(int i = 0; i < sets.length; i++) {
+                if(i > 0) {
+                    rv += ", ";
+                }
+                rv += sets[i];
+            }
+        }
+        txtSets.setText(rv);
+    }//GEN-LAST:event_btnUpdateSetsActionPerformed
 
     private void pnlManaMouseClicked(java.awt.event.MouseEvent evt) {
         if(evt.getClickCount() == 2) {
@@ -457,6 +504,7 @@ public class CardDialog extends javax.swing.JDialog {
         } else {
             card.notes = null;
         }
+        card.sets = sets;
         card.lastUpdated = Calendar.getInstance().getTimeInMillis();
         saved = true;
         setVisible(false);
@@ -486,11 +534,14 @@ public class CardDialog extends javax.swing.JDialog {
     private javax.swing.JButton btnEditDeckCount;
     private javax.swing.JButton btnRemoveFromDeck;
     private javax.swing.JButton btnSave;
+    private javax.swing.JButton btnUpdateSets;
     private javax.swing.JCheckBox cbAddsMana;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JLabel lblUpdated;
@@ -500,6 +551,7 @@ public class CardDialog extends javax.swing.JDialog {
     private javax.swing.JTextField txtLPT;
     private javax.swing.JTextField txtName;
     private javax.swing.JTextArea txtNotes;
+    private javax.swing.JTextArea txtSets;
     private javax.swing.JTextField txtSubType;
     private javax.swing.JTextField txtSuperType;
     private javax.swing.JTextArea txtText;

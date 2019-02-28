@@ -48,6 +48,8 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miNewDeckFromListActionPerformed"/>
               </Events>
             </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator1">
+            </MenuItem>
             <MenuItem class="javax.swing.JMenuItem" name="miDeckList">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Deck List"/>
@@ -62,6 +64,21 @@
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miDeckNeedListActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JCheckBoxMenuItem" name="miSortDeckListBySet">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Sort Deck List by Set"/>
+              </Properties>
+            </MenuItem>
+            <MenuItem class="javax.swing.JPopupMenu$Separator" name="jSeparator2">
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="miUpdateSets">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Update Sets"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="miUpdateSetsActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>

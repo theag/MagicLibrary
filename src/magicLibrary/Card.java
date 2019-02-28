@@ -32,6 +32,7 @@ public class Card implements Comparable<Card> {
     public String notes;
     public boolean addsMana;
     public int count;
+    public String[] sets;
     public long lastUpdated;
 
     public Card() {
@@ -143,6 +144,18 @@ public class Card implements Comparable<Card> {
         Byte b = buffer.get();
         addsMana = b == 1;
         count = buffer.getInt();
+        int size = buffer.getInt();
+        if(size > 0) {
+            sets = new String[size];
+            for(int i = 0; i < sets.length; i++) {
+                sets[i] = "";
+                chr = buffer.getChar();
+                while(chr != Library.ETX) {
+                    sets[i] += chr;
+                    chr = buffer.getChar();
+                }
+            }
+        }
         lastUpdated = buffer.getLong();
     }
     
@@ -226,6 +239,14 @@ public class Card implements Comparable<Card> {
             rv += 2;
         } else {
             rv += 2*(notes.length() + 1);
+        }
+        if(sets == null) {
+            rv += 4;
+        } else {
+            rv += 4;
+            for(String s : sets) {
+                rv += 2*(s.length() + 1);
+            }
         }
         rv += 4 + 8 + 1;
         return rv;
@@ -318,6 +339,17 @@ public class Card implements Comparable<Card> {
             buffer.put((byte)0);
         }
         buffer.putInt(count);
+        if(sets == null) {
+            buffer.putInt(-1);
+        } else {
+            buffer.putInt(sets.length);
+            for(int j = 0; j < sets.length; j++) {
+                for(int i = 0; i < sets[j].length(); i++) {
+                    buffer.putChar(sets[j].charAt(i));
+                }
+                buffer.putChar(Library.ETX);
+            }
+        }
         buffer.putLong(lastUpdated);
     }
 
@@ -666,6 +698,12 @@ public class Card implements Comparable<Card> {
         if(count != otherCard.count) {
             differences.add("Count (Local: " +count +" Drive: " +otherCard.count +")");
         }
+        //sets
+        mine = getSetString();
+        other = otherCard.getSetString();
+        if(mine.compareToIgnoreCase(other) != 0) {
+            differences.add("Sets (Local: " +mine +" Drive: " +other +")");
+        }
     }
 
     private String getManaString() {
@@ -698,6 +736,28 @@ public class Card implements Comparable<Card> {
             }
         }
         return false;
+    }
+    
+    boolean hasSuperType(String type) {
+        for(String t : this.supertype) {
+            if(t.compareToIgnoreCase(type) == 0) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    String getSetString() {
+        String rv = "";
+        if(sets != null) {
+            for(int i = 0; i < sets.length; i++) {
+                if(i > 0) {
+                    rv += ", ";
+                }
+                rv += sets[i];
+            }
+        }
+        return rv;
     }
     
 }
