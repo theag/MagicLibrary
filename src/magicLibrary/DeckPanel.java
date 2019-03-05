@@ -312,6 +312,11 @@ public class DeckPanel extends javax.swing.JPanel {
 
     private void tblDeckMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDeckMouseClicked
         if(evt.getClickCount() == 2) {
+            if(cpd != null) {
+                cpd.setVisible(false);
+                cpd.dispose();
+                cpd = null;
+            }
             int row = tblDeck.rowAtPoint(evt.getPoint());
             DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
             boolean saved = DeckCardDialog.showDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)));
