@@ -303,7 +303,7 @@ public class Library implements Iterable<Card> {
         for(Deck d : decks) {
             if(d.hasCard(card)) {
                 if(!rv.isEmpty()) {
-                    rv += "\n";
+                    rv += ", ";
                 }
                 rv += d.name;
             }

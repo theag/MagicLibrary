@@ -81,14 +81,12 @@ public class CardPopupDialog extends javax.swing.JDialog {
             this.getContentPane().setBackground(bg);
             mp.setBackground(bg);
         }
-        p.translate(10, 0);
         setLocation(p);
         this.row = row;
         setVisible(true);
     }
     
     public void move(java.awt.Point p) {
-        p.translate(10, 0);
         setLocation(p);
     }
 
@@ -117,7 +115,7 @@ public class CardPopupDialog extends javax.swing.JDialog {
         pnlManaHolder.setLayout(pnlManaHolderLayout);
         pnlManaHolderLayout.setHorizontalGroup(
             pnlManaHolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 107, Short.MAX_VALUE)
+            .addGap(0, 150, Short.MAX_VALUE)
         );
         pnlManaHolderLayout.setVerticalGroup(
             pnlManaHolderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,12 +140,12 @@ public class CardPopupDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
                     .addComponent(lblType, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(lblName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 116, Short.MAX_VALUE)
                         .addComponent(pnlManaHolder, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lblLPT)))
@@ -163,7 +161,7 @@ public class CardPopupDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblType)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 135, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 147, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(lblLPT)
                 .addContainerGap())

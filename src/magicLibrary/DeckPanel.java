@@ -362,18 +362,20 @@ public class DeckPanel extends javax.swing.JPanel {
     private void tblDeckMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDeckMouseMoved
         int col = tblDeck.columnAtPoint(evt.getPoint());
         if(col == 0) {
+            java.awt.Point p = evt.getLocationOnScreen();
+            p.translate(10, 0);
             int row = tblDeck.rowAtPoint(evt.getPoint());
             DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
             if(cpd == null) {
                 //make a new one
-                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, evt.getLocationOnScreen());
+                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, p);
             } else if(cpd.row != row) {
                 //make a new one
                 cpd.setVisible(false);
                 cpd.dispose();
-                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, evt.getLocationOnScreen());
+                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, p);
             } else {
-                cpd.move(evt.getLocationOnScreen());
+                cpd.move(p);
             }
         } else if(cpd != null) {
             cpd.setVisible(false);
