@@ -259,6 +259,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
         try {
+            Library.getInstance().sort();
             Library.getInstance().save(fc, fd);
         } catch (IOException ex) {
             System.out.println("Library save failed");

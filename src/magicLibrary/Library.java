@@ -314,6 +314,11 @@ public class Library implements Iterable<Card> {
     void deleteDeck(Deck deck) {
         decks.remove(deck);
     }
+
+    void sort() {
+        Collections.sort(cards);
+        Collections.sort(decks);
+    }
     
     public static class Differences {
         

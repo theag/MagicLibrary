@@ -20,6 +20,7 @@ public class DeckPanel extends javax.swing.JPanel {
 
     private ManaCurvePanel pnlManaCurve;
     private final DeckComboBoxModel model;
+    private CardPopupDialog cpd;
     
     /**
      * Creates new form DeckPanel
@@ -36,6 +37,7 @@ public class DeckPanel extends javax.swing.JPanel {
                 tblDeckHeaderMouseClicked(evt);
             }
         });
+        cpd = null;
     }
 
     /**
@@ -93,9 +95,17 @@ public class DeckPanel extends javax.swing.JPanel {
                 "Title 1", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tblDeck.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
+            public void mouseMoved(java.awt.event.MouseEvent evt) {
+                tblDeckMouseMoved(evt);
+            }
+        });
         tblDeck.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 tblDeckMouseClicked(evt);
+            }
+            public void mouseExited(java.awt.event.MouseEvent evt) {
+                tblDeckMouseExited(evt);
             }
         });
         jScrollPane1.setViewportView(tblDeck);
@@ -343,6 +353,37 @@ public class DeckPanel extends javax.swing.JPanel {
     private void btnShowOnlyMissingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowOnlyMissingActionPerformed
         ((DeckTableModel)tblDeck.getModel()).setShowOnlyChanged(btnShowOnlyMissing.isSelected());
     }//GEN-LAST:event_btnShowOnlyMissingActionPerformed
+
+    private void tblDeckMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDeckMouseMoved
+        int col = tblDeck.columnAtPoint(evt.getPoint());
+        if(col == 0) {
+            int row = tblDeck.rowAtPoint(evt.getPoint());
+            DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
+            if(cpd == null) {
+                //make a new one
+                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, evt.getLocationOnScreen());
+            } else if(cpd.row != row) {
+                //make a new one
+                cpd.setVisible(false);
+                cpd.dispose();
+                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, evt.getLocationOnScreen());
+            } else {
+                cpd.move(evt.getLocationOnScreen());
+            }
+        } else if(cpd != null) {
+            cpd.setVisible(false);
+            cpd.dispose();
+            cpd = null;
+        }
+    }//GEN-LAST:event_tblDeckMouseMoved
+
+    private void tblDeckMouseExited(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDeckMouseExited
+        if(cpd != null) {
+            cpd.setVisible(false);
+            cpd.dispose();
+            cpd = null;
+        }
+    }//GEN-LAST:event_tblDeckMouseExited
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
