@@ -25,11 +25,9 @@
                   <Group type="102" attributes="0">
                       <Component id="cbDecks" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnEditName" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
-                      <Component id="btnDeleteDeck" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace max="-2" attributes="0"/>
                       <Component id="btnShowOnlyMissing" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnShowPopups" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="lblTotal" min="-2" pref="213" max="-2" attributes="0"/>
                   </Group>
@@ -51,9 +49,8 @@
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="cbDecks" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="lblTotal" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnEditName" alignment="3" min="-2" max="-2" attributes="0"/>
-                          <Component id="btnDeleteDeck" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnShowOnlyMissing" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnShowPopups" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="jScrollPane1" max="32767" attributes="0"/>
@@ -106,22 +103,6 @@
         <Property name="horizontalAlignment" type="int" value="4"/>
         <Property name="text" type="java.lang.String" value="jLabel5"/>
       </Properties>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnEditName">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Edit Name"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnEditNameActionPerformed"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JButton" name="btnDeleteDeck">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Delete Deck"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnDeleteDeckActionPerformed"/>
-      </Events>
     </Component>
     <Container class="javax.swing.JTabbedPane" name="jTabbedPane1">
 
@@ -327,6 +308,14 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnShowOnlyMissingActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JToggleButton" name="btnShowPopups">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Show Popups"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnShowPopupsActionPerformed"/>
       </Events>
     </Component>
   </SubComponents>

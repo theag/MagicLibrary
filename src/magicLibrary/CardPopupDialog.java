@@ -15,6 +15,8 @@ import myutil.Colour;
  */
 public class CardPopupDialog extends javax.swing.JDialog {
 
+    public static final int PREFERRED_HEIGHT = 240;
+    
     public final int row;
     
     /**

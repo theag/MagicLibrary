@@ -12,7 +12,7 @@ import java.util.ArrayList;
  * @author nbp184
  */
 public class DeckListDialog extends javax.swing.JDialog {
-
+    
     public static void showDialog(java.awt.Frame parent, Deck d, boolean sortBySet) {
         DeckListDialog dld = new DeckListDialog(parent, d, false, sortBySet);
         dld.setVisible(true);
@@ -23,6 +23,9 @@ public class DeckListDialog extends javax.swing.JDialog {
         dld.setVisible(true);
     }
     
+    private int mode; //x, no x, nothing
+    private String original;
+    
     /**
      * Creates new form DeckListDialog
      */
@@ -30,7 +33,7 @@ public class DeckListDialog extends javax.swing.JDialog {
         super(parent, true);
         initComponents();
         setTitle(d +" Deck List");
-        String t = "";
+        original = "";
         if(sortBySet) {
             ArrayList<String> setNames = new ArrayList<>();
             Deck.DeckCard[][] sorted = new Deck.DeckCard[500][d.size()];
@@ -67,37 +70,38 @@ public class DeckListDialog extends javax.swing.JDialog {
             }
             for(int i = 0; i < count; i++) {
                 if(i > 0) {
-                    t += "\n\n";
+                    original += "\n\n";
                 }
-                t += setNames.get(i) +":";
+                original += setNames.get(i) +":";
                 for(int j = 0; j < counts[i]; j++) {
-                    t += "\n    ";
+                    original += "\n    ";
                     if(needOnly && sorted[i][j].count > sorted[i][j].card.count) {
-                        t += (sorted[i][j].count - sorted[i][j].card.count) +"x " +sorted[i][j].card.name;
+                        original += (sorted[i][j].count - sorted[i][j].card.count) +"x " +sorted[i][j].card.name;
                     } else if(!needOnly) {
-                        t += sorted[i][j].count +"x " +sorted[i][j].card.name;
+                        original += sorted[i][j].count +"x " +sorted[i][j].card.name;
                     }
                     if(!sorted[i][j].card.hasSuperType("Basic") && sorted[i][j].card.sets != null && sorted[i][j].card.sets.length > 1) {
-                        t += " (M)";
+                        original += " (M)";
                     }
                 }
             }
         } else {
             for(Deck.DeckCard dc : d) {
                 if(needOnly && dc.count > dc.card.count) {
-                    if(!t.isEmpty()) {
-                        t += "\n";
+                    if(!original.isEmpty()) {
+                        original += "\n";
                     }
-                    t += (dc.count - dc.card.count) +"x " +dc.card.name;
+                    original += (dc.count - dc.card.count) +"x " +dc.card.name;
                 } else if(!needOnly) {
-                    if(!t.isEmpty()) {
-                        t += "\n";
+                    if(!original.isEmpty()) {
+                        original += "\n";
                     }
-                    t += dc.count +"x " +dc.card.name;
+                    original += dc.count +"x " +dc.card.name;
                 }
             }
         }
-        txtList.setText(t);
+        mode = 0;
+        txtList.setText(original);
         setLocationRelativeTo(parent);
     }
 
@@ -110,8 +114,13 @@ public class DeckListDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        bgFormat = new javax.swing.ButtonGroup();
         jScrollPane1 = new javax.swing.JScrollPane();
         txtList = new javax.swing.JTextArea();
+        jLabel1 = new javax.swing.JLabel();
+        rbX = new javax.swing.JRadioButton();
+        rbNoX = new javax.swing.JRadioButton();
+        rbNothing = new javax.swing.JRadioButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -120,28 +129,102 @@ public class DeckListDialog extends javax.swing.JDialog {
         txtList.setRows(5);
         jScrollPane1.setViewportView(txtList);
 
+        jLabel1.setText("Format:");
+
+        bgFormat.add(rbX);
+        rbX.setSelected(true);
+        rbX.setText("(count)x (name)");
+        rbX.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbXActionPerformed(evt);
+            }
+        });
+
+        bgFormat.add(rbNoX);
+        rbNoX.setText("(count) (name)");
+        rbNoX.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbNoXActionPerformed(evt);
+            }
+        });
+
+        bgFormat.add(rbNothing);
+        rbNothing.setText("(name)");
+        rbNothing.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                rbNothingActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 269, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel1)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(rbX)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                .addComponent(rbNoX))
+                            .addComponent(rbNothing))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 463, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(rbX)
+                    .addComponent(rbNoX))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(rbNothing)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 399, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void rbXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbXActionPerformed
+        if(mode != 0) {
+            mode = 0;
+            txtList.setText(original);
+        }
+    }//GEN-LAST:event_rbXActionPerformed
+
+    private void rbNoXActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNoXActionPerformed
+        if(mode != 1) {
+            mode = 1;
+            String t = original.replaceAll("(?<=\\d+)x", "");
+            txtList.setText(t);
+        }
+    }//GEN-LAST:event_rbNoXActionPerformed
+
+    private void rbNothingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbNothingActionPerformed
+        if(mode != 2) {
+            mode = 2;
+            String t = original.replaceAll("\\d+x ", "");
+            txtList.setText(t);
+        }
+    }//GEN-LAST:event_rbNothingActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.ButtonGroup bgFormat;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JRadioButton rbNoX;
+    private javax.swing.JRadioButton rbNothing;
+    private javax.swing.JRadioButton rbX;
     private javax.swing.JTextArea txtList;
     // End of variables declaration//GEN-END:variables
+
 }

@@ -50,7 +50,12 @@ public class JSONCardDialog extends javax.swing.JDialog {
         super(parent, modal);
         cards = new JSONObject(new JSONTokener(new FileInputStream("AllCards.json")));
         ArrayList<String> names = new ArrayList<>();
-        names.addAll(cards.keySet());
+        for(String name : cards.keySet()) {
+            JSONObject obj = cards.getJSONObject(name);
+            if(obj.getString("type").compareToIgnoreCase("Vanguard") != 0) {
+                names.add(name);
+            }
+        }
         Collections.sort(names);
         model = new CardNameListModel(names);
         decks = new DeckListModel();

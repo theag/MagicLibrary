@@ -88,6 +88,8 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         miSortDeckListBySet = new javax.swing.JCheckBoxMenuItem();
         jSeparator2 = new javax.swing.JPopupMenu.Separator();
         miUpdateSets = new javax.swing.JMenuItem();
+        miEditDeckName = new javax.swing.JMenuItem();
+        miDeleteDeck = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         miUpload = new javax.swing.JMenuItem();
         miDownload = new javax.swing.JMenuItem();
@@ -205,6 +207,22 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
             }
         });
         jMenu1.add(miUpdateSets);
+
+        miEditDeckName.setText("Edit Name");
+        miEditDeckName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miEditDeckNameActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miEditDeckName);
+
+        miDeleteDeck.setText("Delete Deck");
+        miDeleteDeck.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                miDeleteDeckActionPerformed(evt);
+            }
+        });
+        jMenu1.add(miDeleteDeck);
 
         mbMain.add(jMenu1);
 
@@ -418,6 +436,40 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         }
     }//GEN-LAST:event_miUpdateSetsActionPerformed
 
+    private void miEditDeckNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miEditDeckNameActionPerformed
+        Deck result;
+        if(btnDecks.isSelected()) {
+            DeckPanel dp = (DeckPanel)pnlMain.getComponent(2);
+            result = dp.getSelectedDeck();
+        } else {
+            result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to change the name of?", "Edit Name", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        }
+        if(result != null) {
+            String resultName = (String)JOptionPane.showInputDialog(this, "Enter new deck name", "Change " +result.name +" Name", JOptionPane.QUESTION_MESSAGE, null, null, result.name);
+            if(resultName != null) {
+                result.name = resultName;
+                ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(false);
+            }
+        }
+    }//GEN-LAST:event_miEditDeckNameActionPerformed
+
+    private void miDeleteDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_miDeleteDeckActionPerformed
+        Deck result;
+        if(btnDecks.isSelected()) {
+            DeckPanel dp = (DeckPanel)pnlMain.getComponent(2);
+            result = dp.getSelectedDeck();
+        } else {
+            result = (Deck)JOptionPane.showInputDialog(this, "Which deck list would you like to delete?", "Delete Deck", JOptionPane.QUESTION_MESSAGE, null, Library.getInstance().getDeckArray(), null);
+        }
+        if(result != null) {
+            int resultDelete = JOptionPane.showConfirmDialog(this, "Are you sure you wish to delete this deck?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+            if(resultDelete == JOptionPane.YES_OPTION) {
+                Library.getInstance().deleteDeck(result);
+                ((DeckPanel)pnlMain.getComponent(2)).fireLibraryChanged(false);
+            }
+        }
+    }//GEN-LAST:event_miDeleteDeckActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -465,8 +517,10 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
     private javax.swing.JMenuBar mbMain;
     private javax.swing.JMenuItem miDeckList;
     private javax.swing.JMenuItem miDeckNeedList;
+    private javax.swing.JMenuItem miDeleteDeck;
     private javax.swing.JMenuItem miDifferences;
     private javax.swing.JMenuItem miDownload;
+    private javax.swing.JMenuItem miEditDeckName;
     private javax.swing.JMenuItem miJSONCard;
     private javax.swing.JMenuItem miNewCard;
     private javax.swing.JMenuItem miNewDeck;

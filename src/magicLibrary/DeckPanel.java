@@ -53,8 +53,6 @@ public class DeckPanel extends javax.swing.JPanel {
         jScrollPane1 = new javax.swing.JScrollPane();
         tblDeck = new javax.swing.JTable();
         lblTotal = new javax.swing.JLabel();
-        btnEditName = new javax.swing.JButton();
-        btnDeleteDeck = new javax.swing.JButton();
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
@@ -70,6 +68,7 @@ public class DeckPanel extends javax.swing.JPanel {
         lstLand = new javax.swing.JList();
         jPanel2 = new javax.swing.JPanel();
         btnShowOnlyMissing = new javax.swing.JToggleButton();
+        btnShowPopups = new javax.swing.JToggleButton();
 
         addComponentListener(new java.awt.event.ComponentAdapter() {
             public void componentResized(java.awt.event.ComponentEvent evt) {
@@ -112,20 +111,6 @@ public class DeckPanel extends javax.swing.JPanel {
 
         lblTotal.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
         lblTotal.setText("jLabel5");
-
-        btnEditName.setText("Edit Name");
-        btnEditName.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnEditNameActionPerformed(evt);
-            }
-        });
-
-        btnDeleteDeck.setText("Delete Deck");
-        btnDeleteDeck.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnDeleteDeckActionPerformed(evt);
-            }
-        });
 
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0)));
 
@@ -251,6 +236,13 @@ public class DeckPanel extends javax.swing.JPanel {
             }
         });
 
+        btnShowPopups.setText("Show Popups");
+        btnShowPopups.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnShowPopupsActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
@@ -261,11 +253,9 @@ public class DeckPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnEditName)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(btnDeleteDeck)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(btnShowOnlyMissing)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(btnShowPopups)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(lblTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 213, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 676, Short.MAX_VALUE))
@@ -283,9 +273,8 @@ public class DeckPanel extends javax.swing.JPanel {
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(cbDecks, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblTotal)
-                            .addComponent(btnEditName)
-                            .addComponent(btnDeleteDeck)
-                            .addComponent(btnShowOnlyMissing))
+                            .addComponent(btnShowOnlyMissing)
+                            .addComponent(btnShowPopups))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jScrollPane1)))
                 .addContainerGap())
@@ -338,49 +327,38 @@ public class DeckPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_formComponentResized
 
-    private void btnEditNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditNameActionPerformed
-        String result = (String)JOptionPane.showInputDialog(this, "Enter new deck name", "Change " +cbDecks.getSelectedItem() +" Name", JOptionPane.QUESTION_MESSAGE, null, null, cbDecks.getSelectedItem());
-        if(result != null) {
-            Deck d = (Deck)cbDecks.getSelectedItem();
-            d.name = result;
-            model.fireLibraryChanged();
-        }
-    }//GEN-LAST:event_btnEditNameActionPerformed
-
-    private void btnDeleteDeckActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDeleteDeckActionPerformed
-        int result = JOptionPane.showConfirmDialog(MainFrame.getInstance(), "Are you sure you wish to delete this deck?", "Delete", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
-        if(result == JOptionPane.YES_OPTION) {
-            Library.getInstance().deleteDeck((Deck)cbDecks.getSelectedItem());
-            model.fireLibraryChanged();
-        }
-    }//GEN-LAST:event_btnDeleteDeckActionPerformed
-
     private void btnShowOnlyMissingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowOnlyMissingActionPerformed
         ((DeckTableModel)tblDeck.getModel()).setShowOnlyChanged(btnShowOnlyMissing.isSelected());
     }//GEN-LAST:event_btnShowOnlyMissingActionPerformed
 
     private void tblDeckMouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblDeckMouseMoved
-        int col = tblDeck.columnAtPoint(evt.getPoint());
-        if(col == 0) {
-            java.awt.Point p = evt.getLocationOnScreen();
-            p.translate(10, 0);
-            int row = tblDeck.rowAtPoint(evt.getPoint());
-            DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
-            if(cpd == null) {
-                //make a new one
-                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, p);
-            } else if(cpd.row != row) {
-                //make a new one
+        if(btnShowPopups.isSelected()) {
+            int col = tblDeck.columnAtPoint(evt.getPoint());
+            if(col == 0) {
+                java.awt.Point p = evt.getLocationOnScreen();
+                p.translate(10, 0);
+                MainFrame mf = MainFrame.getInstance();
+                if(p.y + CardPopupDialog.PREFERRED_HEIGHT > mf.getLocationOnScreen().y + mf.getSize().height) {
+                    p.translate(0, -CardPopupDialog.PREFERRED_HEIGHT);
+                }
+                int row = tblDeck.rowAtPoint(evt.getPoint());
+                DeckTableModel m1 = (DeckTableModel)tblDeck.getModel();
+                if(cpd == null) {
+                    //make a new one
+                    cpd = new CardPopupDialog(mf, Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, p);
+                } else if(cpd.row != row) {
+                    //make a new one
+                    cpd.setVisible(false);
+                    cpd.dispose();
+                    cpd = new CardPopupDialog(mf, Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, p);
+                } else {
+                    cpd.move(p);
+                }
+            } else if(cpd != null) {
                 cpd.setVisible(false);
                 cpd.dispose();
-                cpd = new CardPopupDialog(MainFrame.getInstance(), Library.getInstance().getCardByName((String)m1.getValueAt(row, 0)), row, p);
-            } else {
-                cpd.move(p);
+                cpd = null;
             }
-        } else if(cpd != null) {
-            cpd.setVisible(false);
-            cpd.dispose();
-            cpd = null;
         }
     }//GEN-LAST:event_tblDeckMouseMoved
 
@@ -392,11 +370,18 @@ public class DeckPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_tblDeckMouseExited
 
+    private void btnShowPopupsActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnShowPopupsActionPerformed
+        if(!btnShowPopups.isSelected() && cpd != null) {
+            cpd.setVisible(false);
+            cpd.dispose();
+            cpd = null;
+        }
+    }//GEN-LAST:event_btnShowPopupsActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton btnDeleteDeck;
-    private javax.swing.JButton btnEditName;
     private javax.swing.JToggleButton btnShowOnlyMissing;
+    private javax.swing.JToggleButton btnShowPopups;
     private javax.swing.JComboBox cbDecks;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
