@@ -115,13 +115,21 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
                           <Component id="txtDecks" max="32767" attributes="0"/>
                           <Component id="txtCMC" alignment="1" max="32767" attributes="0"/>
                           <Group type="102" attributes="0">
                               <Group type="103" groupAlignment="0" attributes="0">
+                                  <Group type="102" alignment="0" attributes="0">
+                                      <Component id="jLabel9" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="btnSetsAndOr" min="-2" max="-2" attributes="0"/>
+                                      <EmptySpace max="-2" attributes="0"/>
+                                      <Component id="cbNoSets" min="-2" max="-2" attributes="0"/>
+                                  </Group>
+                                  <Component id="jScrollPane2" alignment="0" min="-2" max="-2" attributes="0"/>
                                   <Component id="chkInstant" min="-2" max="-2" attributes="0"/>
                                   <Component id="chkLegendary" min="-2" max="-2" attributes="0"/>
                                   <Component id="btnAndOr" alignment="0" min="-2" max="-2" attributes="0"/>
@@ -299,7 +307,15 @@
                       </Group>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="cbAddsMana" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="79" max="32767" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="jLabel9" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="btnSetsAndOr" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="cbNoSets" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="jScrollPane2" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="55" max="32767" attributes="0"/>
                       <Group type="103" groupAlignment="3" attributes="0">
                           <Component id="btnSearch" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="btnReset" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -481,7 +497,7 @@
                 <Component class="javax.swing.JTextArea" name="txtText">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="3"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -514,7 +530,7 @@
                 <Component class="javax.swing.JTextArea" name="txtNotes">
                   <Properties>
                     <Property name="columns" type="int" value="20"/>
-                    <Property name="rows" type="int" value="5"/>
+                    <Property name="rows" type="int" value="3"/>
                   </Properties>
                 </Component>
               </SubComponents>
@@ -567,6 +583,39 @@
                 <Property name="text" type="java.lang.String" value="Has no notes"/>
               </Properties>
             </Component>
+            <Component class="javax.swing.JLabel" name="jLabel9">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="11" style="1"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Sets"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JToggleButton" name="btnSetsAndOr">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="And"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JCheckBox" name="cbNoSets">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Has no sets"/>
+              </Properties>
+            </Component>
+            <Container class="javax.swing.JScrollPane" name="jScrollPane2">
+              <AuxValues>
+                <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
+              </AuxValues>
+
+              <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+              <SubComponents>
+                <Component class="javax.swing.JTextArea" name="txtSets">
+                  <Properties>
+                    <Property name="columns" type="int" value="20"/>
+                    <Property name="rows" type="int" value="3"/>
+                  </Properties>
+                </Component>
+              </SubComponents>
+            </Container>
           </SubComponents>
         </Container>
       </SubComponents>

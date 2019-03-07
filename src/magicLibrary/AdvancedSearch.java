@@ -29,6 +29,9 @@ public class AdvancedSearch {
     public int countOperator;//<,<=,=,>=,>
     public int countNumber;
     public boolean addsMana;
+    public boolean setsAnd;
+    public String[] sets;
+    public boolean noSets;
     
     public AdvancedSearch() {
         allAnd = true;
@@ -45,7 +48,7 @@ public class AdvancedSearch {
     }
     
     public boolean matches(Card card) {
-        boolean[] results = new boolean[9];
+        boolean[] results = new boolean[10];
         //colour
         if(!colourless && colourMask == 0) {
             results[0] = allAnd;
@@ -217,6 +220,43 @@ public class AdvancedSearch {
             results[8] = card.addsMana;
         } else {
             results[8] = allAnd;
+        }
+        //sets
+        if(noSets) {
+            results[9] = card.sets == null || card.sets.length == 0;
+        } else if(sets == null) {
+            results[9] = allAnd;
+        } else if(card.sets == null || card.sets.length == 0) {
+            results[9] = false;
+        } else if(setsAnd) {
+            results[9] = true;
+            boolean temp;
+            for(String t : sets) {
+                temp = false;
+                for(String ct : card.sets) {
+                    if(t.compareToIgnoreCase(ct) == 0) {
+                        temp = true;
+                        break;
+                    }
+                }
+                if(!temp) {
+                    results[9] = false;
+                    break;
+                }
+            }
+        } else {
+            results[9] = false;
+            for(String t : sets) {
+                for(String ct : card.sets) {
+                    if(t.compareToIgnoreCase(ct) == 0) {
+                        results[9] = true;
+                        break;
+                    }
+                }
+                if(results[9]) {
+                    break;
+                }
+            }
         }
         
         boolean rv = allAnd;
