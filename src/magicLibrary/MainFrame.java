@@ -111,7 +111,7 @@ public class MainFrame extends javax.swing.JFrame implements LibraryPanel.Change
         );
         pnlMainLayout.setVerticalGroup(
             pnlMainLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 848, Short.MAX_VALUE)
+            .addGap(0, 799, Short.MAX_VALUE)
         );
 
         tbMain.setBorder(javax.swing.BorderFactory.createMatteBorder(1, 0, 0, 0, java.awt.Color.gray));

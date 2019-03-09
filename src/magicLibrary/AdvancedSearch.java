@@ -200,19 +200,19 @@ public class AdvancedSearch {
         //card count
         switch(countOperator) {
             case 0:
-                results[7] = card.getCMC() < countNumber;
+                results[7] = card.count < countNumber;
                 break;
             case 1:
-                results[7] = card.getCMC() <= countNumber;
+                results[7] = card.count <= countNumber;
                 break;
             case 2:
-                results[7] = card.getCMC() == countNumber;
+                results[7] = card.count == countNumber;
                 break;
             case 3:
-                results[7] = card.getCMC() >= countNumber;
+                results[7] = card.count >= countNumber;
                 break;
             case 4:
-                results[7] = card.getCMC() > countNumber;
+                results[7] = card.count > countNumber;
                 break;
         }
         //adds mana
